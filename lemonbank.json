@@ -1,0 +1,1584 @@
+{
+    "148086360425758720": {
+        "pocket": 318.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 805,
+        "lvl": 5,
+        "userjob": [
+            {
+                "Name": "discord mod",
+                "Verdienst": 30
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 1
+            },
+            {
+                "item": "cheesecake",
+                "amount": 0
+            },
+            {
+                "item": "pinata",
+                "amount": 0
+            },
+            {
+                "item": "candy",
+                "amount": 1
+            },
+            {
+                "item": "present",
+                "amount": 0
+            }
+        ]
+    },
+    "442913791215140875": {
+        "pocket": 1265.0015999999996,
+        "safe": 100,
+        "pets": {},
+        "equippedpet": {
+            "name": "Goose",
+            "hp": 12,
+            "attack": 12,
+            "speed": 14,
+            "xp": 100,
+            "lvl": 10,
+            "item": "None",
+            "accessoire": "None",
+            "attack1": "Honk",
+            "attack2": "Wing Attack",
+            "food": 100,
+            "stamina": 100,
+            "care": 100,
+            "fun": 100
+        },
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "bag": [
+            {
+                "item": "pinata",
+                "amount": 1
+            },
+            {
+                "item": "safe",
+                "amount": 1,
+                "money": 50
+            }
+        ],
+        "xp": 20,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "reddit analyst",
+                "Verdienst": 20
+            }
+        ],
+        "collectibles": [
+            {
+                "name": "Cactus",
+                "amount": 1
+            },
+            {
+                "name": "trumpet",
+                "amount": 1
+            }
+        ]
+    },
+    "297015943907901440": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 1
+            }
+        ]
+    },
+    "783380754238406686": {
+        "pocket": 641.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 7
+            },
+            {
+                "item": "pinata",
+                "amount": 2
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            }
+        ]
+    },
+    "362325904048914442": {
+        "pocket": 98.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 3375,
+        "lvl": 7,
+        "userjob": [
+            {
+                "Name": "lemon researcher",
+                "Verdienst": 40
+            }
+        ],
+        "bag": [
+            {
+                "item": "lemonade",
+                "amount": 0
+            },
+            {
+                "item": "conchshell",
+                "amount": 1
+            },
+            {
+                "item": "mobile",
+                "amount": 1
+            },
+            {
+                "item": "flowers",
+                "amount": 1
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            },
+            {
+                "item": "present",
+                "amount": 0
+            },
+            {
+                "item": "safe",
+                "amount": 1,
+                "money": 3210
+            }
+        ]
+    },
+    "414200155852505089": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 570,
+        "lvl": 4,
+        "userjob": [
+            {
+                "Name": "lemonade salesman",
+                "Verdienst": 25
+            }
+        ],
+        "bag": [
+            {
+                "item": "cheesecake",
+                "amount": 0
+            }
+        ]
+    },
+    "663607852933447700": {
+        "pocket": 836.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 3400,
+        "lvl": 7,
+        "userjob": [
+            {
+                "Name": "lemon researcher",
+                "Verdienst": 40
+            }
+        ],
+        "bag": [
+            {
+                "item": "lemonade",
+                "amount": 2
+            },
+            {
+                "item": "cheesecake",
+                "amount": 2
+            },
+            {
+                "item": "mobile",
+                "amount": 2
+            },
+            {
+                "item": "conchshell",
+                "amount": 2
+            },
+            {
+                "item": "flowers",
+                "amount": 22
+            },
+            {
+                "item": "pinata",
+                "amount": 2
+            },
+            {
+                "item": "laptop",
+                "amount": 2
+            },
+            {
+                "item": "present",
+                "amount": 2
+            },
+            {
+                "item": "candy",
+                "amount": 2
+            }
+        ],
+        "collectibles": [
+            {
+                "name": "megaphone",
+                "amount": 1
+            },
+            {
+                "name": "football",
+                "amount": 1
+            },
+            {
+                "name": "feather",
+                "amount": 1
+            },
+            {
+                "name": "austria flag",
+                "amount": 1
+            }
+        ]
+    },
+    "230713508109615104": {
+        "pocket": 260.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 2205,
+        "lvl": 6,
+        "userjob": [
+            {
+                "Name": "cat enjoyer",
+                "Verdienst": 35
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 3
+            },
+            {
+                "item": "pinata",
+                "amount": 1
+            },
+            {
+                "item": "lemonade",
+                "amount": 1
+            },
+            {
+                "item": "present",
+                "amount": 1
+            },
+            {
+                "item": "cheesecake",
+                "amount": 0
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            },
+            {
+                "item": "mobile",
+                "amount": 1
+            },
+            {
+                "item": "conchshell",
+                "amount": 1
+            }
+        ]
+    },
+    "314118059709300736": {
+        "pocket": 3324.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 1530,
+        "lvl": 6,
+        "userjob": [
+            {
+                "Name": "cat enjoyer",
+                "Verdienst": 35
+            }
+        ],
+        "bag": [
+            {
+                "item": "lemonade",
+                "amount": 2
+            },
+            {
+                "item": "cheesecake",
+                "amount": 3
+            },
+            {
+                "item": "flowers",
+                "amount": 15
+            },
+            {
+                "item": "conchshell",
+                "amount": 1
+            },
+            {
+                "item": "pinata",
+                "amount": 1
+            },
+            {
+                "item": "mobile",
+                "amount": 1
+            },
+            {
+                "item": "present",
+                "amount": 1
+            },
+            {
+                "item": "candy",
+                "amount": 1
+            }
+        ]
+    },
+    "657673892395089950": {
+        "pocket": 2635.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 715,
+        "lvl": 5,
+        "userjob": [
+            {
+                "Name": "discord mod",
+                "Verdienst": 30
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 6
+            },
+            {
+                "item": "cheesecake",
+                "amount": 0
+            }
+        ]
+    },
+    "368823734511075338": {
+        "pocket": 508.5,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 1995,
+        "lvl": 6,
+        "userjob": [
+            {
+                "Name": "cat enjoyer",
+                "Verdienst": 35
+            }
+        ],
+        "bag": [
+            {
+                "item": "lemonade",
+                "amount": 1
+            },
+            {
+                "item": "flowers",
+                "amount": 15
+            },
+            {
+                "item": "cheesecake",
+                "amount": 1
+            },
+            {
+                "item": "present",
+                "amount": 1
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            },
+            {
+                "item": "conchshell",
+                "amount": 1
+            }
+        ]
+    },
+    "143578489713328128": {
+        "pocket": 25.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 750,
+        "lvl": 5,
+        "userjob": [
+            {
+                "Name": "discord mod",
+                "Verdienst": 25
+            }
+        ],
+        "bag": [
+            {
+                "item": "pinata",
+                "amount": 0
+            },
+            {
+                "item": "candy",
+                "amount": 0
+            },
+            {
+                "item": "cheesecake",
+                "amount": 0
+            },
+            {
+                "item": "conchshell",
+                "amount": 1
+            },
+            {
+                "item": "flowers",
+                "amount": 3
+            },
+            {
+                "item": "lemonade",
+                "amount": 0
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            }
+        ]
+    },
+    "300672293854773259": {
+        "pocket": 0.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 255,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "reddit analyst",
+                "Verdienst": 20
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 0
+            },
+            {
+                "item": "cheesecake",
+                "amount": 0
+            }
+        ]
+    },
+    "253538064519921664": {
+        "pocket": 3564.0,
+        "safe": 1,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 875,
+        "lvl": 5,
+        "userjob": [
+            {
+                "Name": "discord mod",
+                "Verdienst": 25
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 0
+            },
+            {
+                "item": "cheesecake",
+                "amount": 1
+            },
+            {
+                "item": "present",
+                "amount": 1
+            },
+            {
+                "item": "lemonade",
+                "amount": 0
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            }
+        ]
+    },
+    "535067144564506624": {
+        "pocket": 916.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 1545,
+        "lvl": 6,
+        "userjob": [
+            {
+                "Name": "discord mod",
+                "Verdienst": 30
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 4
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            },
+            {
+                "item": "lemonade",
+                "amount": 1
+            },
+            {
+                "item": "cheesecake",
+                "amount": 1
+            },
+            {
+                "item": "present",
+                "amount": 1
+            },
+            {
+                "item": "pinata",
+                "amount": 1
+            },
+            {
+                "item": "conchshell",
+                "amount": 1
+            },
+            {
+                "item": "mobile",
+                "amount": 1
+            }
+        ]
+    },
+    "410890050830860288": {
+        "pocket": 48,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 20,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "reddit analyst",
+                "Verdienst": 20
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 2
+            }
+        ]
+    },
+    "452611910735495178": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 15,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "497508029923852299": {
+        "pocket": 326.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 1605,
+        "lvl": 6,
+        "userjob": [
+            {
+                "Name": "cat enjoyer",
+                "Verdienst": 35
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 23
+            },
+            {
+                "item": "cheesecake",
+                "amount": 0
+            },
+            {
+                "item": "conchshell",
+                "amount": 1
+            },
+            {
+                "item": "lemonade",
+                "amount": 3
+            },
+            {
+                "item": "present",
+                "amount": 0
+            },
+            {
+                "item": "mobile",
+                "amount": 1
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            },
+            {
+                "item": "pinata",
+                "amount": 0
+            },
+            {
+                "item": "safe",
+                "amount": 1,
+                "money": 5000
+            }
+        ]
+    },
+    "314014198436724738": {
+        "pocket": 25.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 4340,
+        "lvl": 8,
+        "userjob": [
+            {
+                "Name": "lemon researcher",
+                "Verdienst": 40
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 4
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            },
+            {
+                "item": "present",
+                "amount": 1
+            },
+            {
+                "item": "mobile",
+                "amount": 1
+            },
+            {
+                "item": "conchshell",
+                "amount": 1
+            },
+            {
+                "item": "cheesecake",
+                "amount": 0
+            },
+            {
+                "item": "lemonade",
+                "amount": 1
+            },
+            {
+                "item": "pinata",
+                "amount": 1
+            }
+        ]
+    },
+    "179295302241484800": {
+        "pocket": 759.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 1035,
+        "lvl": 5,
+        "userjob": [
+            {
+                "Name": "discord mod",
+                "Verdienst": 25
+            }
+        ]
+    },
+    "85457129233739776": {
+        "pocket": 79,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 20,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "616679645487562874": {
+        "pocket": 60.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 510,
+        "lvl": 4,
+        "userjob": [
+            {
+                "Name": "reddit analyst",
+                "Verdienst": 20
+            }
+        ],
+        "bag": [
+            {
+                "item": "cheesecake",
+                "amount": 0
+            },
+            {
+                "item": "flowers",
+                "amount": 0
+            },
+            {
+                "item": "laptop",
+                "amount": 1
+            },
+            {
+                "item": "mobile",
+                "amount": 1
+            }
+        ]
+    },
+    "727998296345411615": {
+        "pocket": 100,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 125,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "198605439905038336": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {}
+    },
+    "768484445534552085": {
+        "pocket": 3167,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 630,
+        "lvl": 4,
+        "userjob": [
+            {
+                "Name": "lemonade salesman",
+                "Verdienst": 25
+            }
+        ],
+        "bag": [
+            {
+                "item": "cheesecake",
+                "amount": 0
+            },
+            {
+                "item": "flowers",
+                "amount": 9
+            }
+        ]
+    },
+    "396477825265303553": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 30,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "717296160313966663": {
+        "pocket": 30,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 25,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 1
+            }
+        ]
+    },
+    "642739391491735562": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 35,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "732029612355223562": {
+        "pocket": 865,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 480,
+        "lvl": 4,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 1
+            }
+        ]
+    },
+    "250166613205188608": {
+        "pocket": 25,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {}
+    },
+    "491273102865596427": {
+        "pocket": 175,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 40,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "274556158545756170": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 20,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "561411329806696448": {
+        "pocket": 120,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 150,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "reddit analyst",
+                "Verdienst": 20
+            }
+        ]
+    },
+    "365095296759365634": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {}
+    },
+    "140423031343284224": {
+        "pocket": 347,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 165,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 1
+            }
+        ]
+    },
+    "128907975665385474": {
+        "pocket": 802.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 150,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "lemon researcher",
+                "Verdienst": 40
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 0
+            }
+        ]
+    },
+    "383708050269405194": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {}
+    },
+    "365247141054251028": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 30,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "154512787899416576": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 15,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "131970466595340288": {
+        "pocket": 0.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 1260,
+        "lvl": 5,
+        "userjob": [
+            {
+                "Name": "discord mod",
+                "Verdienst": 30
+            }
+        ],
+        "collectibles": [
+            {
+                "name": "water gun",
+                "amount": 1
+            }
+        ],
+        "bag": [
+            {
+                "item": "flowers",
+                "amount": 2
+            }
+        ]
+    },
+    "457205557892349994": {
+        "pocket": 205.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 245,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "reddit analyst",
+                "Verdienst": 20
+            }
+        ],
+        "bag": [
+            {
+                "item": "lemonade",
+                "amount": 0
+            },
+            {
+                "item": "cheesecake",
+                "amount": 0
+            }
+        ]
+    },
+    "170619582757863426": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 20,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "313702157188595712": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 20,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "304530729071542283": {
+        "pocket": 20,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 35,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "175956558717386753": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 5,
+        "lvl": 1
+    },
+    "172692513721810945": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 30,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "276717209550848000": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 35,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "185019276137201664": {
+        "pocket": 527.0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 355,
+        "lvl": 4,
+        "userjob": [
+            {
+                "Name": "lemonade salesman",
+                "Verdienst": 25
+            }
+        ]
+    },
+    "496338305013645332": {
+        "pocket": 59,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 65,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "386505101407289346": {
+        "pocket": 30,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 40,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "373100989710073867": {
+        "pocket": 110,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 115,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "289074066122473492": {
+        "pocket": 4596,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 1990,
+        "lvl": 6,
+        "userjob": [
+            {
+                "Name": "cat enjoyer",
+                "Verdienst": 35
+            }
+        ],
+        "bag": [
+            {
+                "item": "lemonade",
+                "amount": 1
+            }
+        ]
+    },
+    "135959355626487808": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 25,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "448104970676469760": {
+        "pocket": 13,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 20,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "619561158688636948": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {}
+    },
+    "534917616536649748": {
+        "pocket": 360,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 75,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "150567114871144448": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 25,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "discord mod",
+                "Verdienst": 30
+            }
+        ]
+    },
+    "805523231553224734": {
+        "pocket": 50,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 55,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "273105719119839234": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 20,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "400785035642404894": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 25,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "273374672425582593": {
+        "pocket": 250,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 70,
+        "lvl": 2,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "242367461306007552": {
+        "pocket": 0,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {}
+    },
+    "528207321491570718": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 25,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 35
+            }
+        ]
+    },
+    "176132305117642752": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 25,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "130035934937743360": {
+        "pocket": 10,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 20,
+        "lvl": 1,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    },
+    "145972090791526400": {
+        "pocket": 170,
+        "safe": 0,
+        "pets": {},
+        "equippedpet": {},
+        "petslot1": {},
+        "petslot2": {},
+        "petslot3": {},
+        "xp": 195,
+        "lvl": 3,
+        "userjob": [
+            {
+                "Name": "lemon farmer",
+                "Verdienst": 10
+            }
+        ]
+    }
+}
