@@ -1,6 +1,6 @@
 [
-  {"rarity" : "common", "stars" : 1, "name" : "Babysmol", "stock" :  1, "minhp" :  10, "maxhp" :  15, "minattack" :  10, "maxattack" :  15, "minspeed" :  10, "maxspeed" :  15,
+  {"rarity" : "common", "stars" : 1, "name" : "Babysmol", "stock" :  1, "minhp" :  110, "maxhp" :  115, "minattack" :  10, "maxattack" :  15, "minspeed" :  10, "maxspeed" :  15,
     "size" :  "baby", "maxlvl" :  10, "attack1" :  "Beam of Love", "attack2" :  "Starsurge", "img" : "asmol.jpg", "price" :  1500},
-  {"rarity" : "common", "stars" : 1, "name" : "Goose", "stock" :  1, "minhp" :  10, "maxhp" :  15, "minattack" :  10, "maxattack" :  15, "minspeed" :  10, "maxspeed" :  15,
+  {"rarity" : "common", "stars" : 1, "name" : "Goose", "stock" :  1, "minhp" :  110, "maxhp" :  115, "minattack" :  10, "maxattack" :  15, "minspeed" :  10, "maxspeed" :  15,
     "size" :  "adult", "maxlvl" :  10, "attack1" :  "Honk", "attack2" :  "Wing Attack","img" : "goose.jpg", "price" :  1500}
 ]

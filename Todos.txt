@@ -9,8 +9,13 @@ Connect4
 dices
 
 roulette
+leaderboard with safe
 pets
 dep all
+job level up message bugs
+job xp bar
+BOSS FIGHTS
+RPG
 
 jobs:
 Content Creator
