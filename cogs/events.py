@@ -31,7 +31,7 @@ class events(commands.Cog):
 
         if message.channel.id != 598309398976397332:
             return
-        if message.author.id == 881476780765093939:
+        if message.author.id == message.author.bot:
             return
         channel = self.client.get_channel(598309398976397332)
         chance = random.randrange(0, 100)
