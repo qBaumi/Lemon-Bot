@@ -613,13 +613,29 @@ class economy(commands.Cog):
         users = await self.get_bank_data()
         leader_board = {}
         total = []
+
+
+
         for user in users:
             name = int(user)
+            #783380754238406686
+            #442913791215140875
+            safebal = 0
+            try:
+                for useritem in users[str(name)]["bag"]:
+                    if useritem["item"] == "safe":
+                        try:
+                            safebal = useritem["money"]
+                        except:
+                            safebal = 0
+                        break
+            except:
+                safebal = 0
             if name == 783380754238406686 or name == 442913791215140875:
                 None
             else:
 
-                total_amount = users[user]["pocket"]
+                total_amount = users[user]["pocket"] + safebal
                 leader_board[total_amount] = name
                 total.append(total_amount)
 
@@ -767,11 +783,13 @@ class economy(commands.Cog):
             else:
                 await ctx.send(f"{ctx.author.mention}\nYou cant set your bet on that!")
                 return
+            await self.update_balance(user, -bet)
             number = random.randrange(0, 37)
             print(number)
             red = [9, 18, 7, 12, 3, 32, 19, 21, 25, 34, 27, 36, 30, 23, 5, 16, 1, 14]
             black = [31, 22, 29, 28, 35, 26, 15, 4, 2, 17, 6, 13, 11, 8, 10, 24, 33, 20]
             iswon = False
+            timeswin = 1
             if bid == "red":
                 if number in red:
                     iswon = True
@@ -785,21 +803,43 @@ class economy(commands.Cog):
                 if number%2==0:
                     iswon = True
             if bid == number:
+                timeswin = 2
                 iswon = True
 
             if iswon==False:
                 line = "lost"
             if iswon==True:
                 line= "won"
+
+            degreelist = [9, 22, 18, 29, 7, 28, 12, 35, 3, 26, 0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31]
+            index = -1
+            for i in degreelist:
+                index += 1
+                if i == number:
+                    break
+
             img = Image.open("roulette2.png")
-            img = img.rotate(45, PIL.Image.NEAREST, expand = 1)
-            img.resize((500, 500))
+            im2 = img.convert('RGBA')
+            # rotated image
+            rot = im2.rotate(360/37*index)
+            # a white image same size as rotated image
+            fff = Image.new('RGBA', rot.size, (255,) * 4)
+            # create a composite image using the alpha layer of rot as a mask
+            out = Image.composite(rot, fff, rot)
+            # save your work (converting back to mode='1' or whatever..)
+
+            #img = img.rotate(45, PIL.Image.NEAREST, expand = 1)
+            #img.resize((500, 500))
 
 
-            #draw = ImageDraw.Draw(img)
-            #draw.ellipse((430, 215, 460, 245), fill=(255, 255, 255))
+            draw = ImageDraw.Draw(out)
+            draw.ellipse((430, 215, 460, 245), fill=(255, 255, 255))
+            out.convert(img.mode).save('roulettesaved.png')
+            #img.save("roulettesaved.png")
 
-            img.save("roulettesaved.png")
+            if iswon == True:
+                await self.update_balance(user, bet*2*timeswin)
+
             file = discord.File("roulettesaved.png")
             em = discord.Embed(colour=discord.Color.gold(), title=f"{user.name} {line} {bet} lemons!", description=f"The ball landed on the {number}!")
             em.set_image(url="attachment://roulettesaved.png")
@@ -1914,7 +1954,9 @@ class economy(commands.Cog):
         users[str(user.id)]["xp"] += 5
         lvl_start = users[str(user.id)]["lvl"]
         lvl_end = int(xp ** (1 / 4))
-        print(lvl_end)
+        print(int(2 ** (1/(1/4))))
+
+
 
         if lvl_start < lvl_end:
             users[str(user.id)]["lvl"] = lvl_end
@@ -1952,14 +1994,24 @@ class economy(commands.Cog):
                     await ctx.send(embed=embed)
                 else:
                     embed = discord.Embed(title='Your Job:')
-
+                    string = ""
+                    xp_start = users[str(user.id)]["xp"]
+                    xp_end = int((lvl_start+1) ** (1 / (1 / 4)))
+                    print(f"xpend {xp_end}")
+                    print(f"xpstart {xp_start}")
+                    rest = xp_end - xp_start
+                    for x in range(int(rest)):
+                        string += "🟥"
+                    for i in range(rest):
+                        string += "⬛"
                     for job in userjob:
                         name = job['Name']
                         verdienst = job['Verdienst']
-                        embed.add_field(name=name, value=f'Salary: {verdienst}')
-
                         lvl = str(lvl)
-                        embed.set_footer(text=f'You are level {lvl}')
+                        embed.add_field(name=name, value=f'Salary: {verdienst}')
+                        embed.add_field(name=f"level", value=f"{lvl}", inline=False)
+
+
 
                     await ctx.send(embed=embed)
 
@@ -2047,7 +2099,6 @@ class economy(commands.Cog):
         users[str(user.id)]["xp"] += 10
         lvl_start = users[str(user.id)]["lvl"]
         lvl_end = int(xp ** (1 / 4))
-        print(lvl_end)
         if lvl_start < lvl_end:
             users[str(user.id)]["lvl"] = lvl_end
             if lvl != 1:
