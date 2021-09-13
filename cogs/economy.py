@@ -1996,7 +1996,7 @@ class economy(commands.Cog):
                     embed = discord.Embed(title='Your Job:')
                     string = ""
                     xp_start = users[str(user.id)]["xp"]
-                    xp_end = int((lvl_start+1) ** (1 / (1 / 4)))
+                    xp_end = int(pow(lvl_start+1, 4))
                     print(f"xpend {xp_end}")
                     print(f"xpstart {xp_start}")
                     rest = xp_end - xp_start
@@ -2007,10 +2007,11 @@ class economy(commands.Cog):
                     for job in userjob:
                         name = job['Name']
                         verdienst = job['Verdienst']
-                        lvl = str(lvl)
+                        
                         embed.add_field(name=name, value=f'Salary: {verdienst}')
-                        embed.add_field(name=f"level", value=f"{lvl}", inline=False)
-
+                        embed.add_field(
+                            name="level",
+                            value=f"{lvl} ---{xp_start}/{xp_end}---> {lvl+1}", inline=False)
 
 
                     await ctx.send(embed=embed)
