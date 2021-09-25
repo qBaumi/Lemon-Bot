@@ -53,7 +53,17 @@ class events(commands.Cog):
                        "answer15": {"question": "elbibgr", "answer": "rgbible"},
                        "answer16": {"question": "repiv", "answer": "viper"},
                        "answer17": {"question": "tnarolav", "answer": "valorant"},
-                       "answer18": {"question": "sdnegelfoeugael", "answer": "leagueoflegends"}}
+                       "answer18": {"question": "sdnegelfoeugael", "answer": "leagueoflegends"},
+                       "answer19": {"question": "amameoj", "answer": "joemama"},
+                       "answer20": {"question": "abmag", "answer": "gamba"},
+                       "answer21": {"question": "tob", "answer": "bot"},
+                       "answer22": {"question": "drocsid", "answer": "discord"},
+                       "answer23": {"question": "eiscor", "answer": "rocsie"},
+                       "answer24": {"question": "repap teliot", "answer": "toilet paper"},
+                       "answer25": {"question": "enihcamgnidnev mel", "answer": "lem vendingmachine"},
+                       "answer26": {"question": "dab elppa", "answer": "apple bad"},
+                       "answer27": {"question": "ttej", "answer": "jett"},
+                       "answer28": {"question": "hctiws odnetnin", "answer": "nintendo switch"},}
 
             message.content = message.content.lower()
 

@@ -1,0 +1,33 @@
+about
+debug(only for me to look up the emoji id)
+hug
+help
+startup
+balance
+shop
+buy
+sell
+bag
+use
+daily
+gift(only for admins)
+modgift(only for mods
+refill(only for admins)
+steal
+leaderboard
+pay
+lottery
+roulette
+tictactoe
+wouldyourather
+collectibles
+collection
+vendingmachine
+job list, info, select
+work
+rank
+rankNA
+
+pet commands (dont add them yet)
+pet shop, adopt, info, equip, unequip, pets
+pets (the same as pet pets)

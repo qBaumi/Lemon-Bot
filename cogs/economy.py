@@ -1,6 +1,7 @@
 import asyncio
 import glob
 import json
+import os
 import random
 import time
 
@@ -10,76 +11,88 @@ from discord import Colour
 from discord.ext import commands
 from array import *
 import math
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
+import mysql.connector
 
+with open("password.txt", "r") as f:
+    password = f.read()
+
+mydb = mysql.connector.connect(
+  host="62.171.179.135",
+  user="myserver",
+  password=password,
+  port="3306",
+  database = "lemonbot",
+  auth_plugin="mysql_native_password"
+
+)
+mycursor = mydb.cursor()
 
 class economy(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    # First time opening bank account for the startup command
     async def open_account(self, user):
-        # Open the file with the getbankdata function
-        users = await self.get_bank_data()
-        # If they are already in there return False to check later on the startup command
-        if str(user.id) in users:
-            return False
-        # If they aren't registered set the money on wallet and bank to 0
+        mycursor.execute("SELECT id FROM users")
+
+        ids = mycursor.fetchall()
+
+        for id in ids:
+            ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
+            if str(user.id) == id[0]:
+                return False
         else:
-            # Make a new pocket and galaxy and set it to 0€ also make new DICTS to store the pets, these are dicts because they should have stats
-            users[str(user.id)] = {}
-            users[str(user.id)]['pocket'] = 0
-            users[str(user.id)]['safe'] = 0
-            users[str(user.id)]['pets'] = {}
-            users[str(user.id)]['equippedpet'] = {}
-            users[str(user.id)]['petslot1'] = {}
-            users[str(user.id)]['petslot2'] = {}
-            users[str(user.id)]['petslot3'] = {}
-        # Open the json again but in write mode to dump the users
-        with open('lemonbank.json', 'w') as f:
-            json.dump(users, f, indent=4)
-        # Return True to check in startup command
+            sql = "INSERT INTO users (id, pocket, safe, xp, lvl) VALUES (%s, %s, %s, %s, %s)"
+            val = (user.id, 0, 0, 0, 1)
+            mycursor.execute(sql, val)
+        mydb.commit()
         return True
 
     # Check if you have an account opened
     async def check_account(self, user):
-        # Open the file with the getbankdata function
-        users = await self.get_bank_data()
-        # If they are already in there return False to check later on the startup command
-        if str(user.id) in users:
-            return True
+        mycursor.execute("SELECT id FROM users")
+
+        ids = mycursor.fetchall()
+
+        for id in ids:
+            ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
+            if str(user.id) == id[0]:
+                return True
         return False
 
-    # Get the Bank, user data stored in the json file
-    async def get_bank_data(self):
-        # open the json file in read mode to load users and return them
-        with open("lemonbank.json", "r") as f:
-            users = json.load(f)
+    async def get_bank_data(self, id):
+        mycursor.execute(f"SELECT * FROM users WHERE id = {id}")
+        data = mycursor.fetchall()
+
+        users = {data[0][0] : {"pocket" : data[0][1], "safe" : data[0][2]}}
         return users
 
     # Give or withdraw money from your account
     async def update_balance(self, user, change=0, mode="pocket"):
         # Get the bank file data
-        users = await self.get_bank_data()
-        # Update the value in the mode you want
-        users[str(user.id)][mode] += change
-        with open('lemonbank.json', 'w') as f:
-            json.dump(users, f, indent=4)
-        # Return a currency value for text purposes
-        bal = users[str(user.id)]["pocket"], users[str(user.id)]["safe"]
+        users = await self.get_bank_data(id=user.id)
+        sql = f"UPDATE users SET {mode} = {users[str(user.id)]['pocket'] + change} WHERE id = {user.id}"
+        mycursor.execute(sql)
+        mydb.commit()
+        bal = users[str(user.id)]["pocket"] + change
         return bal
 
+    #test
+    #@commands.command()
+    #async def givememoney(self, ctx):
+    #    await self.update_balance(ctx.author, 10)
 
-    # Currency helper function to get currency faster
+
     async def currency(self, user):
         # Get bank data
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(id=user.id)
         # Third index with all money you have
-        allmoney = users[str(user.id)]["pocket"] + users[str(user.id)]["safe"]
         # Get both the pocket and galaxy money into the bal variable and return it
         bal = users[str(user.id)]["pocket"], users[str(user.id)]["safe"], users[str(user.id)]["pocket"] + \
               users[str(user.id)]["safe"]
         return bal
+
+
 
     # Startup command to open account
     @commands.command(aliases=["start"])
@@ -161,11 +174,11 @@ class economy(commands.Cog):
         embed = discord.Embed(title='Shop')
         # For every item make a string variable that will add a field per item
         specialitems = await self.get_item_data()
-        print(specialitems)
+
         for thing in specialitems:
-            print(thing)
+
             for item in specialitems[thing]:
-                print(item)
+
                 name = item['name']
                 price = item['price']
                 desc = item['desc']
@@ -215,6 +228,21 @@ class economy(commands.Cog):
                 embed.add_field(name=str, value=f'{desc}', inline=False)
         await ctx.send(embed=embed)
 
+
+    async def getbag(self, id):
+        mycursor.execute(f"SELECT * FROM items WHERE id = {id}")
+        data = mycursor.fetchall()
+        bag = []
+        for item in data:
+            name = item[1]
+            amount = item[2]
+            dict = {"item" : name, "amount" : amount}
+            bag.append(dict)
+        return bag
+
+    #@commands.command()
+    #async def test(self, ctx):
+    #    await self.getbag(ctx.author.id)
     # Buy Sell etc
     @commands.command()
     async def buy(self, ctx, item, amount=1):
@@ -229,10 +257,14 @@ class economy(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\nYou can only buy one safe!")
             print("that")
             return
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
         user = ctx.author
-        for useritem in users[str(user.id)]["bag"]:
-            if useritem["item"] == "safe" and useritem["amount"] > 0:
+        try:
+            bag = await self.getbag()
+        except:
+            bag = []
+        for useritem in bag:
+            if useritem["item"] == "safe" and useritem["amount"] > 0 and item.lower()=="safe":
                 print("this")
                 await ctx.send(f"{ctx.author.mention}\nYou can only buy one safe!")
                 return
@@ -258,6 +290,23 @@ class economy(commands.Cog):
             specialitems["MysterySkin"][0]["stock"] = specialitems["MysterySkin"][0]["stock"] - amount
             with open("spItems.json", "w") as f:
                 json.dump(specialitems, f, indent=4)
+            await ctx.send(f"{user.mention}\nto claim your Item, please click on this link and open a ticket!\nhttps://discord.com/channels/598303095352459305/860863662902083604/881771382185279508")
+        elif item.lower() == "nitroclassic":
+            specialitems = await self.get_item_data()
+            print(specialitems["MysterySkin"][1]["stock"])
+            specialitems["MysterySkin"][1]["stock"] = specialitems["MysterySkin"][1]["stock"] - amount
+            with open("spItems.json", "w") as f:
+                json.dump(specialitems, f, indent=4)
+            await ctx.send(
+                    f"{user.mention}\nto claim your Item, please click on this link and open a ticket!\nhttps://discord.com/channels/598303095352459305/860863662902083604/881771382185279508")
+        elif item.lower() == "discordnitro":
+            specialitems = await self.get_item_data()
+            print(specialitems["MysterySkin"][2]["stock"])
+            specialitems["MysterySkin"][2]["stock"] = specialitems["MysterySkin"][2]["stock"] - amount
+            with open("spItems.json", "w") as f:
+                json.dump(specialitems, f, indent=4)
+            await ctx.send(
+                f"{user.mention}\nto claim your Item, please click on this link and open a ticket!\nhttps://discord.com/channels/598303095352459305/860863662902083604/881771382185279508")
 
         await ctx.send(f"{ctx.author.mention}\nYou just bought {amount} {item}")
 
@@ -268,10 +317,10 @@ class economy(commands.Cog):
             return
         await self.open_account(ctx.author)
         user = ctx.author
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
 
         try:
-            bag = users[str(user.id)]["bag"]
+            bag = await self.getbag(user.id)
         except:
             bag = []
 
@@ -287,7 +336,7 @@ class economy(commands.Cog):
 
         await ctx.send(embed=em)
 
-    async def buy_this(self, user, item_name, amount):
+    async def buy_this(self, user, item_name, amount=1):
         item_name = item_name.lower()
         name_ = None
         stock = 100
@@ -335,35 +384,42 @@ class economy(commands.Cog):
 
         cost = price * amount
 
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(user.id)
 
-        bal = await self.update_balance(user)
+        bal = await self.currency(user)
 
         if bal[depotindex] < cost:
             return [False, 2]
 
+
+        index = 0
+        t = None
+        userbag = await self.getbag(user.id)
         try:
-            index = 0
-            t = None
-            for thing in users[str(user.id)]["bag"]:
+            for thing in userbag:
                 n = thing["item"]
                 if n == item_name:
                     old_amt = thing["amount"]
                     new_amt = old_amt + amount
-                    users[str(user.id)]["bag"][index]["amount"] = new_amt
+                    # SINGLE QUOTE MAFMEDLSAKFJÖS
+                    sql = f"UPDATE items SET amount = {new_amt} WHERE id = {user.id} AND name = '{item_name}'"
+                    mycursor.execute(sql)
+                    mydb.commit()
                     t = 1
                     break
                 index += 1
 
             if t == None:
-                obj = {"item": item_name, "amount": amount}
-                users[str(user.id)]["bag"].append(obj)
+                sql = f"INSERT INTO items (id, name, amount) VALUES ({user.id}, '{item_name}', {amount})"
+                mycursor.execute(sql)
+                mydb.commit()
         except:
-            obj = {"item": item_name, "amount": amount}
-            users[str(user.id)]["bag"] = [obj]
+            sql = f"INSERT INTO items (id, name, amount) VALUES ({user.id}, '{item_name}', {amount})"
+            mycursor.execute(sql)
+            mydb.commit()
 
-        with open("lemonbank.json", "w") as f:
-            json.dump(users, f, indent=4)
+
+
 
         await self.update_balance(user, cost * -1, depot)
 
@@ -415,21 +471,24 @@ class economy(commands.Cog):
 
         cost = price * amount
 
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(user.id)
 
-        bal = await self.update_balance(user)
+        bal = await self.currency(user)
 
         try:
             index = 0
             t = None
-            for thing in users[str(user.id)]["bag"]:
+            userbag = await self.getbag(user.id)
+            for thing in userbag:
                 n = thing["item"]
                 if n == item_name:
                     old_amt = thing["amount"]
                     new_amt = old_amt - amount
                     if new_amt < 0:
                         return [False, 2]
-                    users[str(user.id)]["bag"][index]["amount"] = new_amt
+                    sql = f"UPDATE items SET amount = {new_amt} WHERE id = {user.id} AND name = '{item_name}'"
+                    mycursor.execute(sql)
+                    mydb.commit()
                     t = 1
                     break
                 index += 1
@@ -438,8 +497,6 @@ class economy(commands.Cog):
         except:
             return [False, 3]
 
-        with open("lemonbank.json", "w") as f:
-            json.dump(users, f, indent=4)
 
         await self.update_balance(user, cost, depot)
 
@@ -484,7 +541,7 @@ class economy(commands.Cog):
         role2 = discord.utils.get(user.guild.roles, id=825532026462797835)
 
 
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(winner.id)
         if moneyform == "lemons":
             mode = "pocket"
         else:
@@ -528,7 +585,7 @@ class economy(commands.Cog):
         user = ctx.author
 
 
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(winner.id)
         if moneyform == "lemons":
             mode = "pocket"
         else:
@@ -551,7 +608,9 @@ class economy(commands.Cog):
     async def on_command_error(self, ctx, error):
         await ctx.send(f"{ctx.author.mention}\nYou need to be an Admin to use this command")
 
-    @commands.cooldown(1, 180, commands.BucketType.user)
+    #TODO: here make
+
+    @commands.cooldown(1, 369, commands.BucketType.user)
     @commands.command(aliases=["rob"])
     async def steal(self, ctx, victim : discord.User):
         user = ctx.author
@@ -563,13 +622,14 @@ class economy(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
             self.steal.reset_cooldown(ctx)
             return
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(user.id)
+        usersvictim = await self.get_bank_data(victim.id)
         if users[str(user.id)]['pocket'] < 100:
             await ctx.send(f"{ctx.author.mention}\nYou need atleast `100 lemons` in your pocket in order to steal from another person")
             self.steal.reset_cooldown(ctx)
             return
         try:
-            if users[str(victim.id)]['pocket'] < 100:
+            if usersvictim[str(victim.id)]['pocket'] < 100:
                 await ctx.send(f"{ctx.author.mention}\nIs too `poor` to get robbed")
                 self.steal.reset_cooldown(ctx)
                 return
@@ -582,10 +642,10 @@ class economy(commands.Cog):
         print(percent)
         if chance < 40:
             sentences = [f"You were captured when you tried to open {victim.name}'s bag", f"When you touched {victim.name}'s pocket the police saw you and arrested you. Have fun in jail!", f"Pretty unlucky...{victim.name} is currently attempting a self-defending course, you stand no chance", f"{victim.name}'s big brother saw you...he is very big"
-                         ,f"Robbing in front of a cop...you should try to type that in youtube!", f"When you opened {victim.name}'s bag, her little chihuahua (Yeah I gooled that name before) jumped into your face and bit you"]
+                         ,f"Robbing in front of a cop...you should try to type that in youtube!", f"When you opened {victim.name}'s bag, her little chihuahua (Yeah I googled that name before) jumped into your face and bit you"]
             funnysentence = random.choice(sentences)
-            if users[str(victim.id)]['pocket'] < users[str(user.id)]['pocket']:
-                loss = round(users[str(user.id)]['pocket'] * percent * (users[str(victim.id)]['pocket']/users[str(user.id)]['pocket']), 0)
+            if usersvictim[str(victim.id)]['pocket'] < users[str(user.id)]['pocket']:
+                loss = round(users[str(user.id)]['pocket'] * percent * (usersvictim[str(victim.id)]['pocket']/users[str(user.id)]['pocket']), 0)
             else:
                 loss = round(users[str(user.id)]['pocket'] * percent, 0)
                 loss = int(loss)
@@ -597,8 +657,8 @@ class economy(commands.Cog):
             await self.update_balance(victim, loss)
             return
 
-        await self.update_balance(victim, int(round(users[str(victim.id)]['pocket']*percent, 0)*-1))
-        await self.update_balance(user, int(round(users[str(victim.id)]['pocket']*percent, 0)))
+        await self.update_balance(victim, int(round(usersvictim[str(victim.id)]['pocket']*percent, 0)*-1))
+        await self.update_balance(user, int(round(usersvictim[str(victim.id)]['pocket']*percent, 0)))
         em = discord.Embed(colour=discord.Color.red(), title=f"{user.name} stole {victim.name} {round(users[str(victim.id)]['pocket']*percent, 0):g} lemons", description=f"Less lemonade for {victim.name} I guess")
         await ctx.send(embed=em)
 
@@ -610,9 +670,15 @@ class economy(commands.Cog):
 
     @commands.command()
     async def leaderboard(self, ctx, x=10):
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
         leader_board = {}
         total = []
+        mycursor.execute(f"SELECT * FROM users")
+        data = mycursor.fetchall()
+        users = {}
+        for user in data:
+
+            users[user[0]] = {"pocket" : user[1]}
 
 
 
@@ -621,13 +687,14 @@ class economy(commands.Cog):
             #783380754238406686
             #442913791215140875
             safebal = 0
+            userbag = await self.getbag(ctx.author.id)
             try:
-                for useritem in users[str(name)]["bag"]:
-                    if useritem["item"] == "safe":
-                        try:
-                            safebal = useritem["money"]
-                        except:
-                            safebal = 0
+                sql = "SELECT * FROM safe"
+                mycursor.execute(sql)
+                data = mycursor.fetchall()
+                for id in data:
+                    if id[0] == str(name):
+                        safebal = id[1]
                         break
             except:
                 safebal = 0
@@ -669,9 +736,9 @@ class economy(commands.Cog):
             return
         pay_amount = int(pay_amount)
         if pay_amount > 0:
-            await  self.get_bank_data()
             user = ctx.author
-            users = await self.get_bank_data()
+            users = await self.get_bank_data(ctx.author.id)
+            usersreceiver = await self.get_bank_data(userid.id)
             await self.Pay_helper(ctx=ctx, userid=userid, pay_amount=pay_amount)
             wallet_amt = users[str(user.id)]['pocket']
             if True and pay_amount <= wallet_amt:
@@ -681,9 +748,8 @@ class economy(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\nNo")
 
     async def Pay_helper(self, ctx, userid: discord.User, pay_amount):
-        await  self.get_bank_data()
         user = ctx.author
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
 
         pay_amount = int(pay_amount)
         wallet_amt = users[str(user.id)]['pocket']
@@ -707,7 +773,7 @@ class economy(commands.Cog):
         if bet<0:
             await ctx.send(f"{ctx.author.mention}\nYou think I wouldnt see that coming? :)")
             return
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
         user = ctx.author
         if users[str(user.id)]['pocket'] < bet:
             await ctx.send(f"{ctx.author.mention}\nYou don't have enough money")
@@ -759,7 +825,7 @@ class economy(commands.Cog):
         if bet<0:
             await ctx.send(f"{ctx.author.mention}\nYou think I wouldnt see that coming? :)")
             return
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
         user = ctx.author
         if users[str(user.id)]['pocket'] < bet:
             await ctx.send(f"{ctx.author.mention}\nYou don't have enough money in their pocket!")
@@ -800,12 +866,11 @@ class economy(commands.Cog):
                 if number%2==1:
                     iswon = True
             if bid == "even":
-                if number%2==0:
+                if number%2==0 and number != 0:
                     iswon = True
             if bid == number:
                 timeswin = 2
                 iswon = True
-
             if iswon==False:
                 line = "lost"
             if iswon==True:
@@ -841,7 +906,7 @@ class economy(commands.Cog):
                 await self.update_balance(user, bet*2*timeswin)
 
             file = discord.File("roulettesaved.png")
-            em = discord.Embed(colour=discord.Color.gold(), title=f"{user.name} {line} {bet} lemons!", description=f"The ball landed on the {number}!")
+            em = discord.Embed(colour=discord.Color.gold(), title=f"{user.name} {line} {bet*2*timeswin-bet} lemons!", description=f"The ball landed on the {number}!")
             em.set_image(url="attachment://roulettesaved.png")
             await ctx.send(f"{user.mention}\n", embed=em, file = file)
 
@@ -857,9 +922,10 @@ class economy(commands.Cog):
         if bet<0:
             await ctx.send(f"{ctx.author.mention}\nYou think I wouldnt see that coming? :)")
             return
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
+        usersenemy = await self.get_bank_data(enemy.id)
         user = ctx.author
-        if users[str(user.id)]['pocket'] < bet or users[str(enemy.id)]['pocket'] < bet:
+        if users[str(user.id)]['pocket'] < bet or usersenemy[str(enemy.id)]['pocket'] < bet:
             await ctx.send(f"{ctx.author.mention}\nYou or your enemy doesn't have enough money in their pocket!")
             return
 
@@ -1255,7 +1321,7 @@ class economy(commands.Cog):
 
     @commands.command(aliases=["wouldyourather", "would you rather"])
     async def wyr(self, ctx):
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
         user = ctx.author
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
@@ -1300,7 +1366,7 @@ class economy(commands.Cog):
                     break
                 em.add_field(name=f"{name} {emoji}", value=f"{desc}", inline=False)
         else:
-            for i in range(page*10-10, page*10+10):
+            for i in range(page*10-10, page*10):
                 try:
                     name = collectibles[i]["name"]
                     emoji = collectibles[i]["emoji"]
@@ -1313,6 +1379,16 @@ class economy(commands.Cog):
         await ctx.send(embed=em)
 
 
+    async def getcollection(self, id):
+        mycursor.execute(f"SELECT * FROM collectibles WHERE id = {id}")
+        data = mycursor.fetchall()
+        bag = []
+        for item in data:
+            name = item[1]
+            amount = item[2]
+            dict = {"name": name, "amount": amount}
+            bag.append(dict)
+        return bag
 
     @commands.command()
     async def collection(self, ctx, page=1):
@@ -1320,10 +1396,10 @@ class economy(commands.Cog):
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             return
-        users = await self.get_bank_data()
+
 
         try:
-            collection = users[str(user.id)]["collectibles"]
+            collection = await self.getcollection(ctx.author.id)
         except:
             collection = []
         with open("collectibles.json", "r", encoding="utf-8") as f:
@@ -1353,7 +1429,7 @@ class economy(commands.Cog):
 
     @commands.command()
     async def vendingmachine(self, ctx):
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             return
@@ -1368,28 +1444,54 @@ class economy(commands.Cog):
         name = collectible["name"]
         emoji = collectible["emoji"]
         try:
+            collection = await self.getcollection(user.id)
+        except:
+            collection = []
+        try:
             index = 0
             t = None
-            for thing in users[str(user.id)]["collectibles"]:
+            for thing in collection:
                 n = thing["name"]
                 if n == name:
                     old_amt = thing["amount"]
                     new_amt = old_amt + 1
-                    users[str(user.id)]["collectibles"][index]["amount"] = new_amt
+                    sql = f"UPDATE collectibles SET amount = {new_amt} WHERE id = {user.id} AND name = '{name}'"
+                    mycursor.execute(sql)
+                    mydb.commit()
                     t = 1
                     break
-                index += 1
             if t == None:
-                obj = {"name": name, "amount": 1}
-                users[str(user.id)]["collectibles"].append(obj)
+                sql = f"INSERT INTO collectibles (id, name, amount) VALUES ({user.id}, '{name}', 1)"
+                mycursor.execute(sql)
+                mydb.commit()
         except:
-            obj = {"name": name, "amount": 1}
-            users[str(user.id)]["collectibles"] = [obj]
-        with open('lemonbank.json', 'w') as f:
-            json.dump(users, f, indent=4)
+            sql = f"INSERT INTO collectibles (id, name, amount) VALUES ({user.id}, '{name}', 1)"
+            mycursor.execute(sql)
+            mydb.commit()
+
         await self.update_balance(ctx.author, -150)
         em = discord.Embed(title=f"You threw your 150 <:lemon2:881595266757713920> lemons into a vending machine and got a {name} {emoji}", description="Dont ask me how you can throw 150 lemons in there", colour=discord.Color.dark_blue())
         await ctx.send(embed=em)
+
+    async def del_item(self, id, item, amount=1):
+        index = 0
+        t = None
+        userbag = await self.getbag(id)
+        for thing in userbag:
+            n = thing["item"]
+            if n == item:
+                old_amt = thing["amount"]
+                new_amt = old_amt - amount
+                if new_amt < 0:
+                    return [False, 2]
+                sql = f"UPDATE items SET amount = {new_amt} WHERE id = {id} AND name = '{item}'"
+                mycursor.execute(sql)
+                mydb.commit()
+                t = 1
+                break
+            index += 1
+
+
 
     @commands.command()
     async def use(self, ctx, item="None"):
@@ -1400,10 +1502,11 @@ class economy(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\nYou cant use nothing")
             return
         user = ctx.author
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
         checkifitem = 0
         index = -1
-        for item_ in users[str(user.id)]["bag"]:
+        userbag = await self.getbag(user.id)
+        for item_ in userbag:
             item_name = item_["item"]
             item_amount = item_["amount"]
             index = index +1
@@ -1415,8 +1518,7 @@ class economy(commands.Cog):
                     checkifitem = 1
                 break
         if checkifitem == 0:
-            print(users[str(user.id)]["bag"][index]["item"])
-            if users[str(user.id)]["bag"][index]["item"] != item.lower():
+            if userbag[index]["item"] != item.lower():
                 await ctx.send(f"{ctx.author.mention}\nYou dont have {item.capitalize()}")
                 return
         item = item.lower()
@@ -1424,19 +1526,14 @@ class economy(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\nYou just drank lemonade that was made by lemons, that you bought with the lemons, that you get paid as a lemon farmer for harvesting lemons")
             await ctx.send("But atleast you got refreshed, so who cares")
             await ctx.send("<:FeelsDankMan:810802803739983903>")
-            print(index)
-            users[str(user.id)]["bag"][index]["amount"] = item_amount-1
-            with open('lemonbank.json', 'w') as f:
-                json.dump(users, f, indent=4)
+            await self.del_item(ctx.author.id, item)
+
             return
         if item == "candy":
             lines = ["You like the candy, because it tasted like lemon!", "You didnt like this candy", "You spit the candy out, because it was so gross", "Mmmmm lime also tastes good", "You threw the ananas candy in the trash, because you were eating pizza at the same time"]
             line = random.choice(lines)
             await ctx.send(line)
-            print(index)
-            users[str(user.id)]["bag"][index]["amount"] = item_amount-1
-            with open('lemonbank.json', 'w') as f:
-                json.dump(users, f, indent=4)
+            await self.del_item(ctx.author.id, item)
             return
 
         if item == "flowers":
@@ -1460,13 +1557,12 @@ class economy(commands.Cog):
 
                 print(id)
 
-                users[str(user.id)]["bag"][index]["amount"] = item_amount - 1
+                await self.del_item(ctx.author.id, item)
                 await ctx.send(f"You gifted your flowers to {msg.content}, they " + line)
-                with open('lemonbank.json', 'w') as f:
-                    json.dump(users, f, indent=4)
+
                 try:
                     await self.update_balance(id, 15)
-                    await self.buy_this(id, "flowers", 1)
+                    await self.buy_this(id, "flowers")
                     return
                 except:
                     await ctx.send(f"{ctx.author.mention}\nSelf defending mechanism activated. Something didnt work, qBaumi doesnt know why, but if anyone lost something CONTACT him. RIGHT NOW")
@@ -1481,13 +1577,18 @@ class economy(commands.Cog):
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "dep" or m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "depot" or m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "with" or m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "withdraw" or m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "witd" or m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "deposit"
 
-            users = await self.get_bank_data()
+            users = await self.get_bank_data(user.id)
             try:
-                safe = users[str(user.id)]["bag"][index]
-                money = safe["money"]
+                mysql = f"SELECT money FROM safe WHERE id = {user.id}"
+                mycursor.execute(mysql)
+                data = mycursor.fetchall()
+                print(data[0][0])
+                money = data[0][0]
             except:
-                users[str(user.id)]["bag"][index]["money"] = 0
-                money = users[str(user.id)]["bag"][index]["money"]
+                mysql = f"INSERT INTO safe (id, money) VALUES ({user.id}, 0)"
+                mycursor.execute(mysql)
+                mydb.commit()
+                money = 0
             em = discord.Embed(colour=discord.Color.dark_gray(), title="Your safe <:safe:885811224418332692>", description=f"`{money}` lemons")
             await ctx.send(f"{user.mention}\nDo you want to `deposit` or `withdraw` money from your safe?", embed=em)
             try:
@@ -1525,10 +1626,9 @@ class economy(commands.Cog):
                     return
 
                 newamt = money + amountmoney
-                users[str(user.id)]["bag"][index]["money"] += amountmoney
-
-                with open('lemonbank.json', 'w') as f:
-                    json.dump(users, f, indent=4)
+                sql = f"UPDATE safe SET money = {newamt} WHERE id = {user.id}"
+                mycursor.execute(sql)
+                mydb.commit()
                 await self.update_balance(user, -1 * amountmoney)
                 await ctx.send(f"{user.mention}\nYou now have `{newamt}` lemons stored in your safe")
                 return
@@ -1557,9 +1657,10 @@ class economy(commands.Cog):
                     return
 
                 newamt = money - amountmoney
-                users[str(user.id)]["bag"][index]["money"] -= amountmoney
-                with open('lemonbank.json', 'w') as f:
-                    json.dump(users, f, indent=4)
+                sql = f"UPDATE safe SET money = {newamt} WHERE id = {user.id}"
+                mycursor.execute(sql)
+                mydb.commit()
+
                 await self.update_balance(user, amountmoney)
                 await ctx.send(f"{user.mention}\nYou now have `{newamt}` lemons stored in your safe")
                 return
@@ -1581,7 +1682,8 @@ class economy(commands.Cog):
 
             present_item_index = -1
             itemreal = 0
-            for present_item in users[str(user.id)]["bag"]:
+            userbag = await self.getbag(ctx.author.id)
+            for present_item in userbag:
                 present_item_name = present_item["item"]
                 present_item_amount = present_item["amount"]
                 present_item_index = index + 1
@@ -1621,7 +1723,7 @@ class economy(commands.Cog):
                     await ctx.send(f"{ctx.author.mention}\nYou cant just give yourself a present!")
                     return
 
-                users[str(user.id)]["bag"][index]["amount"] = item_amount - 1
+                await self.del_item(ctx.author.id, item)
 
                 await ctx.send(f"{ctx.author.mention}\nYou gifted {present_item_name} to {msg.content}, they " + line)
                 with open('lemonbank.json', 'w') as f:
@@ -1632,8 +1734,7 @@ class economy(commands.Cog):
                     if shopitem["name"].lower() == present_item_name.lower():
                         break
                 try:
-                    await self.update_balance(user, int((-1)*(price/2)))
-                    await self.sell_this(user, present_item_name, 1)
+                    await self.del_item(ctx.author.id, present_item_name.lower())
                     await self.update_balance(id, price)
                     await self.buy_this(id, present_item_name, 1)
                     return
@@ -1727,9 +1828,10 @@ class economy(commands.Cog):
             def checkreaction(reaction, user):
                 return reaction.message.id == message.id and user == ctx.author
 
-            message = await ctx.send("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`League of Legends`")
+            message = await ctx.send("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`Make memes`")
             await message.add_reaction('<:GoogleChrome:883281638270844958>')
             await message.add_reaction('<:minecra:883287114270261268>')
+            await message.add_reaction('<:FeelsDankMan:810802803739983903>')
             # YOU NEED TO AWAIT LMAO
             try:
                 reaction, useremoji = await self.client.wait_for('reaction_add', timeout=10, check=checkreaction)
@@ -1797,6 +1899,57 @@ class economy(commands.Cog):
                 line = random.choice(lines)
                 await ctx.send(line)
                 return
+            if str(reaction.emoji) == "<:FeelsDankMan:810802803739983903>":
+                def check(m):
+                    return m.author == ctx.author and m.channel == ctx.channel
+
+                folder = os.listdir('./memes/templates')
+                print(folder)
+                em = discord.Embed(title="Which template you would like to use?", colour=discord.Color.green())
+                for path in folder:
+                    if path != "img.png":
+                        string = path.split(".")
+                        em.add_field(name=string[0], value="\u200b", inline=False)
+                em.set_footer(text="Send your templates to qBaumi, NOW!")
+                message = await ctx.send(f"{user.mention}\n", embed=em)
+                try:
+                    msg = await self.client.wait_for("message", timeout=60, check=check)
+                except:
+                    await ctx.send("You didnt answer in time!")
+                    return
+                isreal = False
+
+                for path in folder:
+
+                    string = path.split(".")
+                    print(msg.content.lower())
+                    print(string)
+                    if msg.content.lower() == string[0].lower():
+                        isreal = True
+                        break
+                if isreal == False:
+                    await ctx.send("This template does not exist! *But if you have one send it to qBaumi*")
+                    return
+                await ctx.send(f"{user.mention}\nWhat do you want to write on that beautiful template?")
+                try:
+                    msg = await self.client.wait_for("message", timeout=60, check=check)
+                except:
+                    await ctx.send("You didnt answer in time!")
+                    return
+                img = Image.open("./memes/templates/" + path)
+                width, height = img.size
+                draw = ImageDraw.Draw(img)
+                color = 'rgb(255, 255, 255)'  # white color
+                font = ImageFont.truetype('./fonts/Roboto-Bold.ttf', size=45)
+                draw.text((10, height-55), msg.content, fill=color, font=font)
+                img.save("./memes/templates/img.png")
+
+                em = discord.Embed(colour=discord.Color.green(), title="Great job!")
+                file = discord.File("./memes/templates/img.png")
+                em.set_image(url="attachment://img.png")
+                await ctx.send(file = file, embed=em)
+
+                return
 
 
         if item == "cheesecake":
@@ -1814,7 +1967,7 @@ class economy(commands.Cog):
                 return
             if msg.content.lower() == "eat":
                 await ctx.send(f"{ctx.author.mention}\nYou ate your cheesecake, it was very delicious")
-                users[str(user.id)]["bag"][index]["amount"] = item_amount - 1
+
             elif msg.content.lower() == "share":
                 await ctx.send(f"{ctx.author.mention}\nWith whom you want to share your cheesecake?")
                 try:
@@ -1824,7 +1977,7 @@ class economy(commands.Cog):
                     return
                 person = msg.content
                 await ctx.send(f"{ctx.author.mention}\nYou shared your cake with {person}!")
-                users[str(user.id)]["bag"][index]["amount"] = item_amount - 1
+
             else:
                 await ctx.send(f"{ctx.author.mention}\nWho will be your victim?")
                 try:
@@ -1834,9 +1987,8 @@ class economy(commands.Cog):
                     return
                 person = msg.content
                 await ctx.send(f"{ctx.author.mention}\nYou throw your cake at {person}")
-                users[str(user.id)]["bag"][index]["amount"] = item_amount - 1
-            with open('lemonbank.json', 'w') as f:
-                json.dump(users, f, indent=4)
+
+            await self.del_item(ctx.author.id, item)
             return
 
         if item == "pinata":
@@ -1860,9 +2012,7 @@ class economy(commands.Cog):
                 candy = random.randrange(3, 7)
                 print(candy)
                 await ctx.send(f"{ctx.author.mention}\nAfter you hit 🏏 the pinata `{times}` times you got {candy} candy!")
-                users[str(user.id)]["bag"][index]["amount"] = item_amount - 1
-                with open('lemonbank.json', 'w') as f:
-                    json.dump(users, f, indent=4)
+                await self.del_item(ctx.author.id, item)
 
                 # IMPORTANT THE WITH OPEN BEFORE THE UPDATE OR IT WILL OVERWRITE THIS STUPID BAL AND BUYTHIS
 
@@ -1885,10 +2035,9 @@ class economy(commands.Cog):
 
                     print(msg.content)
                     print(id)
-                    users[str(user.id)]["bag"][index]["amount"] = item_amount - 1
+                    await self.del_item(ctx.author.id, item)
                     await ctx.send(f"{ctx.author.mention}\nYou gifted your pinata to {msg.content}, muchas gracias they said")
-                    with open('lemonbank.json', 'w') as f:
-                        json.dump(users, f, indent=4)
+
                     try:
                         await self.update_balance(id, 150)
                         await self.buy_this(id, "pinata", 1)
@@ -1936,37 +2085,49 @@ class economy(commands.Cog):
         embed.set_footer(text='Send job ideas to @qBaumi#1247!')
         await ctx.send(embed=embed)
 
+    async def getxp(self, id):
+        mycursor.execute(f"SELECT * FROM users WHERE id = {id}")
+        data = mycursor.fetchall()
+        xp = data[0][3]
+        lvl = data[0][4]
+        print(xp)
+        return xp, lvl
+
+    @commands.command()
+    async def gimmexp(self, ctx):
+        await self.getxp(ctx.author.id)
+
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(aliases=['jobs'])
     async def job(self, ctx, arg1='None', *, arg2='None'):
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(ctx.author.id)
         user = ctx.author
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             return
-        try:
-            xp = users[str(user.id)]["xp"]
-            lvl = users[str(user.id)]["lvl"]
-        except:
-            xp = users[str(user.id)]["xp"] = 0
-            lvl = users[str(user.id)]["lvl"] = 1
 
-        users[str(user.id)]["xp"] += 5
-        lvl_start = users[str(user.id)]["lvl"]
+        xp, lvl = await self.getxp(user.id)
+
+        sql = f"UPDATE users SET xp = {xp+5} WHERE id = {user.id}"
+        mycursor.execute(sql)
+        mydb.commit()
+
+        lvl_start = lvl
         lvl_end = int(xp ** (1 / 4))
         print(int(2 ** (1/(1/4))))
 
 
 
         if lvl_start < lvl_end:
-            users[str(user.id)]["lvl"] = lvl_end
+            sql = f"UPDATE users SET lvl = {lvl_end} WHERE id = {user.id}"
+            mycursor.execute(sql)
+            mydb.commit()
             if lvl != 1:
                 embed = discord.Embed(title=f'{user.name} leveled up and can now access better job',
                                       description=f'You are now level {lvl}')
                 await ctx.send(embed=embed)
 
-        with open("lemonbank.json", "w") as f:
-            json.dump(users, f, indent=4)
+
 
         if arg2 == 'None':
             if arg1 == 'list' or arg1 == 'List':
@@ -1985,7 +2146,10 @@ class economy(commands.Cog):
 
             elif arg1 == 'info' or arg1 == 'Info':
                 try:
-                    userjob = users[str(user.id)]["userjob"]
+                    mycursor.execute(f"SELECT * FROM jobs WHERE id = {user.id}")
+                    data = mycursor.fetchall()
+                    userjob = [{"Name": data[0][1], "Verdienst": data[0][2]}]
+
                 except:
                     userjob = []
                 if not userjob:
@@ -1995,10 +2159,10 @@ class economy(commands.Cog):
                 else:
                     embed = discord.Embed(title='Your Job:')
                     string = ""
-                    xp_start = users[str(user.id)]["xp"]
-                    xp_end = int(pow(lvl_start+1, 4))
-                    print(f"xpend {xp_end}")
-                    print(f"xpstart {xp_start}")
+                    xp_start = xp
+                    xp_end = int((lvl_start + 1) ** (1 / (1 / 4)))
+                    xp_end = int(pow(lvl_start + 1, 4))
+
                     rest = xp_end - xp_start
                     for x in range(int(rest)):
                         string += "🟥"
@@ -2007,12 +2171,14 @@ class economy(commands.Cog):
                     for job in userjob:
                         name = job['Name']
                         verdienst = job['Verdienst']
-                        
+                        lvl = str(lvl)
+                        dislvl = str(int(lvl)+1)
+
                         embed.add_field(name=name, value=f'Salary: {verdienst}')
+
                         embed.add_field(
                             name="level",
-                            value=f"{lvl} ---{xp_start}/{xp_end}---> {lvl+1}", inline=False)
-
+                            value=f"{lvl} ---{xp_start}/{xp_end}---> {dislvl}", inline=False)
 
                     await ctx.send(embed=embed)
 
@@ -2030,7 +2196,11 @@ class economy(commands.Cog):
                 if arg1 == 'select' and arg2 == name or arg1 == 'Select' and arg2 == name or arg1 == 'sel' and arg2 == name or arg1 == 'Sel' and arg2 == name:
 
                     try:
-                        userjob = users[str(user.id)]["userjob"]
+                        mycursor.execute(f"SELECT * FROM jobs WHERE id = {user.id}")
+                        data = mycursor.fetchall()
+                        userjob = [{"Name" : data[0][1], "Verdienst" : data[0][2]}]
+
+
                     except:
                         userjob = []
 
@@ -2044,6 +2214,7 @@ class economy(commands.Cog):
                             tf = 1
                             break
 
+
                     if lvl < neededlvl:
                         ausgabe = f'You dont have enough experience to work as {name}!'
                         embed2 = discord.Embed(title=ausgabe)
@@ -2051,10 +2222,19 @@ class economy(commands.Cog):
                         tf = 1
                         return
 
-                    obj = {"Name": name, "Verdienst": verdienst}
-                    users[str(user.id)]["userjob"] = [obj]
-                    with open("lemonbank.json", "w") as f:
-                        json.dump(users, f, indent=4)
+                    if bool(userjob) == False:
+                        sql = f"INSERT INTO jobs (id, Name, Verdienst) VALUES ({user.id}, '{name}', {verdienst})"
+                        mycursor.execute(sql)
+
+
+                    else:
+                        sql = f"UPDATE jobs SET Name = '{name}' WHERE id = {user.id}"
+                        mycursor.execute(sql)
+                        sql = f"UPDATE jobs SET Verdienst = {verdienst} WHERE id = {user.id}"
+                        mycursor.execute(sql)
+
+
+                    mydb.commit()
                     ausgabe = 'You wrote an application for the job and not even 2 hours later you received a phone call and got the job'
                     tf = 1
                     break
@@ -2075,13 +2255,15 @@ class economy(commands.Cog):
     @commands.command()
     async def work(self, ctx):
         user = ctx.author
-        users = await self.get_bank_data()
+        users = await self.get_bank_data(user.id)
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             self.work.reset_cooldown(ctx)
             return
         try:
-            userjob = users[str(user.id)]["userjob"]
+            mycursor.execute(f"SELECT * FROM jobs WHERE id = {user.id}")
+            data = mycursor.fetchall()
+            userjob = [{"Name": data[0][1], "Verdienst": data[0][2]}]
         except:
             userjob = []
             embed = discord.Embed(title='You cant work without a job!')
@@ -2091,24 +2273,28 @@ class economy(commands.Cog):
             await self.job_helper(ctx)
             return
         try:
-            xp = users[str(user.id)]["xp"]
-            lvl = users[str(user.id)]["lvl"]
-        except:
-            xp = users[str(user.id)]["xp"] = 0
-            lvl = users[str(user.id)]["lvl"] = 1
+            xp, lvl = await self.getxp(user.id)
 
-        users[str(user.id)]["xp"] += 10
-        lvl_start = users[str(user.id)]["lvl"]
+
+        except:
+            xp = 0
+            lvl = 1
+
+        sql = f"UPDATE users SET xp = {xp + 10} WHERE id = {user.id}"
+        mycursor.execute(sql)
+        mydb.commit()
+        lvl_start = lvl
         lvl_end = int(xp ** (1 / 4))
         if lvl_start < lvl_end:
-            users[str(user.id)]["lvl"] = lvl_end
+            sql = f"UPDATE users SET lvl = {lvl_end} WHERE id = {user.id}"
+            mycursor.execute(sql)
+            mydb.commit()
             if lvl != 1:
                 embed = discord.Embed(title=f'{user.name} leveled up and can now access better job',
                                       description=f'You are now level {lvl}')
                 await ctx.send(embed=embed)
 
-        with open("lemonbank.json", "w") as f:
-            json.dump(users, f, indent=4)
+
 
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel

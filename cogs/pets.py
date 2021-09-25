@@ -18,7 +18,10 @@ class pets(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def pet(self, ctx, arg1, arg2 = "None"):
+    async def pet(self, ctx, arg1="None", arg2 = "None"):
+        if await self.check_account(ctx.author) == False:
+            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
+            return
         user = ctx.author
         arg1 = arg1.lower()
         arg2 = arg2.lower()
@@ -89,6 +92,12 @@ class pets(commands.Cog):
             users = await self.get_bank_data()
 
             pet = users[str(user.id)]["equippedpet"]
+            if bool(pet) == False and bool(users[str(user.id)]["petslot1"]) == False and bool(users[str(user.id)]["petslot2"]) == False and bool(users[str(user.id)]["petslot3"]) == False:
+                await ctx.send("You dont have a pet!")
+                return
+            if bool(pet) == False:
+                await ctx.send("You dont have a pet equipped!")
+                return
             print(pet)
 
             em = discord.Embed(colour=discord.Color.teal(), title=pet["name"])
@@ -148,9 +157,136 @@ class pets(commands.Cog):
             await ctx.send(file=file, embed=em)
 
             return
+        elif arg1 == "equip":
+            users = await self.get_bank_data()
+
+            pet = users[str(user.id)]["equippedpet"]
+            if bool(pet) == False and bool(users[str(user.id)]["petslot1"]) == False and bool(users[str(user.id)]["petslot2"]) == False and bool(users[str(user.id)]["petslot3"]) == False:
+                await ctx.send("You dont have a pet!")
+                return
+            if bool(users[str(user.id)]["petslot1"]) == False and bool(users[str(user.id)]["petslot2"]) == False and bool(users[str(user.id)]["petslot3"]) == False:
+                await ctx.send("You dont have a pet in other slots!")
+                return
+            currentpet = users[str(user.id)]["equippedpet"]
+
+            def check(m):
+                return m.author == ctx.author and m.channel == ctx.channel and m.content == "1" or m.author == ctx.author and m.channel == ctx.channel and m.content == "2" or m.author == ctx.author and m.channel == ctx.channel and m.content == "3"
+            await ctx.send("Which slot you want to move to your equipped? `1`, `2` or `3` ?")
+            try:
+                msg = await self.client.wait_for('message', timeout=15, check=check)
+            except asyncio.TimeoutError:
+                await ctx.send('You didnt answer in time!')
+                return
+            slot = "petslot" + msg.content
+            if bool(users[str(user.id)][slot]) == False:
+                await ctx.send(f'{user.mention}\nYou dont have a pet in this slot to equip!')
+                return
+            print(slot)
+            currentpet = users[str(user.id)][slot]
+            users[str(user.id)][slot] = users[str(user.id)]["equippedpet"]
+            users[str(user.id)]["equippedpet"] = currentpet
+            with open("lemonbank.json", "w") as f:
+                json.dump(users, f, indent=4)
+            if bool(users[str(user.id)][slot]) == True:
+                await ctx.send(f'{user.mention}\nYou equipped your {users[str(user.id)]["equippedpet"]["name"]} and moved your {users[str(user.id)][slot]["name"]} to slot {msg.content}')
+                return
+            else:
+                await ctx.send(f'{user.mention}\nYou equipped your {users[str(user.id)]["equippedpet"]["name"]}')
+                return
+
+        elif arg1 == "unequip":
+            users = await self.get_bank_data()
+
+            pet = users[str(user.id)]["equippedpet"]
+            if bool(pet) == False and bool(users[str(user.id)]["petslot1"]) == False and bool(
+                    users[str(user.id)]["petslot2"]) == False and bool(users[str(user.id)]["petslot3"]) == False:
+                await ctx.send("You dont have a pet!")
+                return
+            if bool(users[str(user.id)]["petslot1"]) == True and bool(
+                    users[str(user.id)]["petslot2"]) == True and bool(users[str(user.id)]["petslot3"]) == True:
+                await ctx.send("You dont have an empty slot!")
+                return
 
 
+            def check(m):
+                return m.author == ctx.author and m.channel == ctx.channel and m.content == "1" or m.author == ctx.author and m.channel == ctx.channel and m.content == "2" or m.author == ctx.author and m.channel == ctx.channel and m.content == "3"
 
+            await ctx.send("Which slot you want to equip? `1`, `2` or `3` ?")
+            try:
+                msg = await self.client.wait_for('message', timeout=15, check=check)
+            except asyncio.TimeoutError:
+                await ctx.send('You didnt answer in time!')
+                return
+            slot = "petslot" + msg.content
+            print(slot)
+            if bool(users[str(user.id)][slot]) == True:
+                await ctx.send(f'{user.mention}\nThere is already a pet in this slot, if you want it equipped do so with `lem pet equip`')
+                return
+            users[str(user.id)][slot] = users[str(user.id)]["equippedpet"]
+            users[str(user.id)]["equippedpet"] = {}
+            with open("lemonbank.json", "w") as f:
+                json.dump(users, f, indent=4)
+            await ctx.send(f'{user.mention}\nYour pet was moved to slot {msg.content}')
+
+        elif arg1 == "pets":
+
+            users = await self.get_bank_data()
+
+            pet1 = users[str(user.id)]["equippedpet"]
+            pet2 = users[str(user.id)]["petslot1"]
+            pet3 = users[str(user.id)]["petslot2"]
+            pet4 = users[str(user.id)]["petslot3"]
+            em = discord.Embed(colour=discord.Color.teal(), title="Your pets")
+            if bool(pet1) == True:
+                em.add_field(name=pet1["name"], value=f'Lvl {pet1["lvl"]}', inline=False)
+            if bool(pet2) == True:
+                em.add_field(name=pet2["name"], value=f'Lvl {pet2["lvl"]}', inline=False)
+            if bool(pet3) == True:
+                em.add_field(name=pet3["name"], value=f'Lvl {pet3["lvl"]}', inline=False)
+            if bool(pet4) == True:
+                em.add_field(name=pet4["name"], value=f'Lvl {pet4["lvl"]}', inline=False)
+
+            await ctx.send(f"{user.mention}", embed = em)
+            return
+        elif arg1=="help":
+            await self.pet_help(ctx)
+            return
+        else:
+            await self.pet_help(ctx)
+            return
+
+    @commands.command()
+    async def pets(self, ctx):
+        if await self.check_account(ctx.author) == False:
+            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
+            return
+        users = await self.get_bank_data()
+        user = ctx.author
+
+        pet1 = users[str(user.id)]["equippedpet"]
+        pet2 = users[str(user.id)]["petslot1"]
+        pet3 = users[str(user.id)]["petslot2"]
+        pet4 = users[str(user.id)]["petslot3"]
+        em = discord.Embed(colour=discord.Color.teal(), title="Your pets")
+        if bool(pet1) == True:
+            em.add_field(name=pet1["name"], value=f'Lvl {pet1["lvl"]}', inline=False)
+        if bool(pet2) == True:
+            em.add_field(name=pet2["name"], value=f'Lvl {pet2["lvl"]}', inline=False)
+        if bool(pet3) == True:
+            em.add_field(name=pet3["name"], value=f'Lvl {pet3["lvl"]}', inline=False)
+        if bool(pet4) == True:
+            em.add_field(name=pet4["name"], value=f'Lvl {pet4["lvl"]}', inline=False)
+
+        await ctx.send(f"{user.mention}", embed=em)
+
+
+    async def pet_help(self, ctx):
+        em = discord.Embed(title="Pets", colour=discord.Color.from_rgb(254, 254, 51), description="You can buy a pet from the `lem pet shop` and look and care for your equipped pet with `lem pet info`. You can have a maximum of 4 pets. You can buy them as adults and babys, an adult is the maximum level but has not that good stats as the same pet leveled up from a baby to the maximum level!")
+        em.add_field(name="shop", value="Look which pets are currently available!", inline=False)
+        em.add_field(name="adopt | buy", value="Adopt a pet from the shop", inline=False)
+        em.add_field(name="info", value="Have a look at your equipped pet's stats!", inline=False)
+        em.add_field(name="pets", value="View all your pets", inline=False)
+        await ctx.send(embed=em)
 
     # Setup a new json with asmolpets and return it per function because of....problems
     async def allpets(self):
