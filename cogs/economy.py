@@ -16,9 +16,11 @@ import mysql.connector
 
 with open("password.txt", "r") as f:
     password = f.read()
+with open("IP.txt", "r") as f:
+    ip = f.read()
 
 mydb = mysql.connector.connect(
-  host="62.171.179.135",
+  host=ip,
   user="myserver",
   password=password,
   port="3306",
@@ -71,7 +73,7 @@ class economy(commands.Cog):
     async def update_balance(self, user, change=0, mode="pocket"):
         # Get the bank file data
         users = await self.get_bank_data(id=user.id)
-        sql = f"UPDATE users SET {mode} = {users[str(user.id)]['pocket'] + change} WHERE id = {user.id}"
+        sql = f"UPDATE users SET {mode} = {users[str(user.id)][mode] + change} WHERE id = {user.id}"
         mycursor.execute(sql)
         mydb.commit()
         bal = users[str(user.id)]["pocket"] + change

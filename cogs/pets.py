@@ -13,6 +13,22 @@ from discord import Colour
 from discord.ext import commands
 from .economy import *
 
+with open("password.txt", "r") as f:
+    password = f.read()
+with open("IP.txt", "r") as f:
+    ip = f.read()
+
+mydb = mysql.connector.connect(
+  host=ip,
+  user="myserver",
+  password=password,
+  port="3306",
+  database = "lemonbot",
+  auth_plugin="mysql_native_password"
+
+)
+mycursor = mydb.cursor()
+
 class pets(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -43,7 +59,8 @@ class pets(commands.Cog):
             await ctx.send(embed=em)
             return
         elif arg1 == "buy" or arg1 == "adopt":
-            users = await self.get_bank_data()
+            users = await self.get_bank_data(user.id)
+
             if bool(users[str(user.id)]["equippedpet"]) == True:
                 await ctx.send("You currently have a pet equipped, to move it to a different slot try `lem pet move <petname> <petslot>`")
                 return
@@ -89,10 +106,13 @@ class pets(commands.Cog):
             await ctx.send(f"Congratulations, you officially adopted {name}! You can view your pet now with `lem pet info` or `lem pet view`")
             return
         elif arg1 == "info" or arg1 == "view":
-            users = await self.get_bank_data()
 
-            pet = users[str(user.id)]["equippedpet"]
-            if bool(pet) == False and bool(users[str(user.id)]["petslot1"]) == False and bool(users[str(user.id)]["petslot2"]) == False and bool(users[str(user.id)]["petslot3"]) == False:
+
+            pet = await self.userpet(user.id, "equippedpet")
+            pet1 = await self.userpet(user.id, "petslot1")
+            pet2 = await self.userpet(user.id, "petslot2")
+            pet3 = await self.userpet(user.id, "petslot3")
+            if bool(pet) == False and bool(pet1) == False and bool(pet2) == False and bool(pet3) == False:
                 await ctx.send("You dont have a pet!")
                 return
             if bool(pet) == False:
@@ -230,12 +250,11 @@ class pets(commands.Cog):
 
         elif arg1 == "pets":
 
-            users = await self.get_bank_data()
 
-            pet1 = users[str(user.id)]["equippedpet"]
-            pet2 = users[str(user.id)]["petslot1"]
-            pet3 = users[str(user.id)]["petslot2"]
-            pet4 = users[str(user.id)]["petslot3"]
+            pet1 = await self.userpet(ctx.author.id, "equippedpet")
+            pet2 = await self.userpet(ctx.author.id, "petslot1")
+            pet3 = await self.userpet(ctx.author.id, "petslot2")
+            pet4 = await self.userpet(ctx.author.id, "petslot3")
             em = discord.Embed(colour=discord.Color.teal(), title="Your pets")
             if bool(pet1) == True:
                 em.add_field(name=pet1["name"], value=f'Lvl {pet1["lvl"]}', inline=False)
@@ -260,13 +279,13 @@ class pets(commands.Cog):
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
             return
-        users = await self.get_bank_data()
+
         user = ctx.author
 
-        pet1 = users[str(user.id)]["equippedpet"]
-        pet2 = users[str(user.id)]["petslot1"]
-        pet3 = users[str(user.id)]["petslot2"]
-        pet4 = users[str(user.id)]["petslot3"]
+        pet1 = await self.userpet(ctx.author.id, "equippedpet")
+        pet2 = await self.userpet(ctx.author.id, "petslot1")
+        pet3 = await self.userpet(ctx.author.id, "petslot2")
+        pet4 = await self.userpet(ctx.author.id, "petslot3")
         em = discord.Embed(colour=discord.Color.teal(), title="Your pets")
         if bool(pet1) == True:
             em.add_field(name=pet1["name"], value=f'Lvl {pet1["lvl"]}', inline=False)
@@ -287,6 +306,21 @@ class pets(commands.Cog):
         em.add_field(name="info", value="Have a look at your equipped pet's stats!", inline=False)
         em.add_field(name="pets", value="View all your pets", inline=False)
         await ctx.send(embed=em)
+
+    async def userpet(self, id, slot):
+        mycursor.execute(f"SELECT * FROM {slot} WHERE id = {id}")
+        data = mycursor.fetchall()
+        pet = {}
+        try:
+            data = data[0]
+            pet = {"name" : data[1], "hp" : data[2], "attack" : data[3], "speed" : data[4], "xp" : data[5], "lvl" : data[6], "item" : data[7], "attack1" : data[8], "attack2" : data[9], "food" : data[10], "stamina" : data[11], "care" : data[12], "fun" : data[13], "img" : data[14]}
+        except:
+            None
+        return pet
+
+    @commands.command()
+    async def testpet(self, ctx):
+        await self.userpet(ctx.author.id, "equippedpet")
 
     # Setup a new json with asmolpets and return it per function because of....problems
     async def allpets(self):
@@ -414,32 +448,49 @@ class pets(commands.Cog):
         # If all worked properly THEN return True and the petslot it got stored
         return [True, petslot]
 
+    async def open_account(self, user):
+        mycursor.execute("SELECT id FROM users")
+
+        ids = mycursor.fetchall()
+
+        for id in ids:
+            ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
+            if str(user.id) == id[0]:
+                return False
+        else:
+            sql = "INSERT INTO users (id, pocket, safe, xp, lvl) VALUES (%s, %s, %s, %s, %s)"
+            val = (user.id, 0, 0, 0, 1)
+            mycursor.execute(sql, val)
+        mydb.commit()
+        return True
+
     # Check if you have an account opened
     async def check_account(self, user):
-        # Open the file with the getbankdata function
-        users = await self.get_bank_data()
-        # If they are already in there return False to check later on the startup command
-        if str(user.id) in users:
-            return True
+        mycursor.execute("SELECT id FROM users")
+
+        ids = mycursor.fetchall()
+
+        for id in ids:
+            ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
+            if str(user.id) == id[0]:
+                return True
         return False
 
-    # Get the Bank, user data stored in the json file
-    async def get_bank_data(self):
-        # open the json file in read mode to load users and return them
-        with open("lemonbank.json", "r") as f:
-            users = json.load(f)
+    async def get_bank_data(self, id):
+        mycursor.execute(f"SELECT * FROM users WHERE id = {id}")
+        data = mycursor.fetchall()
+
+        users = {data[0][0] : {"pocket" : data[0][1], "safe" : data[0][2]}}
         return users
 
     # Give or withdraw money from your account
     async def update_balance(self, user, change=0, mode="pocket"):
         # Get the bank file data
-        users = await self.get_bank_data()
-        # Update the value in the mode you want
-        users[str(user.id)][mode] += change
-        with open('lemonbank.json', 'w') as f:
-            json.dump(users, f, indent=4)
-        # Return a currency value for text purposes
-        bal = users[str(user.id)]["pocket"], users[str(user.id)]["safe"]
+        users = await self.get_bank_data(id=user.id)
+        sql = f"UPDATE users SET {mode} = {users[str(user.id)]['pocket'] + change} WHERE id = {user.id}"
+        mycursor.execute(sql)
+        mydb.commit()
+        bal = users[str(user.id)]["pocket"] + change
         return bal
 
 def setup(client):
