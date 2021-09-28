@@ -3,27 +3,44 @@ import json
 import discord
 from discord.ext import commands
 import random
+import mysql.connector
+
+with open("password.txt", "r") as f:
+    password = f.read()
+with open("IP.txt", "r") as f:
+    ip = f.read()
+
+mydb = mysql.connector.connect(
+  host=ip,
+  user="myserver",
+  password=password,
+  port="3306",
+  database = "lemonbot",
+  auth_plugin="mysql_native_password"
+
+)
+mycursor = mydb.cursor()
 
 
 class events(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    async def get_bank_data(self):
-        # open the json file in read mode to load users and return them
-        with open("lemonbank.json", "r") as f:
-            users = json.load(f)
+    async def get_bank_data(self, id):
+        mycursor.execute(f"SELECT * FROM users WHERE id = {id}")
+        data = mycursor.fetchall()
+
+        users = {data[0][0]: {"pocket": data[0][1], "safe": data[0][2]}}
         return users
 
+    # Give or withdraw money from your account
     async def update_balance(self, user, change=0, mode="pocket"):
         # Get the bank file data
-        users = await self.get_bank_data()
-        # Update the value in the mode you want
-        users[str(user.id)][mode] += change
-        with open('lemonbank.json', 'w') as f:
-            json.dump(users, f, indent=4)
-        # Return a currency value for text purposes
-        bal = users[str(user.id)]["pocket"], users[str(user.id)]["safe"]
+        users = await self.get_bank_data(id=user.id)
+        sql = f"UPDATE users SET {mode} = {users[str(user.id)]['pocket'] + change} WHERE id = {user.id}"
+        mycursor.execute(sql)
+        mydb.commit()
+        bal = users[str(user.id)]["pocket"] + change
         return bal
 
     @commands.Cog.listener()

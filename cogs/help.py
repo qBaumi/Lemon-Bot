@@ -237,7 +237,7 @@ class help(commands.Cog):
             value="To earn money you need to get a job, for more information use `lem job help`",
             inline=False)
         em.add_field(
-            name="jobs",
+            name="steal",
             value="Or you can go and steal money from someone *hehehe*... `lem steal @victim`",
             inline=False)
         em.add_field(

@@ -1,6 +1,7 @@
 import asyncio
 import glob
 import json
+import operator
 import os
 import random
 import time
@@ -204,7 +205,7 @@ class economy(commands.Cog):
                         index = index + 1
                     str2 = f"{price} {moneyemoji}"
                     str = str + str2
-                    embed.add_field(name=str, value=f'Only `{stock}` items left!!! {desc}`', inline=False)
+                    embed.add_field(name=str, value=f'Only `{stock}` items left!!! {desc}', inline=False)
         for item in self.mainshop:
             name = item['name']
             price = item['price']
@@ -305,6 +306,22 @@ class economy(commands.Cog):
             specialitems = await self.get_item_data()
             print(specialitems["MysterySkin"][2]["stock"])
             specialitems["MysterySkin"][2]["stock"] = specialitems["MysterySkin"][2]["stock"] - amount
+            with open("spItems.json", "w") as f:
+                json.dump(specialitems, f, indent=4)
+            await ctx.send(
+                f"{user.mention}\nto claim your Item, please click on this link and open a ticket!\nhttps://discord.com/channels/598303095352459305/860863662902083604/881771382185279508")
+        elif item.lower() == "tier1sub":
+            specialitems = await self.get_item_data()
+            print(specialitems["MysterySkin"][3]["stock"])
+            specialitems["MysterySkin"][3]["stock"] = specialitems["MysterySkin"][3]["stock"] - amount
+            with open("spItems.json", "w") as f:
+                json.dump(specialitems, f, indent=4)
+            await ctx.send(
+                f"{user.mention}\nto claim your Item, please click on this link and open a ticket!\nhttps://discord.com/channels/598303095352459305/860863662902083604/881771382185279508")
+        elif item.lower() == "mysteryskin975RP":
+            specialitems = await self.get_item_data()
+            print(specialitems["MysterySkin"][4]["stock"])
+            specialitems["MysterySkin"][4]["stock"] = specialitems["MysterySkin"][4]["stock"] - amount
             with open("spItems.json", "w") as f:
                 json.dump(specialitems, f, indent=4)
             await ctx.send(
@@ -600,11 +617,11 @@ class economy(commands.Cog):
 
     @gift.error
     async def on_command_error(self, ctx, error):
-        await ctx.send(f"{ctx.author.mention}\nYou need to be an Admin or Mod, in order to use this command")
+        await ctx.send(f"{ctx.author.mention}\nYou need to be an Admin or Mod, in order to use this command\nIf you are a Mod, please use **lem modgift** instead\nAnd the winner **MUST** have startupped with **lem startup**")
 
     @modgift.error
     async def on_command_error(self, ctx, error):
-        await ctx.send(f"{ctx.author.mention}\nYou need to be an Admin or Mod, in order to use this command")
+        await ctx.send(f"{ctx.author.mention}\nYou need to be an Admin or Mod, in order to use this command\nIf you are a Mod, please use **lem modgift** instead\nAnd the winner **MUST** have startupped with **lem startup**")
 
     @refill.error
     async def on_command_error(self, ctx, error):
@@ -661,7 +678,7 @@ class economy(commands.Cog):
 
         await self.update_balance(victim, int(round(usersvictim[str(victim.id)]['pocket']*percent, 0)*-1))
         await self.update_balance(user, int(round(usersvictim[str(victim.id)]['pocket']*percent, 0)))
-        em = discord.Embed(colour=discord.Color.red(), title=f"{user.name} stole {victim.name} {round(users[str(victim.id)]['pocket']*percent, 0):g} lemons", description=f"Less lemonade for {victim.name} I guess")
+        em = discord.Embed(colour=discord.Color.red(), title=f"{user.name} stole {victim.name} {round(usersvictim[str(victim.id)]['pocket']*percent, 0):g} lemons", description=f"Less lemonade for {victim.name} I guess")
         await ctx.send(embed=em)
 
     @steal.error
@@ -672,58 +689,25 @@ class economy(commands.Cog):
 
     @commands.command()
     async def leaderboard(self, ctx, x=10):
-        users = await self.get_bank_data(ctx.author.id)
-        leader_board = {}
-        total = []
-        mycursor.execute(f"SELECT * FROM users")
-        data = mycursor.fetchall()
-        users = {}
-        for user in data:
-
-            users[user[0]] = {"pocket" : user[1]}
-
-
-
-        for user in users:
-            name = int(user)
-            #783380754238406686
-            #442913791215140875
-            safebal = 0
-            userbag = await self.getbag(ctx.author.id)
-            try:
-                sql = "SELECT * FROM safe"
-                mycursor.execute(sql)
-                data = mycursor.fetchall()
-                for id in data:
-                    if id[0] == str(name):
-                        safebal = id[1]
-                        break
-            except:
-                safebal = 0
-            if name == 783380754238406686 or name == 442913791215140875:
-                None
-            else:
-
-                total_amount = users[user]["pocket"] + safebal
-                leader_board[total_amount] = name
-                total.append(total_amount)
-
-        total = sorted(total, reverse=True)
-
+        def users_list():
+            mysql = "SELECT users.id, pocket, safe.money, (pocket + IFNULL(safe.money, 0)) as total FROM `users` LEFT JOIN `safe` ON safe.id = users.id ORDER BY `total` DESC "
+            mycursor.execute(mysql)
+            userlist = []
+            for guy in mycursor.fetchall():
+                dict = {"id" : guy[0], "total" : guy[3]}
+                userlist.append(dict)
+            return userlist
+        def get_top_n(self, n):
+            # Use a custom function (key) to sort
+            return sorted(users_list(), key=operator.itemgetter("total"), reverse=True)[:n]
         em = discord.Embed(title=f"Top {x} richest people", color=discord.Color.dark_gold())
         index = 1
-        for amt in total:
-            id_ = leader_board[amt]
-            member = await self.client.fetch_user(id_)
-
-            name = member.name
-            em.add_field(name=f"{index}. {name}", value=f"`{int(amt)}` lemons <:lemon2:881595266757713920>", inline=False)
-            if index == x:
-                break
-            else:
-                index += 1
-
+        for user in get_top_n(self, x):
+            member = await self.client.fetch_user(user["id"])
+            em.add_field(name=f"{index}. {member.name}", value=f"`{int(user['total'])}` lemons <:lemon2:881595266757713920>", inline=False)
+            index+=1
         await ctx.send(embed=em)
+
 
     @commands.command(aliases=['give', 'send'])
     async def Pay(self, ctx, userid: discord.User, pay_amount):
@@ -1728,8 +1712,7 @@ class economy(commands.Cog):
                 await self.del_item(ctx.author.id, item)
 
                 await ctx.send(f"{ctx.author.mention}\nYou gifted {present_item_name} to {msg.content}, they " + line)
-                with open('lemonbank.json', 'w') as f:
-                    json.dump(users, f, indent=4)
+
 
                 for shopitem in self.mainshop:
                     price = shopitem["price"]
@@ -1890,13 +1873,19 @@ class economy(commands.Cog):
                     return
                 return
             if str(reaction.emoji) == "<:minecra:883287114270261268>":
-                users = await self.get_bank_data()
+                sql = "SELECT id FROM users"
+                mycursor.execute(sql)
+                data = mycursor.fetchall()
+                print(data)
+                users = data
+
                 userlist = []
                 for user in users:
                     userlist.append(user)
                 print(userlist)
                 user = random.choice(userlist)
                 print(user)
+                user = user[0]
                 lines = [f"You and <@!{user}> built a wooden house!", f"You and <@!{user}> played Minecraft for 5 hours", f"<@!{user}> set you a redstone trap and you fell for it", f"<@!{user}> and you built a lemon tree", f"<@!{user}> and you built a big mansion", f"<@!{user}> and you built a giant mob farm"]
                 line = random.choice(lines)
                 await ctx.send(line)
@@ -2262,6 +2251,7 @@ class economy(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             self.work.reset_cooldown(ctx)
             return
+
         try:
             mycursor.execute(f"SELECT * FROM jobs WHERE id = {user.id}")
             data = mycursor.fetchall()
