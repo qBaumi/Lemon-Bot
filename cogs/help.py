@@ -89,10 +89,18 @@ class help(commands.Cog):
     async def pet_help_msg(self, ctx):
         em = discord.Embed(title="Pets", colour=discord.Color.from_rgb(254, 254, 51),
                            description="You can buy a pet from the `lem pet shop` and look and care for your equipped pet with `lem pet info`. You can have a maximum of 4 pets. You can buy them as adults and babys, an adult is the maximum level but has not that good stats as the same pet leveled up from a baby to the maximum level!")
-        em.add_field(name="shop", value="Look which pets are currently available!", inline=False)
-        em.add_field(name="adopt | buy", value="Adopt a pet from the shop", inline=False)
-        em.add_field(name="info", value="Have a look at your equipped pet's stats!", inline=False)
-        em.add_field(name="pets", value="View all your pets", inline=False)
+        em.add_field(name="pet shop", value="Look which pets are currently available!", inline=False)
+        em.add_field(name="pet adopt | pet buy", value="Adopt a pet from the shop", inline=False)
+        em.add_field(name="pet sell", value="Sadge", inline=False)
+        em.add_field(name="pet info", value="Have a look at your equipped pet's stats!", inline=False)
+        em.add_field(name="pet feed | pet care | pet play",
+                     value="You can also use them with `lem pet info` and then react to the emojis!", inline=False)
+        em.add_field(name="pet pat", value="Gladge", inline=False)
+        em.add_field(name="pet walk", value="Walk your pet, it needs to go to the toilet as well", inline=False)
+        em.add_field(name="pet equip | pet unequip",
+                     value="Equip a pet from a different slot | Unequip a pet to buy another one", inline=False)
+        em.add_field(name="pet pets", value="View all your pets", inline=False)
+        em.add_field(name="pet fight", value="COMING SOON!!!", inline=False)
         await ctx.send(embed=em)
 
     async def game_help_msg(self, ctx):
@@ -143,27 +151,27 @@ class help(commands.Cog):
             description="To get help for a specific topic try `lem help money` for example",
             colour=discord.Color.from_rgb(254, 254, 51))
         em.add_field(
-            name="Money",
+            name="Help Money",
             value="Everything with money, the basics and how to earn it(with jobs)",
             inline=False)
         em.add_field(
-            name="Jobs",
+            name="Help Jobs",
             value="How you can earn money",
             inline=False)
         em.add_field(
-            name="Items",
+            name="Help Items",
             value="How to buy and use items",
             inline=False)
         em.add_field(
-            name="Pets",
+            name="Help Pets",
             value="How to get and care for your cute pets",
             inline=False)
         em.add_field(
-            name="Games",
+            name="Help Games",
             value="Play some Games 🎮",
             inline=False)
         em.add_field(
-            name="Misc",
+            name="Help Misc",
             value="I wonder whats that 🤔",
             inline=False)
         em.add_field(

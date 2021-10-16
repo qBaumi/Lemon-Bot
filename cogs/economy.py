@@ -34,7 +34,7 @@ mycursor = mydb.cursor()
 class economy(commands.Cog):
     def __init__(self, client):
         self.client = client
-
+    petcursor = mycursor
     async def open_account(self, user):
         mycursor.execute("SELECT id FROM users")
 
@@ -627,7 +627,6 @@ class economy(commands.Cog):
     async def on_command_error(self, ctx, error):
         await ctx.send(f"{ctx.author.mention}\nYou need to be an Admin to use this command")
 
-    #TODO: here make
 
     @commands.cooldown(1, 369, commands.BucketType.user)
     @commands.command(aliases=["rob"])
@@ -658,7 +657,6 @@ class economy(commands.Cog):
             return
         chance = random.randrange(0, 100)
         percent = round(random.uniform(0.01, 0.041), 2)
-        print(percent)
         if chance < 40:
             sentences = [f"You were captured when you tried to open {victim.name}'s bag", f"When you touched {victim.name}'s pocket the police saw you and arrested you. Have fun in jail!", f"Pretty unlucky...{victim.name} is currently attempting a self-defending course, you stand no chance", f"{victim.name}'s big brother saw you...he is very big"
                          ,f"Robbing in front of a cop...you should try to type that in youtube!", f"When you opened {victim.name}'s bag, her little chihuahua (Yeah I googled that name before) jumped into your face and bit you"]
@@ -805,6 +803,9 @@ class economy(commands.Cog):
 
     @commands.command()
     async def roulette(self, ctx, bet=0):
+        if await self.check_account(ctx.author) == False:
+            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
+            return
         if bet==0:
             await ctx.send(f"{ctx.author.mention}\nYou didn't set a bet, try again `lem roulette 10` for example")
             return
@@ -902,6 +903,9 @@ class economy(commands.Cog):
             return
     @commands.command()
     async def tictactoe(self, ctx, enemy: discord.User, bet=0):
+        if await self.check_account(ctx.author) == False:
+            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
+            return
         if bet==0:
             await ctx.send(f"{ctx.author.mention}\nYou didn't set a bet, try again `lem tictactoe `{enemy.name}` 10` for example")
             return
@@ -1307,11 +1311,12 @@ class economy(commands.Cog):
 
     @commands.command(aliases=["wouldyourather", "would you rather"])
     async def wyr(self, ctx):
-        users = await self.get_bank_data(ctx.author.id)
-        user = ctx.author
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             return
+        users = await self.get_bank_data(ctx.author.id)
+        user = ctx.author
+
         if users[str(user.id)]["pocket"] < 25:
             await ctx.send(f"{ctx.author.mention}\nYou dont have enough money!")
             return
@@ -1415,10 +1420,11 @@ class economy(commands.Cog):
 
     @commands.command()
     async def vendingmachine(self, ctx):
-        users = await self.get_bank_data(ctx.author.id)
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             return
+        users = await self.get_bank_data(ctx.author.id)
+
         user = ctx.author
         if users[str(user.id)]["pocket"] < 150:
             await ctx.send(f"{ctx.author.mention}\nYou dont have enough money!")
@@ -2091,11 +2097,12 @@ class economy(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(aliases=['jobs'])
     async def job(self, ctx, arg1='None', *, arg2='None'):
-        users = await self.get_bank_data(ctx.author.id)
-        user = ctx.author
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             return
+        users = await self.get_bank_data(ctx.author.id)
+        user = ctx.author
+
 
         xp, lvl = await self.getxp(user.id)
 
@@ -2245,12 +2252,13 @@ class economy(commands.Cog):
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command()
     async def work(self, ctx):
-        user = ctx.author
-        users = await self.get_bank_data(user.id)
         if await self.check_account(ctx.author) == False:
             await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
             self.work.reset_cooldown(ctx)
             return
+        user = ctx.author
+        users = await self.get_bank_data(user.id)
+
 
         try:
             mycursor.execute(f"SELECT * FROM jobs WHERE id = {user.id}")
