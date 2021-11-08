@@ -1,6 +1,11 @@
 add pets
 fix present hope its fixed for now
 sell mysteryskin (admin command)
+mit delitem
+
+fight
+walk find items
+leckerlie maybe
 
 make shop look nice
 quests
@@ -8,14 +13,13 @@ ITEMS:
 Connect4
 dices
 
-roulette
-leaderboard with safe
-pets
+achievements
 dep all
-job level up message bugs
-job xp bar
 BOSS FIGHTS
 RPG
+meme templates
+get streamer when laptop stream
+perkz more like perkz
 
 jobs:
 Content Creator
@@ -24,6 +28,12 @@ Lawyer
 Film maker
 Actor/Actress with which emotion you should show
 Manager
+- cafe/starbucks barista 
+- waiter 
+- aram pro player :5_KekBoom:
+- chef
+- twitch streamer
+After lvl 10 no more jobs
 
 
 clothes that give bettter daily lemons

@@ -23,6 +23,22 @@
             "money": "golden lemons",
             "emoji": "<:13627124:884424774502219776>",
             "stock": 1
+        },
+        {
+            "name": "Tier1sub",
+            "price": 400,
+            "desc": "Nemesis Tier 1 Sub",
+            "money": "golden lemons",
+            "emoji": "<:lemon2:881595266757713920>",
+            "stock": 0
+        },
+        {
+            "name": "MysterySkin975RP",
+            "price": 1000,
+            "desc": "Mystery Skin worth at least 975RP",
+            "money": "golden lemons",
+            "emoji": "<a:Giveaways:881606847096844338>",
+            "stock": 1
         }
     ]
 }
