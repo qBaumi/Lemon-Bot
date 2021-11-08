@@ -459,7 +459,7 @@ class pets(commands.Cog):
             return
         xp = random.randrange(10, 21)
         users = await self.get_bank_data(ctx.author.id)
-        if users[str(ctx.author.id)]["pocket"] < 50:
+        if users[str(ctx.author.id)]["pocket"] < 20:
             await ctx.send(f"{ctx.author.mention}\nYou dont have enough money!")
             return
         hunger = int(stats["food"])+20
@@ -472,8 +472,8 @@ class pets(commands.Cog):
         realshi = random.choice(foodlist)
         petreaction = ["they liked it", "they didnt like it", "they didnt eat it", "they threw it up later", "they said guß for food", "they want more!"]
         line = random.choice(petreaction)
-        await self.update_balance(ctx.author, -50)
-        embed = discord.Embed(title=f"You fed {pet['name']} {realshi} {line}!", colour=discord.Color.teal(), description=f"You paid 50 lemons for their luxury...pets are expensive, but worth <:nemePat:781659265244200981>")
+        await self.update_balance(ctx.author, -20)
+        embed = discord.Embed(title=f"You fed {pet['name']} {realshi} {line}!", colour=discord.Color.teal(), description=f"You paid 20 lemons for their luxury...pets are expensive, but worth <:nemePat:781659265244200981>")
         await ctx.send(f"{ctx.author.mention}\n", embed=embed)
 
         return
@@ -540,7 +540,7 @@ class pets(commands.Cog):
             return
         xp = random.randrange(10, 21)
         users = await self.get_bank_data(ctx.author.id)
-        if users[str(ctx.author.id)]["pocket"] < 100:
+        if users[str(ctx.author.id)]["pocket"] < 50:
             await ctx.send(f"{ctx.author.mention}\nYou dont have enough money!")
             return
         hunger = int(stats["care"]) + 30
@@ -556,8 +556,8 @@ class pets(commands.Cog):
         line = random.choice(petreaction)
         embed = discord.Embed(title=f"You {realshi}, {line}!", colour=discord.Color.teal())
         if realshi == lines[1]:
-            await self.update_balance(ctx.author, -100)
-            await embed.set_footer(text="You paid 100 lemons for the vet!")
+            await self.update_balance(ctx.author, -50)
+            embed.set_footer(text="You paid 50 lemons for the vet!")
         await ctx.send(f"{ctx.author.mention}\n", embed=embed)
 
         return

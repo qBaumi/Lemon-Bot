@@ -1,5 +1,4 @@
 import discord
-from discord import Colour
 from discord.ext import commands
 
 class help(commands.Cog):
@@ -122,7 +121,7 @@ class help(commands.Cog):
             inline=False)
         em.add_field(
             name="wouldyourather",
-            value="Pay 25 and answer a would you rather question!",
+            value="Answer a would you rather question!",
             inline=False)
         await ctx.send(embed=em)
 
@@ -297,7 +296,7 @@ class help(commands.Cog):
             inline=False)
         em.add_field(
             name="wouldyourather",
-            value="Pay 25 and answer a would you rather question!",
+            value="Answer a would you rather question!",
             inline=False)
         await ctx.send(embed=em)
 def setup(client):

@@ -1,10 +1,7 @@
 import random
-import time
-import asyncio
 import discord
 from discord.ext import commands
-from discord import Colour, guild, reaction, Emoji
-import json
+from discord import Emoji
 
 # Setup the clinet with the prefix and case_insensitive (write BiG or smAll commands) and remove the default help command to make a custom one
 client = commands.Bot(command_prefix=['lem ', 'Lem ', 'LEM ', 'LEm ', 'lEm ', 'lEM '], case_insensitive=True)
@@ -19,11 +16,15 @@ async def on_ready():
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="When life gives you lemons, make lemonade!"))
 
 
-
+client.load_extension("cogs.admincommands")
+client.load_extension("cogs.collectibles")
 client.load_extension("cogs.economy")
-client.load_extension("cogs.help")
-client.load_extension("cogs.LeagueAPI")
 client.load_extension("cogs.events")
+client.load_extension("cogs.games")
+client.load_extension("cogs.help")
+client.load_extension("cogs.items")
+client.load_extension("cogs.jobs")
+client.load_extension("cogs.LeagueAPI")
 client.load_extension("cogs.pets")
 
 # About section
@@ -33,13 +34,12 @@ async def about(ctx):
     em.add_field(name="Creator / Developer", value="qBaumi#1247", inline=False)
     em.add_field(name="Developer", value="Menxs#0592", inline=False)
     em.add_field(name="Artist", value="https://twitter.com/lilRoundabout/", inline=False)
-    channel = client.get_channel(598309398976397332)
-    em.add_field(name="Description", value=f"Hello, I am the Lemon Bot. \n Let me introduce real quick.\nI am an economy bot for the Nemesis discord server. I can get you precious lemons, if you get some work done for me...of course\nYou can find out more about me when you type <neme help> for example. But only in bot-commands, otherwise my boss will get angry...\nIf you have ANY ideas for items or commands, please share them with my Boss, you will find him at the beginning of this message.\n Thank you to all who helped creating me!", inline=False)
+    em.add_field(name="Description", value=f"Hello, I am the Lemon Bot. \n Let me introduce real quick.\nI am an economy bot for the Nemesis discord server. I can get you precious lemons, if you get some work done for me...of course\nYou can find out more about me when you type **lem help** for example. But only in bot-commands, otherwise my boss will get angry...\nIf you have ANY ideas for items or commands, please share them with my Boss, you will find him at the beginning of this message.\n Thank you to all who helped creating me!", inline=False)
     await ctx.send(embed=em)
 
 @client.command(pass_context=True)
 async def debug(ctx, emoji: Emoji):
-    embed = discord.Embed(description=f"emoji: {emoji}", title=f"emoji: {emoji}")
+    embed = discord.Embed(description=f"<:{repr(emoji.name)}:{repr(emoji.id)}>", title=f"emoji: {emoji}")
     embed.add_field(name="id", value=repr(emoji.id))
     embed.add_field(name="name", value=repr(emoji.name))
     await ctx.send(embed=embed)
@@ -52,10 +52,6 @@ async def hug(ctx, user):
     hug =random.choice(hugs)
     await ctx.send(f"{ctx.author.mention} gave {user} a hug")
     await ctx.send(hug)
-
-
-
-
 
 
 
