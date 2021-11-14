@@ -1,13 +1,10 @@
 import json
 import math
 import random
-
-import essentialfunctions as es
+import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
-
-mycursor = es.mycursor
-mydb = es.mydb
+from .economy import mycursor, mydb
 
 class collectibles(commands.Cog):
     def __init__(self, client):
@@ -33,27 +30,18 @@ class collectibles(commands.Cog):
             all_collectibles += 1
         pages = math.ceil(all_collectibles / 10)
 
-        if page > pages or pages < 1:
+        if page > pages or page < 1:
             await ctx.send(f"There are only {pages} pages")
             return
-        if page == 1:
-            for i in range(10):
-                try:
-                    name = collectibles[i]["name"]
-                    emoji = collectibles[i]["emoji"]
-                    desc = collectibles[i]["desc"]
-                except:
-                    break
-                em.add_field(name=f"{name} {emoji}", value=f"{desc}", inline=False)
-        else:
-            for i in range(page * 10 - 10, page * 10):
-                try:
-                    name = collectibles[i]["name"]
-                    emoji = collectibles[i]["emoji"]
-                    desc = collectibles[i]["desc"]
-                except:
-                    break
-                em.add_field(name=f"{name} {emoji}", value=f"{desc}", inline=False)
+
+        for i in range(page * 10 - 10, page * 10):
+            try:
+                name = collectibles[i]["name"]
+                emoji = collectibles[i]["emoji"]
+                desc = collectibles[i]["desc"]
+            except:
+                break
+            em.add_field(name=f"{name} {emoji}", value=f"{desc}", inline=False)
 
         em.set_footer(text=f"{page} / {pages}")
         await ctx.send(embed=em)

@@ -1,4 +1,7 @@
 import asyncio
+import datetime
+
+import cogs.essentialfunctions as es
 import glob
 import os
 import random
@@ -6,7 +9,8 @@ import time
 import discord
 from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
-import essentialfunctions as es
+from cogs.economy import globalmainshop
+
 
 """Globals"""
 mycursor = es.mycursor
@@ -16,17 +20,7 @@ class items(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    mainshop = [{"name": "Lemonade", "price": 5, "desc": "Everyone likes lemonade", "money": "lemons", "emoji" : "<:lemonade:882239415601213480>"},
-                {"name": "Cheesecake", "price": 10, "desc": "You can either eat it, or throw it at another person :)", "money": "lemons", "emoji" : "🍰"},
-                {"name": "Flowers", "price": 15, "desc": "Flowers are always a great birthday gift!", "money": "lemons","emoji": "💐"},
-                {"name": "Present", "price": 70, "desc": "Now you can gift every item", "money": "lemons", "emoji": "🎁"},
-                {"name": "Pinata", "price": 150, "desc": "Piñata is great, but be careful with the baseball bat!", "money": "lemons","emoji": "<:pinata:882600329517096971>"},
-                {"name": "ConchShell", "price": 200, "desc": "LONG LIVE THE MAGIC CONCH SHELL", "money": "lemons","emoji": "<:magicconchshell:882556087843307520>"},
-                {"name": "Candy", "price": 10, "desc": "f", "money": "lemons","emoji": "🍬"},
-                {"name": "Mobile", "price": 500, "desc": "Phone, I hope you know what a phone is", "money": "lemons", "emoji" : "☎"},
-                {"name": "Laptop", "price": 1000, "desc": "Yes, a thousand", "money": "lemons", "emoji": "💻"},
-                {"name": "Safe", "price": 1500, "desc": "Store 5000 precious lemons in it!", "money": "lemons", "emoji": "<:safe:885811224418332692>"}]
-
+    mainshop = globalmainshop
 
     """DISPLAYS USER BAG"""
     @commands.command(aliases=["items"])
@@ -655,10 +649,66 @@ class items(commands.Cog):
                     await ctx.send(
                         f"{ctx.author.mention}\n{msg.content} is not a user or has never used this bot before. `Answer with @friend if you just typed their name`")
                     return
+        if item == "adventcalendar":
+            date = datetime.date.today()
+            date = str(date)
+            print(date)
+            if(date[0:8] != "2021-11-"):
+                await ctx.send("It's unfortunately not December <:Sadge:720250426892615745>")
+                return
 
+            day = int(date[8:len(date)])
+            print(day)
+            prizes = [{"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"},
+                      {"amount" : 10, "moneyform" : "pocket"}]
 
-
-
+            """
+                Here comes the part to check if user can still claim the prize
+            """
+            sql = f"SELECT * FROM adventcalendar WHERE id = '{ctx.author.id}' AND day = {day}"
+            mycursor.execute(sql)
+            data = mycursor.fetchall()
+            print(data)
+            if data:
+                em = discord.Embed(title="You already opened todays door! Come back tomorrow!", colour=discord.Color.teal())
+                await ctx.send(embed=em)
+                return
+            i = day-1
+            await es.update_balance(ctx.author, prizes[i]["amount"], prizes[i]["moneyform"])
+            sql = f"INSERT INTO adventcalendar (id, day) VALUES ('{ctx.author.id}', {day})"
+            mycursor.execute(sql)
+            mydb.commit()
+            if prizes[i]['moneyform'] == "pocket":
+                money = "lemons"
+                moneyemoji = "<:lemon2:881595266757713920>"
+            else:
+                money = "golden lemons"
+                moneyemoji = "<:GoldenLemon:882634893039923290>"
+            em = discord.Embed(title=f"You opened the door of the {day}th december and you got `{prizes[i]['amount']}` {moneyemoji} {money}!", colour=discord.Color.teal(), description="Have a great day!")
+            await ctx.send(embed=em)
         else:
             await ctx.send(f"{ctx.author.mention}\nThat item does not exist or has no usage yet")
 

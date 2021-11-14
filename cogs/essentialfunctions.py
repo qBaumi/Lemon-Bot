@@ -1,24 +1,12 @@
 import mysql.connector, discord, json
-
+from .economy import mycursor, mydb
 
 with open("password.txt", "r") as f:
     password = f.read()
 with open("IP.txt", "r") as f:
     ip = f.read()
 
-"""
-    W3SCHOOLS MYSQL CONNECTOR FOR MOR INFO
-"""
-mydb = mysql.connector.connect(
-  host=ip,
-  user="myserver",
-  password=password,
-  port="3306",
-  database = "lemonbot",
-  auth_plugin="mysql_native_password"
 
-)
-mycursor = mydb.cursor()
 
 
 
@@ -154,7 +142,7 @@ async def add_item(item_name, userid, amount):
             if n == item_name:
                 old_amt = thing["amount"]
                 new_amt = old_amt + amount
-                # SINGLE QUOTE MAFMEDLSAKFJÖS
+                # SINGLE QUOTE MAFMEDLSAKFJÃ–S
                 sql = f"UPDATE items SET amount = {new_amt} WHERE id = {userid} AND name = '{item_name}'"
                 mycursor.execute(sql)
                 mydb.commit()

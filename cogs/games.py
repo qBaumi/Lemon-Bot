@@ -4,7 +4,7 @@ import discord
 from PIL import Image, ImageDraw
 from discord.ext import commands
 import random, asyncio
-import essentialfunctions as es
+import cogs.essentialfunctions as es
 
 class games(commands.Cog):
     def __init__(self, client):

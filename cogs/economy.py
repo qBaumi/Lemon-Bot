@@ -1,13 +1,14 @@
-import asyncio
-import glob
 import json
+import math
 import operator
 import random
+import cogs.essentialfunctions as es
+import asyncio
 import discord
 from discord import Colour
 from discord.ext import commands
 import mysql.connector
-import essentialfunctions as es
+
 
 
 with open("password.txt", "r") as f:
@@ -28,6 +29,18 @@ mydb = mysql.connector.connect(
 
 )
 mycursor = mydb.cursor()
+
+globalmainshop = [{"name": "Lemonade", "price": 5, "desc": "Everyone likes lemonade", "money": "lemons", "emoji" : "<:lemonade:882239415601213480>"},
+                {"name": "Cheesecake", "price": 10, "desc": "You can either eat it, or throw it at another person :)", "money": "lemons", "emoji" : "🍰"},
+                {"name": "Flowers", "price": 15, "desc": "Flowers are always a great birthday gift!", "money": "lemons","emoji": "💐"},
+                {"name": "Present", "price": 70, "desc": "Now you can gift every item", "money": "lemons", "emoji": "🎁"},
+                {"name": "Pinata", "price": 150, "desc": "Piñata is great, but be careful with the baseball bat!", "money": "lemons","emoji": "<:pinata:882600329517096971>"},
+                {"name": "ConchShell", "price": 200, "desc": "LONG LIVE THE MAGIC CONCH SHELL", "money": "lemons","emoji": "<:magicconchshell:882556087843307520>"},
+                {"name": "Candy", "price": 10, "desc": "f", "money": "lemons","emoji": "🍬"},
+                {"name": "Mobile", "price": 500, "desc": "Phone, I hope you know what a phone is", "money": "lemons", "emoji" : "☎"},
+                {"name": "Laptop", "price": 1000, "desc": "Browse for cute animals, make memes or play minecraft", "money": "lemons", "emoji": "💻"},
+                {"name": "Safe", "price": 1500, "desc": "Store 5000 precious lemons in it!", "money": "lemons", "emoji": "<:safe:885811224418332692>"},
+                {"name": "Adventcalendar", "price": 10000, "desc": "Open a door and get a price everyday", "money": "lemons", "emoji": "🎅"}]
 
 class economy(commands.Cog):
     def __init__(self, client):
@@ -89,82 +102,175 @@ class economy(commands.Cog):
             em.set_footer(text="Welcome to the rich people gang")
         # Set the Fields for pocket and safe
         em.add_field(name="You have ", value=f"`{int(round(money[0], 0)):g}` <:lemon2:881595266757713920> lemons in your pocket", inline=False)
-        em.add_field(name="You have ", value=f"`{int(round(money[1], 0)):g}` golden lemons", inline=False)
+        em.add_field(name="You have ", value=f"`{int(round(money[1], 0)):g}` <:GoldenLemon:882634893039923290> golden lemons", inline=False)
 
         await ctx.send(embed=em)
 
     # Shop
-    mainshop = [{"name": "Lemonade", "price": 5, "desc": "Everyone likes lemonade", "money": "lemons", "emoji" : "<:lemonade:882239415601213480>"},
-                {"name": "Cheesecake", "price": 10, "desc": "You can either eat it, or throw it at another person :)", "money": "lemons", "emoji" : "🍰"},
-                {"name": "Flowers", "price": 15, "desc": "Flowers are always a great birthday gift!", "money": "lemons","emoji": "💐"},
-                {"name": "Present", "price": 70, "desc": "Now you can gift every item", "money": "lemons", "emoji": "🎁"},
-                {"name": "Pinata", "price": 150, "desc": "Piñata is great, but be careful with the baseball bat!", "money": "lemons","emoji": "<:pinata:882600329517096971>"},
-                {"name": "ConchShell", "price": 200, "desc": "LONG LIVE THE MAGIC CONCH SHELL", "money": "lemons","emoji": "<:magicconchshell:882556087843307520>"},
-                {"name": "Candy", "price": 10, "desc": "f", "money": "lemons","emoji": "🍬"},
-                {"name": "Mobile", "price": 500, "desc": "Phone, I hope you know what a phone is", "money": "lemons", "emoji" : "☎"},
-                {"name": "Laptop", "price": 1000, "desc": "Yes, a thousand", "money": "lemons", "emoji": "💻"},
-                {"name": "Safe", "price": 1500, "desc": "Store 5000 precious lemons in it!", "money": "lemons", "emoji": "<:safe:885811224418332692>"}]
+    mainshop = globalmainshop
 
+    def getmoneyemoji(self, moneyform):
+        if moneyform == "lemons":
+            moneyemoji = "<:lemon2:881595266757713920>"
+        else:
+            moneyemoji = "<:GoldenLemon:882634893039923290>"
+        return moneyemoji
 
+    async def getshopembed(self, page, itemsperpage, switch_emoji, notlisted, shop="normal"):
+
+        em = discord.Embed(title='Shop', description="<:GoldenLemon:882634893039923290> switch to golden lemon shop!")
+
+        specialitems = await es.get_item_data()
+        specialitems = specialitems["MysterySkin"]
+
+        if shop=="special":
+            """
+                    Calculate pages
+            """
+            shopitems = 0
+            for item in specialitems:
+                if item["name"] not in notlisted:
+                    shopitems += 1
+            pages = math.ceil(shopitems / itemsperpage)
+
+            if page > pages or page < 1:
+                return False
+
+            """
+                Get the page indexes in the for loop and add every item to the embed
+            """
+
+            print(pages)
+            print(f"start index: {page * itemsperpage - itemsperpage}")
+            print(f"end index: {page * itemsperpage}")
+
+            for i in range(page * itemsperpage - itemsperpage, page * itemsperpage):
+                try:
+                    name = specialitems[i]["name"]
+                    emoji = specialitems[i]["emoji"]
+                    desc = specialitems[i]["desc"]
+                    stock = specialitems[i]["stock"]
+                    moneyemoji = self.getmoneyemoji(specialitems[i]["money"])
+                    price = specialitems[i]["price"]
+
+                except:
+                    break
+                if name not in notlisted:
+                    em.add_field(name=f"{name} {emoji}      -      {price} {moneyemoji}", value=f'Only `{stock}` items left!!! {desc}', inline=False)
+
+        elif shop=="normal":
+            """
+                            Calculate pages
+                    """
+            shopitems = 0
+            for item in self.mainshop:
+                if item["name"] not in notlisted:
+                    shopitems += 1
+            pages = math.ceil(shopitems / itemsperpage)
+
+            if page > pages or page < 1:
+                return False
+
+            """
+                Get the page indexes in the for loop and add every item to the embed
+            """
+
+            print(pages)
+            print(f"start index: {page * itemsperpage - itemsperpage}")
+            print(f"end index: {page * itemsperpage}")
+
+            for i in range(page * itemsperpage - itemsperpage, page * itemsperpage):
+                try:
+                    name = self.mainshop[i]["name"]
+                    emoji = self.mainshop[i]["emoji"]
+                    desc = self.mainshop[i]["desc"]
+                    moneyemoji = self.getmoneyemoji(self.mainshop[i]["money"])
+                    price = self.mainshop[i]["price"]
+
+                except:
+                    break
+                if name not in notlisted:
+                    em.add_field(name=f"{name} {emoji}      -      {price} {moneyemoji}", value=f"{desc}", inline=False)
+        em.set_footer(text=f"{page} / {pages}")
+
+        return em
 
     @commands.command()
-    async def Shop(self, ctx):
+    async def Shop(self, ctx, page=1, shop="normal"):
         if not await es.check_account(ctx):
             return
-        # make a nice embed
-        embed = discord.Embed(title='Shop')
-        # For every item make a string variable that will add a field per item
-        specialitems = await es.get_item_data()
 
-        for thing in specialitems:
 
-            for item in specialitems[thing]:
+        notlisted = ["Candy", "Adventcalendar"]
+        switch_emoji = "<:GoldenLemon:882634893039923290>"
+        switch_emoji_normal = "<:lemon2:881595266757713920>"
+        itemsperpage = 5
+        timeoutsec = 60
+        switch = switch_emoji
 
-                name = item['name']
-                price = item['price']
-                desc = item['desc']
-                emoji = item["emoji"]
-                moneyform = item['money']
-                stock = item['stock']
+        em = await self.getshopembed(page, itemsperpage, switch_emoji, notlisted, shop)
+        msg = await ctx.send(f"{ctx.author.mention}", embed=em)
+        if shop=="special":
+            switch = switch_emoji_normal
 
-                #Only display item if it's in stock
-                if stock > 0:
-                    if moneyform == "lemons":
-                        moneyemoji = "<:lemon2:881595266757713920>"
-                    else:
-                        moneyemoji = "<:GoldenLemon:882634893039923290>"
-                    str = f"{name}  "
-                    index = 0
-                    for space in range(100-len(str)):
-                        if index == 0:
-                            str = str + f"{emoji}"
-                        str = str + " "
-                        index = index + 1
-                    str2 = f"{price} {moneyemoji}"
-                    str = str + str2
-                    embed.add_field(name=str, value=f'Only `{stock}` items left!!! {desc}', inline=False)
-        for item in self.mainshop:
-            name = item['name']
-            price = item['price']
-            desc = item['desc']
-            emoji = item["emoji"]
-            moneyform = item['money']
-            if name != "Candy":
-                if moneyform == "lemons":
-                    moneyemoji = "<:lemon2:881595266757713920>"
-                else:
-                    moneyemoji = "<:lemon2:881595266757713920>"
-                str = f"{name}  "
-                index = 0
-                for space in range(100-len(str)):
-                    if index == 0:
-                        str = str + f"{emoji}"
-                    str = str + " "
-                    index = index + 1
-                str2 = f"{price} {moneyemoji}"
-                str = str + str2
-                embed.add_field(name=str, value=f'{desc}', inline=False)
-        await ctx.send(embed=embed)
+        """
+            Here comes the switch pages part after the embed was sent the first time
+        """
+        await msg.add_reaction("◀️")
+        await msg.add_reaction("▶️")
+        await msg.add_reaction(switch_emoji)
+
+        def check(reaction, user):
+            return reaction.message.id == msg.id and user == ctx.author
+        while True:
+            try:
+                reaction, useremoji = await self.client.wait_for('reaction_add', timeout=timeoutsec, check=check)
+            except asyncio.TimeoutError:
+
+                """
+                    IT ONLY WORKS LIKE THIS REMOVE OWN REACTION BLYAT EDKLFSÖJLKJSDFL
+                """
+                await msg.remove_reaction("◀️", self.client.user)
+                await msg.remove_reaction("▶️", self.client.user)
+                await msg.remove_reaction(switch, self.client.user)
+                return
+
+            if reaction.emoji == "◀️":
+
+                if await self.getshopembed(page-1, itemsperpage, switch, notlisted, shop):
+                    page -= 1
+                    em = await self.getshopembed(page, itemsperpage, switch, notlisted, shop)
+                await msg.remove_reaction("◀️", ctx.author)
+            elif str(reaction.emoji) == "▶️":
+
+                if await self.getshopembed(page+1, itemsperpage, switch, notlisted, shop):
+                    page += 1
+                    em = await self.getshopembed(page, itemsperpage, switch, notlisted, shop)
+                await msg.remove_reaction("▶️", ctx.author)
+            elif str(reaction.emoji) == str(switch_emoji):
+                print("yas")
+                em = await self.getshopembed(1, itemsperpage, switch, notlisted, shop="special")
+                await msg.remove_reaction(switch, self.client.user)
+                switch = switch_emoji_normal
+                shop = "special"
+                await msg.remove_reaction(switch_emoji, ctx.author)
+            elif str(reaction.emoji) == str(switch_emoji_normal):
+                em = await self.getshopembed(1, itemsperpage, switch, notlisted, shop="normal")
+                await msg.remove_reaction(switch, self.client.user)
+                switch = switch_emoji
+                shop = "normal"
+                await msg.remove_reaction(switch_emoji_normal, ctx.author)
+
+
+            await msg.edit(embed=em)
+            #msg = await ctx.send(f"{ctx.author.mention}\n", embed=em)
+            await msg.add_reaction(switch) #here it is
+
+
+
+
+
+
 
 
 
@@ -194,8 +300,20 @@ class economy(commands.Cog):
             bag = await es.getbag(user.id)
         except:
             bag = []
+
+        """
+            get the index of the item in the blacklist for the check if the user has already that item once
+        """
+        index = -1
+        for i in range(0, len(blacklist)):
+            if blacklist[i].lower() == item.lower():
+                print(i)
+                index = i
+                break
+
+
         for useritem in bag:
-            if useritem["item"] in blacklist and useritem["amount"] > 0 and item.lower() in blacklist:
+            if useritem["item"] == blacklist[index] and useritem["amount"] > 0 and item.lower() == blacklist[index]:
                 print("this")
                 await ctx.send(f"{ctx.author.mention}\nYou can only buy one {item}!")
                 return
@@ -473,7 +591,7 @@ class economy(commands.Cog):
             return
         try:
             if usersvictim[str(victim.id)]['pocket'] < 100:
-                await ctx.send(f"{ctx.author.mention}\nIs too `poor` to get robbed")
+                await ctx.send(f"{ctx.author.mention}\n{victim.mention} is too `poor` to get robbed")
                 self.steal.reset_cooldown(ctx)
                 return
         except:

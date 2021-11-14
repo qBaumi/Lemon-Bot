@@ -6,7 +6,7 @@ from discord.ext import commands
 import mysql.connector
 import random, asyncio, json
 from .economy import mycursor, mydb
-
+import cogs.essentialfunctions as es
 
 with open("password.txt", "r") as f:
     password = f.read()
@@ -24,16 +24,12 @@ class pets(commands.Cog):
 
     @commands.command()
     async def pet(self, ctx, arg1="None", arg2 = "None"):
-        if await self.check_account(ctx.author) == False:
-            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
+        if await es.check_account(ctx) == False:
             return
         user = ctx.author
         arg1 = arg1.lower()
         arg2 = arg2.lower()
         pets = await self.allpets()
-        if await self.check_account(user) == False:
-            await ctx.send("Try `lem startup` first")
-            return
         if arg1 == "shop":
             em = discord.Embed(title="Pet shop", colour=discord.Color.teal())
 
@@ -48,7 +44,7 @@ class pets(commands.Cog):
             await ctx.send(embed=em)
             return
         elif arg1 == "buy" or arg1 == "adopt":
-            users = await self.get_bank_data(user.id)
+            users = await es.get_bank_data(user.id)
             equippedpet = await self.userpet(user.id, "equippedpet")
             if bool(equippedpet) == True:
                 await ctx.send("You currently have a pet equipped, to move it to a different slot try `lem pet unequip`")
@@ -101,7 +97,7 @@ class pets(commands.Cog):
 
             savepet(self, user.id, "equippedpet")
 
-            await self.update_balance(user, -price)
+            await es.update_balance(user, -price)
             await ctx.send(f"Congratulations, you officially adopted {name}! You can view your pet now with `lem pet info` or `lem pet view`")
             pet["stock"] = pet["stock"] - 1
             with open("allpets.json", "w") as f:
@@ -110,7 +106,7 @@ class pets(commands.Cog):
 
 
         elif arg1 == "sell":
-            users = await self.get_bank_data(user.id)
+            users = await es.get_bank_data(user.id)
             equippedpet = await self.userpet(user.id, "equippedpet")
             if bool(equippedpet) == False:
                 await ctx.send(
@@ -148,7 +144,7 @@ class pets(commands.Cog):
             pet["stock"] = pet["stock"] + 1
             with open("allpets.json", "w") as f:
                 json.dump(pets, f, indent=4)
-            await self.update_balance(ctx.author, int(price/2))
+            await es.update_balance(ctx.author, int(price/2))
             await ctx.send(f"{user.mention}\nYou sold your {name} to a man in a dark alley")
             await ctx.send("<:Cryge:829750407496204361>")
             return
@@ -433,11 +429,11 @@ class pets(commands.Cog):
         events = [f"You and {pet['name']} are humming to Life is a highway!", f"{pet['name']} smells something...maybe you should go shower", f"{pet['name']} starts barking at a dog", f"A lemon from an lemon tree fell on {pet['name']}, you put in in your wallet", f"{pet['name']} found {lemons} lemons on the street", f"A stranger gave {pet['name']} 10 lemons because they where so cute <:nemePat:781659265244200981>", f"An old man pat {pet['name']}"]
         rndmevent = random.choice(events)
         if rndmevent == events[3]:
-            await self.update_balance(ctx.author, 1)
+            await es.update_balance(ctx.author, 1)
         elif rndmevent == events[4]:
-            await self.update_balance(ctx.author, lemons)
+            await es.update_balance(ctx.author, lemons)
         elif rndmevent == events[5]:
-            await self.update_balance(ctx.author, 10)
+            await es.update_balance(ctx.author, 10)
         await message.edit(content=f"{ctx.author.mention}\nYou leave the house with {pet['name']}")
         await asyncio.sleep(3)
         await message.edit(content=f"{ctx.author.mention}\nYou are going down the road")
@@ -458,7 +454,7 @@ class pets(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\n{pet['name']} isn't hungry! Try again later")
             return
         xp = random.randrange(10, 21)
-        users = await self.get_bank_data(ctx.author.id)
+        users = await es.get_bank_data(ctx.author.id)
         if users[str(ctx.author.id)]["pocket"] < 20:
             await ctx.send(f"{ctx.author.mention}\nYou dont have enough money!")
             return
@@ -472,7 +468,7 @@ class pets(commands.Cog):
         realshi = random.choice(foodlist)
         petreaction = ["they liked it", "they didnt like it", "they didnt eat it", "they threw it up later", "they said guß for food", "they want more!"]
         line = random.choice(petreaction)
-        await self.update_balance(ctx.author, -20)
+        await es.update_balance(ctx.author, -20)
         embed = discord.Embed(title=f"You fed {pet['name']} {realshi} {line}!", colour=discord.Color.teal(), description=f"You paid 20 lemons for their luxury...pets are expensive, but worth <:nemePat:781659265244200981>")
         await ctx.send(f"{ctx.author.mention}\n", embed=embed)
 
@@ -539,7 +535,7 @@ class pets(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\n{pet['name']} has everything they neede! Try again later")
             return
         xp = random.randrange(10, 21)
-        users = await self.get_bank_data(ctx.author.id)
+        users = await es.get_bank_data(ctx.author.id)
         if users[str(ctx.author.id)]["pocket"] < 50:
             await ctx.send(f"{ctx.author.mention}\nYou dont have enough money!")
             return
@@ -556,7 +552,7 @@ class pets(commands.Cog):
         line = random.choice(petreaction)
         embed = discord.Embed(title=f"You {realshi}, {line}!", colour=discord.Color.teal())
         if realshi == lines[1]:
-            await self.update_balance(ctx.author, -50)
+            await es.update_balance(ctx.author, -50)
             embed.set_footer(text="You paid 50 lemons for the vet!")
         await ctx.send(f"{ctx.author.mention}\n", embed=embed)
 
@@ -683,50 +679,7 @@ class pets(commands.Cog):
 
 
 
-    async def open_account(self, user):
-        mycursor.execute("SELECT id FROM users")
 
-        ids = mycursor.fetchall()
-
-        for id in ids:
-            ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
-            if str(user.id) == id[0]:
-                return False
-        else:
-            sql = "INSERT INTO users (id, pocket, safe, xp, lvl) VALUES (%s, %s, %s, %s, %s)"
-            val = (user.id, 0, 0, 0, 1)
-            mycursor.execute(sql, val)
-        mydb.commit()
-        return True
-
-    # Check if you have an account opened
-    async def check_account(self, user):
-        mycursor.execute("SELECT id FROM users")
-
-        ids = mycursor.fetchall()
-
-        for id in ids:
-            ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
-            if str(user.id) == id[0]:
-                return True
-        return False
-
-    async def get_bank_data(self, id):
-        mycursor.execute(f"SELECT * FROM users WHERE id = {id}")
-        data = mycursor.fetchall()
-
-        users = {data[0][0] : {"pocket" : data[0][1], "safe" : data[0][2]}}
-        return users
-
-    # Give or withdraw money from your account
-    async def update_balance(self, user, change=0, mode="pocket"):
-        # Get the bank file data
-        users = await self.get_bank_data(id=user.id)
-        sql = f"UPDATE users SET {mode} = {users[str(user.id)]['pocket'] + change} WHERE id = {user.id}"
-        mycursor.execute(sql)
-        mydb.commit()
-        bal = users[str(user.id)]["pocket"] + change
-        return bal
 
 def setup(client):
     client.add_cog(pets(client))

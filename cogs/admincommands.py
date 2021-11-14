@@ -1,7 +1,8 @@
 import json
+import cogs.essentialfunctions as es
 from discord.ext import commands
 import discord, asyncio
-import essentialfunctions as es
+
 
 class admincommands(commands.Cog):
     def __init__(self, client):

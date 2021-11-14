@@ -2,13 +2,11 @@ import asyncio
 import glob
 import random
 import time
-
+import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
-import essentialfunctions as es
+from .economy import mycursor, mydb
 
-mycursor = es.mycursor
-mydb = es.mydb
 
 class jobs(commands.Cog):
     def __init__(self, client):
