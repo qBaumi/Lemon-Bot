@@ -455,7 +455,7 @@ class pets(commands.Cog):
             return
         xp = random.randrange(10, 21)
         users = await es.get_bank_data(ctx.author.id)
-        if users[str(ctx.author.id)]["pocket"] < 20:
+        if users[str(ctx.author.id)]["pocket"] < 5:
             await ctx.send(f"{ctx.author.mention}\nYou dont have enough money!")
             return
         hunger = int(stats["food"])+20
@@ -468,8 +468,8 @@ class pets(commands.Cog):
         realshi = random.choice(foodlist)
         petreaction = ["they liked it", "they didnt like it", "they didnt eat it", "they threw it up later", "they said guß for food", "they want more!"]
         line = random.choice(petreaction)
-        await es.update_balance(ctx.author, -20)
-        embed = discord.Embed(title=f"You fed {pet['name']} {realshi} {line}!", colour=discord.Color.teal(), description=f"You paid 20 lemons for their luxury...pets are expensive, but worth <:nemePat:781659265244200981>")
+        await es.update_balance(ctx.author, -5)
+        embed = discord.Embed(title=f"You fed {pet['name']} {realshi} {line}!", colour=discord.Color.teal(), description=f"You paid 5 lemons for their luxury...pets are expensive, but worth <:nemePat:781659265244200981>")
         await ctx.send(f"{ctx.author.mention}\n", embed=embed)
 
         return

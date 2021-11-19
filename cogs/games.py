@@ -189,6 +189,131 @@ class games(commands.Cog):
             return
 
     @commands.command()
+    async def minesweeper(self, ctx,):
+
+        rows = 9
+        col = 9
+        bombs = 10
+        bombcoords = []
+
+        empty = "⬛"
+        one = "1️⃣"
+        two = "2️⃣"
+        three = "3️⃣"
+        four = "4️⃣"
+        five = "5️⃣"
+        six = "6️⃣"
+        seven = "7️⃣"
+        eight = "8️⃣"
+        bomb = "💥"
+
+
+        for i in range(0, bombs):
+            while True:
+                x = random.randrange(0, col)
+                y = random.randrange(0, rows)
+                coords = (x, y)
+                if coords not in bombcoords:
+                    bombcoords.append(coords)
+                    break
+        print(bombcoords)
+
+        """
+            return : int
+            how many bombs are near
+        """
+        def bombsnear(x, y, bombcoords):
+            bombs = 0
+            # ABOTH
+            if (x, y + 1) in bombcoords:
+                bombs += 1
+            # UNDER
+            if (x, y - 1) in bombcoords:
+                bombs += 1
+            # LEFT
+            if (x - 1, y) in bombcoords:
+                bombs += 1
+            # RIGHT
+            if (x + 1, y) in bombcoords:
+                bombs += 1
+            # TOP LEFT
+            if (x - 1, y + 1) in bombcoords:
+                bombs += 1
+            # TOP RIGHT
+            if (x + 1, y + 1) in bombcoords:
+                bombs += 1
+            # BOT LEFT
+            if (x - 1, y - 1) in bombcoords:
+                bombs += 1
+            # BOT RIGHT
+            if (x + 1, y - 1) in bombcoords:
+                bombs += 1
+            return bombs
+
+        """
+            return : str
+            gives emoji from number
+        """
+        def numToEmoji(i):
+            emoji = ""
+            if i == 0:
+                emoji = empty
+            if i == 1:
+                emoji = one
+            if i == 2:
+                emoji = two
+            if i == 3:
+                emoji = three
+            if i == 4:
+                emoji = four
+            if i == 5:
+                emoji = five
+            if i == 6:
+                emoji = six
+            if i == 7:
+                emoji = seven
+            if i == 8:
+                emoji = eight
+            if i == 9:
+                emoji = bomb
+            return emoji
+
+        """
+            Create gameboard
+        """
+        gameboard = {}
+        for i in range(0, rows):
+            gameboard[i] = [0] * col
+
+        for x in range(0, col):
+
+            for y in range(0, rows):
+
+                if (x, y) not in bombcoords:
+                    gameboard[x][y] = bombsnear(x, y, bombcoords)
+
+                else:
+                    gameboard[x][y] = 9
+
+
+
+
+
+
+        """
+            Now send gameboard with spoilers
+        """
+        line = ""
+        for x in range(0, col):
+            for y in range(0, rows):
+                line += "||"
+                line += numToEmoji(gameboard[x][y])
+                line += "||"
+            line += "\n"
+        await ctx.send(line)
+        print(gameboard)
+
+    @commands.command()
     async def tictactoe(self, ctx, enemy: discord.User, bet=0):
         """Globals"""
         users = await es.get_bank_data(ctx.author.id)

@@ -5,6 +5,7 @@ import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
 from .economy import mycursor, mydb
+from .other import addhalloffame
 
 class collectibles(commands.Cog):
     def __init__(self, client):
@@ -76,15 +77,12 @@ class collectibles(commands.Cog):
             collectibles = json.load(f)
 
         em = discord.Embed(title="Your Collection", colour=discord.Color.teal())
-        collectibles_amount = 0
-        all_collectibles = 0
-        for collectible in collectibles:
-            all_collectibles += 1
+        collectibles_amount, all_collectibles = await self.getcollectiblesamout(ctx.author.id)
         for item in collection:
             name = item["name"]
             name_ = name.capitalize()
             amount = item["amount"]
-            collectibles_amount += 1
+
             for collectible in collectibles:
                 emoji = collectible["emoji"]
                 if name == collectible["name"]:
@@ -94,6 +92,11 @@ class collectibles(commands.Cog):
                 em.add_field(name=f"{name_} {emoji}", value=f"amount: `{amount}`", inline=False)
         em.set_footer(text=f"{collectibles_amount} / {all_collectibles} collectibles")
         await ctx.send(embed=em)
+
+        """ADD HALL OF FAME"""
+        if collectibles_amount == all_collectibles:
+            await addhalloffame(ctx.author.id)
+
 
     @commands.command()
     async def vendingmachine(self, ctx):
@@ -146,6 +149,29 @@ class collectibles(commands.Cog):
             title=f"You threw your 150 <:lemon2:881595266757713920> lemons into a vending machine and got a {name} {emoji}",
             description="Dont ask me how you can throw 150 lemons in there", colour=discord.Color.dark_blue())
         await ctx.send(embed=em)
+
+
+        """ADD HALL OF FAME"""
+        collectibles_amount, all_collectibles = await self.getcollectiblesamout(ctx.author.id)
+        if collectibles_amount == all_collectibles:
+            await addhalloffame(ctx.author.id)
+
+    async def getcollectiblesamout(self, userid):
+        try:
+            collection = await self.getcollection(userid)
+        except:
+            collection = []
+        with open("collectibles.json", "r", encoding="utf-8") as f:
+            collectibles = json.load(f)
+
+        collectibles_amount = 0
+        all_collectibles = 0
+        for collectible in collectibles:
+            all_collectibles += 1
+        for item in collection:
+            collectibles_amount += 1
+
+        return collectibles_amount, all_collectibles
 
 def setup(client):
     client.add_cog(collectibles(client))

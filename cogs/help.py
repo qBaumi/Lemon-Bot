@@ -82,6 +82,7 @@ class help(commands.Cog):
         em.add_field(name="collectibles", value="View all collectibles `lem collectibles *page*`", inline=False)
         em.add_field(name="collection", value="View all your collectibles", inline=False)
         em.add_field(name="vendingmachine", value="Get a random collectible. You can also suggest collectibles (if you have a better name for this command dm qBaumi)", inline=False)
+        em.add_field(name="HallOfFame", value="To join the Hall of Fame, you need to collect **ALL** collectibles <:Gladge:792430592636616714>")
         em.set_footer(text="I know, this page is helpful")
         await ctx.send(embed=em)
 
@@ -122,6 +123,10 @@ class help(commands.Cog):
         em.add_field(
             name="wouldyourather",
             value="Answer a would you rather question!",
+            inline=False)
+        em.add_field(
+            name="minesweeper 💥",
+            value="Our favourite Microsoft Game!",
             inline=False)
         await ctx.send(embed=em)
 

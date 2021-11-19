@@ -482,12 +482,15 @@ class jobs(commands.Cog):
         embed = discord.Embed(color=discord.Color.red())
         embed.add_field(name='Sorry, in terms of health, we have no health', value=error)
         await ctx.send(embed=embed)
+        print(error)
 
     @job.error
     async def on_command_error(self, ctx, error):
         embed = discord.Embed(color=discord.Color.red())
         embed.add_field(name='Sorry, in terms of health, we have no health', value=error)
         await ctx.send(embed=embed)
+        print(error)
+
 
 
 def setup(client):
