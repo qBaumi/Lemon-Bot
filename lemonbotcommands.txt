@@ -20,13 +20,16 @@ lottery
 roulette
 tictactoe
 wouldyourather
+minesweeper
 collectibles
 collection
 vendingmachine
+halloffame
 job list, info, select
 work
 rank
 rankNA
+wordle
 
 pet commands (dont add them yet)
 pet shop, adopt, info, equip, unequip, pets
