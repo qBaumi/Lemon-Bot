@@ -791,7 +791,6 @@ class games(commands.Cog):
     @commands.command(aliases=["wouldyourather", "would you rather"])
     async def wyr(self, ctx):
 
-        user = ctx.author
         with open("wyr.json", "r") as f:
             wyr = json.load(f)
         while True:
@@ -803,6 +802,112 @@ class games(commands.Cog):
         scene2 = scenedict2["scene"]
         await ctx.send(f"{ctx.author.mention}\nWould you rather {scene} or {scene2}")
 
+    """Wordle from soap"""
+    @commands.command()
+    async def wordle(self, ctx):
+        with open("./json/wordle_emojis.json", "r") as f:
+            emojis = json.load(f)
+        empty = "<:empty:941356986476408873>"
+
+        guesses = {0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : ""}
+
+        # Get solution
+        with open("./json/wordlist.json", "r") as f:
+            wordlist = json.load(f)
+        solution = random.choice(wordlist)
+
+        async def howtoplay():
+            await ctx.send("""**Wordle**\n
+**How to play**
+Type a word that has **5 letters**
+It will appear :green_square: if it is at the **right place** of the **solution**
+If it is :yellow_square: the letter is in the word but at a **different spot**
+And if the letter appears :blue_square: it the word **doesn't contain the letter at all**
+You can try **6 times**
+**Good Luck!**\n \n<:rect843:881875152630059019>""")
+
+        # sends messages with fields
+        async def sendembed(guesses):
+            previousguess = "asdfjklö"
+            for i in range(6):
+                if previousguess == "":
+                    return
+                if guesses[i] == "":
+                    await ctx.send(f"{empty} {empty} {empty} {empty} {empty} ")
+                else:
+                    sendstr = ""
+                    for x in range(5):
+                        sendstr += f"{convertToEmoji(guesses[i], x)} "
+                    await ctx.send(sendstr)
+                previousguess = guesses[i]
+        def convertToEmoji(guess, letterindex):
+            return emojis[getLetterColor(guess, letterindex)][guess[letterindex]]
+        def getLetterColor(guess, letterpos):
+            if guess[letterpos] == solution[letterpos]:
+                return "green"
+            if guess[letterpos] in solution:
+                return "yellow"
+            return "blue"
+        def check(message):
+            return message.channel == ctx.channel and message.author == ctx.author
+        async def getguess():
+            try:
+                while True:
+                    msg = await self.client.wait_for('message', timeout=300, check=check)
+
+                    if len(msg.content) != 5:
+                        await ctx.send("**The word must be 5 letters long!**")
+                        #await getguess()
+                    elif not msg.content.isalpha() or " " in msg.content:
+                        await ctx.send("**Only letters are allowed! Nice try MTD :)**")
+                        #await getguess()
+                    elif not msg.content in wordlist:
+                        await ctx.send("**This isn't an allowed word**")
+                    else:
+                        return msg.content
+            except asyncio.TimeoutError:
+                await ctx.send(f"You didn't answer in time")
+                return "0"
+
+        await howtoplay()
+        await sendembed(guesses)
+
+        #loop through the 6 tries
+        for i in range(6):
+            guesses[i] = await getguess()
+            if guesses[i] == "0":
+                return
+            if guesses[i] == solution:
+                await ctx.send("**Congratulations you won!!!**")
+                await ctx.send(f"{convertToEmoji(solution, 0)} {convertToEmoji(solution, 1)} {convertToEmoji(solution, 2)} {convertToEmoji(solution, 3)} {convertToEmoji(solution, 4)} ")
+                return
+            await sendembed(guesses)
+        await ctx.send(f"**Unfortunately you used all your six tries without guessing the solution :(, the solution was**\n**{solution}**")
+
+
+
+    async def getemojidict(self):
+
+        # fetch guild
+        guild = await self.client.fetch_guild(828921143507288064)
+        emojis = guild.emojis
+        print(emojis)
+
+        emojidict = {
+            "green":
+                {},
+            "yellow":
+                {}
+        }
+
+        for emoji in emojis:
+            print(emoji.name)
+            if emoji.name.startswith("green_"):
+                emojidict["green"][emoji.name[len(emoji.name)-1:len(emoji.name)]] = str(emoji)
+            elif emoji.name.startswith("yellow_"):
+                emojidict["yellow"][emoji.name[len(emoji.name)-1:len(emoji.name)]] = str(emoji)
+
+        print(emojidict)
 
 def setup(client):
     client.add_cog(games(client))
