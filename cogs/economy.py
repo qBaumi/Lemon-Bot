@@ -31,16 +31,17 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 globalmainshop = [{"name": "Lemonade", "price": 5, "desc": "Everyone likes lemonade", "money": "lemons", "emoji" : "<:lemonade:882239415601213480>"},
+                {"name": "Treat", "price": 5, "desc": "Give your sweet pet at treat <:Gladge:792430592636616714>", "money": "lemons", "emoji" : "🍖"},
                 {"name": "Cheesecake", "price": 10, "desc": "You can either eat it, or throw it at another person :)", "money": "lemons", "emoji" : "🍰"},
                 {"name": "Flowers", "price": 15, "desc": "Flowers are always a great birthday gift!", "money": "lemons","emoji": "💐"},
                 {"name": "Present", "price": 70, "desc": "Now you can gift every item", "money": "lemons", "emoji": "🎁"},
                 {"name": "Pinata", "price": 150, "desc": "Piñata is great, but be careful with the baseball bat!", "money": "lemons","emoji": "<:pinata:882600329517096971>"},
                 {"name": "ConchShell", "price": 200, "desc": "LONG LIVE THE MAGIC CONCH SHELL", "money": "lemons","emoji": "<:magicconchshell:882556087843307520>"},
-                {"name": "Candy", "price": 10, "desc": "f", "money": "lemons","emoji": "🍬"},
                 {"name": "Mobile", "price": 500, "desc": "Phone, I hope you know what a phone is", "money": "lemons", "emoji" : "☎"},
                 {"name": "Laptop", "price": 1000, "desc": "Browse for cute animals, make memes or play minecraft", "money": "lemons", "emoji": "💻"},
                 {"name": "Safe", "price": 1500, "desc": "Store 5000 precious lemons in it!", "money": "lemons", "emoji": "<:safe:885811224418332692>"},
-                {"name": "Adventcalendar", "price": 10000, "desc": "Open a door and get a price everyday", "money": "lemons", "emoji": "🎅"}]
+                {"name": "Candy", "price": 10, "desc": "f", "money": "lemons","emoji": "🍬"}]
+                #{"name": "Adventcalendar", "price": 10000, "desc": "Open a door and get a price everyday", "money": "lemons", "emoji": "🎅"}
 
 class economy(commands.Cog):
     def __init__(self, client):
@@ -186,7 +187,8 @@ class economy(commands.Cog):
                     desc = self.mainshop[i]["desc"]
                     moneyemoji = self.getmoneyemoji(self.mainshop[i]["money"])
                     price = self.mainshop[i]["price"]
-
+                    print(i)
+                    print(name)
                 except:
                     break
                 if name not in notlisted:

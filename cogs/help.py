@@ -36,7 +36,7 @@ class help(commands.Cog):
             inline=False)
         em.add_field(
             name="daily",
-            value="If you are too lazy for that, you can still get your daily 10 lemons",
+            value="If you are too lazy for that, you can still get your daily 20 lemons",
             inline=False)
         em.add_field(
             name="leaderboard",
@@ -128,6 +128,10 @@ class help(commands.Cog):
             name="minesweeper 💥",
             value="Our favourite Microsoft Game!",
             inline=False)
+        em.add_field(
+            name="wordle",
+            value="try it out!",
+            inline=False)
         await ctx.send(embed=em)
 
 
@@ -147,6 +151,22 @@ class help(commands.Cog):
             name="hug",
             value="<:nemeHug:834605591846584391> `lem hug @ingrioo`",
             inline=False)
+        await ctx.send(embed=em)
+
+    async def loyalty_help_msg(self, ctx):
+        em = discord.Embed(
+            title="Loyalty",
+            colour=discord.Color.from_rgb(254, 254, 51),
+            description="You earn Loyalty Points from events and at the end of the year, the person with the most points gets a custom color role!")
+        em.add_field(
+            name="profile",
+            value="Look up your Loyalty Points",
+            inline=False)
+        em.add_field(
+            name="loyalty",
+            value="See who has the most Loyalty Points!",
+            inline=False)
+
         await ctx.send(embed=em)
 
     async def help_msg(self, ctx):
@@ -179,11 +199,16 @@ class help(commands.Cog):
             value="I wonder whats that 🤔",
             inline=False)
         em.add_field(
+            name="Help Loyalty",
+            value="Check out how the Loyalty Points work",
+            inline=False)
+        em.add_field(
             name="Commands",
             value="Every command that the average chad can access",
             inline=False)
         em.set_footer(text="If you still need help ask qBaumi#1247")
         await ctx.send(embed=em)
+        await ctx.send(f"{ctx.author.mention}\n**Now you can use** `lem help games` **for example!!!**")
 
     @commands.command()
     async def help(self, ctx, topic="help"):
@@ -201,6 +226,9 @@ class help(commands.Cog):
             await self.game_help_msg(ctx)
         elif topic in ["misc", "miscellanous"]:
             await self.misc_help_msg(ctx)
+        elif topic in ["loyalty", "loyal"]:
+            await self.loyalty_help_msg(ctx)
+
         elif topic in ["all", "allcommands", "commands"]:
             await self.allcommands_msg(ctx)
         else:
@@ -303,6 +331,20 @@ class help(commands.Cog):
             name="wouldyourather",
             value="Answer a would you rather question!",
             inline=False)
+
+        page2 = discord.Embed(
+            title="Page 2",
+            colour=discord.Color.from_rgb(254, 254, 51))
+
+        page2.add_field(
+            name="profile",
+            value="Look up your Loyalty Points",
+            inline=False)
+        page2.add_field(
+            name="loyalty",
+            value="See who has the most Loyalty Points!",
+            inline=False)
         await ctx.send(embed=em)
+        await ctx.send(embed=page2)
 def setup(client):
     client.add_cog(help(client))

@@ -90,7 +90,9 @@ class jobs(commands.Cog):
         if arg2 == 'None':
             if arg1 == 'list' or arg1 == 'List':
                 embed = discord.Embed(title='Open Jobs:')
+                print("HEERERE")
                 for job in self.joblist:
+                    print(job)
                     name = job['Name']
                     desc = job['Beschreibung']
                     lvl = job['lvl']

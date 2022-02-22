@@ -6,7 +6,7 @@
             "desc": "Get a Mystery Skin in League of Legends",
             "money": "golden lemons",
             "emoji": "<a:Giveaways:881606847096844338>",
-            "stock": 1
+            "stock": 5
         },
         {
             "name": "NitroClassic",
@@ -14,7 +14,7 @@
             "desc": "1 Month Nitro Classic",
             "money": "golden lemons",
             "emoji": "<:13627124:884424774502219776>",
-            "stock": 1
+            "stock": 3
         },
         {
             "name": "DiscordNitro",
@@ -22,7 +22,7 @@
             "desc": "1 Month Discord Nitro",
             "money": "golden lemons",
             "emoji": "<:13627124:884424774502219776>",
-            "stock": 1
+            "stock": 2
         },
         {
             "name": "Tier1sub",
@@ -30,7 +30,7 @@
             "desc": "Nemesis Tier 1 Sub",
             "money": "golden lemons",
             "emoji": "<:lemon2:881595266757713920>",
-            "stock": 0
+            "stock": 5
         },
         {
             "name": "MysterySkin975RP",

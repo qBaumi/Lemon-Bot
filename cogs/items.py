@@ -10,6 +10,7 @@ import discord
 from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 from cogs.economy import globalmainshop
+import cogs.pets
 
 
 """Globals"""
@@ -615,7 +616,6 @@ class items(commands.Cog):
                 await es.del_item(ctx.author.id, item)
 
                 # IMPORTANT THE WITH OPEN BEFORE THE UPDATE OR IT WILL OVERWRITE THIS STUPID BAL AND BUYTHIS
-
                 await es.add_item("candy", user.id, candy)
 
 
@@ -649,6 +649,7 @@ class items(commands.Cog):
                     await ctx.send(
                         f"{ctx.author.mention}\n{msg.content} is not a user or has never used this bot before. `Answer with @friend if you just typed their name`")
                     return
+        """
         if item == "adventcalendar":
             date = datetime.date.today()
             date = str(date)
@@ -685,9 +686,9 @@ class items(commands.Cog):
                       {"amount" : 10, "moneyform" : "pocket"},
                       {"amount" : 10, "moneyform" : "pocket"}]
 
-            """
-                Here comes the part to check if user can still claim the prize
-            """
+            
+            Here comes the part to check if user can still claim the prize
+            
             sql = f"SELECT * FROM adventcalendar WHERE id = '{ctx.author.id}' AND day = {day}"
             mycursor.execute(sql)
             data = mycursor.fetchall()
@@ -708,10 +709,16 @@ class items(commands.Cog):
                 money = "golden lemons"
                 moneyemoji = "<:GoldenLemon:882634893039923290>"
             em = discord.Embed(title=f"You opened the door of the {day}th december and you got `{prizes[i]['amount']}` {moneyemoji} {money}!", colour=discord.Color.teal(), description="Have a great day!")
-            await ctx.send(embed=em)
+            await ctx.send(embed=em)"""
+        if item == "treat":
+            stupidpetsclass = cogs.pets.pets(self.client)
+            await cogs.pets.pets.treat_helper(stupidpetsclass, ctx)
+            await es.del_item(ctx.author.id, item)
+            stupidpetsclass = None
         else:
             await ctx.send(f"{ctx.author.mention}\nThat item does not exist or has no usage yet")
 
 
 def setup(client):
     client.add_cog(items(client))
+

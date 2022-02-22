@@ -791,7 +791,7 @@ class games(commands.Cog):
     @commands.command(aliases=["wouldyourather", "would you rather"])
     async def wyr(self, ctx):
 
-        with open("wyr.json", "r") as f:
+        with open("./json/wyr.json", "r") as f:
             wyr = json.load(f)
         while True:
             scenedict = random.choice(wyr)
@@ -854,7 +854,7 @@ You can try **6 times**
             try:
                 while True:
                     msg = await self.client.wait_for('message', timeout=300, check=check)
-
+                    msg.content = msg.content.lower()
                     if len(msg.content) != 5:
                         await ctx.send("**The word must be 5 letters long!**")
                         #await getguess()

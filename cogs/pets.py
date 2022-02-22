@@ -597,6 +597,9 @@ class pets(commands.Cog):
         self.updatestat(id, "xp", newxp)
         return 0
 
+
+        return
+
     async def ch_shop(self):
         await self.client.wait_until_ready()
         while not self.client.is_closed():
@@ -663,10 +666,18 @@ class pets(commands.Cog):
             await self.getminustats("petslot3")
             await asyncio.sleep(60)
 
+    async def stayconnected(self):
+        await self.client.wait_until_ready()
+        while not self.client.is_closed():
+            mycursor.execute(f"INSERT INTO connect(counter) VALUES(1);")
+            mydb.commit()
+            await asyncio.sleep(3600)
+
     @commands.Cog.listener()
     async def on_ready(self):
         self.client.loop.create_task(self.ch_stats())
         self.client.loop.create_task(self.ch_shop())
+        self.client.loop.create_task(self.stayconnected())
 
     # Setup a new json with asmolpets and return it per function because of....problems
     async def allpets(self):
@@ -675,7 +686,28 @@ class pets(commands.Cog):
             allpets = json.load(f)
         return allpets
 
+    @staticmethod
+    async def treat_helper(self, ctx):
+        pet = await self.userpet(ctx.author.id, "equippedpet")
+        if bool(pet) == False:
+            await ctx.send(f"{ctx.author.mention}\nYou dont have a pet equipped!")
+            return
+        stats = await self.getstats(ctx.author.id)
+        if stats["food"] > 80:
+            await ctx.send(f"{ctx.author.mention}\n{pet['name']} isn't hungry! Try again later")
+            return
+        users = await es.get_bank_data(ctx.author.id)
+        hunger = int(stats["food"]) + 5
+        self.updatestat(ctx.author.id, "food", hunger)
+        addxp = await self.addxp(ctx.author.id, 5)
+        if addxp == 1:
+            embed = discord.Embed(title=f'{pet["name"]} leveled up!', colour=discord.Color.teal(),
+                                  description=f"{pet['name']} now has:\n❤{pet['hp'] + 3}\n🗡️{pet['attack'] + 3}\n💨{pet['speed'] + 3}")
+            await ctx.send(f"{ctx.author.mention}\n", embed=embed)
 
+        embed = discord.Embed(title=f"You gave {pet['name']} a treat!", colour=discord.Color.teal())
+        await ctx.send(f"{ctx.author.mention}\n", embed=embed)
+        await ctx.send(f"<a:nemerub:853296247606476800>")
 
 
 

@@ -7,6 +7,7 @@ from discord import Emoji
 client = commands.Bot(command_prefix=['lem ', 'Lem ', 'LEM ', 'LEm ', 'lEm ', 'lEM '], case_insensitive=True)
 client.remove_command("help")
 # Current permission integer 173949705280
+# NEW ONE WITH MANAGE MESSAGES 414534990912
 
 
 # Print a message in the console when he works properly
@@ -26,6 +27,10 @@ client.load_extension("cogs.items")
 client.load_extension("cogs.jobs")
 client.load_extension("cogs.LeagueAPI")
 client.load_extension("cogs.pets")
+client.load_extension("cogs.other")
+client.load_extension("cogs.loyalty")
+#client.load_extension("cogs.googlesheets")
+
 
 # About section
 @client.command()

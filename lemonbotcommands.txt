@@ -34,3 +34,7 @@ wordle
 pet commands (dont add them yet)
 pet shop, adopt, info, equip, unequip, pets
 pets (the same as pet pets)
+
+profile
+loyalty
+reward(only for mods/admins)

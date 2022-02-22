@@ -41,6 +41,28 @@ class admincommands(commands.Cog):
         print(user.roles)
         role2 = discord.utils.get(user.guild.roles, id=825532026462797835)
 
+        async def check_account(userid):
+            es.mycursor.execute("SELECT id FROM users")
+
+            ids = es.mycursor.fetchall()
+
+            for id in ids:
+                ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
+                if str(userid) == id[0]:
+                    return True
+            return False
+
+        if await check_account(winner.id) == False:
+            # here startup
+            await es.open_account(winner)
+            em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
+                               description=f"Let me introduce you to our little friend Lemon right here.")
+            em.add_field(name="Welcome you can find out more about me with <lem about>",
+                         value="Congrats! You already found the *startup command*. \n"
+                               "Next is the `lem lemons` or `lem balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `lem help` for more information")
+            await ctx.send(f"{winner.mention}", embed=em)
+            await es.update_balance(winner, 50)
+
         users = await es.get_bank_data(winner.id)
         if moneyform == "lemons":
             mode = "pocket"
@@ -116,6 +138,23 @@ class admincommands(commands.Cog):
         await ctx.send(f"{ctx.author.mention}\nYou need to be an Admin to use this command")
 
     @deleteitem.error
+    async def on_command_error(self, ctx, error):
+        await ctx.send(
+            f"{ctx.author.mention}\nYou need to be an Admin, in order to use this command\nIf you are a Mod, please use **lem moddeleteitem** instead")
+        await ctx.send(error)
+
+    @commands.command()
+    @commands.has_any_role("Admins", "HM", "Developer")
+    async def presentlist(self, ctx):
+        with open("./json/present.json", "r", encoding="utf-8") as f:
+            ids = json.load(f)
+        list = ""
+        for id in ids:
+            user = await self.client.fetch_user(id)
+            list += str(user) + "\n"
+        await ctx.send(list)
+
+    @presentlist.error
     async def on_command_error(self, ctx, error):
         await ctx.send(
             f"{ctx.author.mention}\nYou need to be an Admin, in order to use this command\nIf you are a Mod, please use **lem moddeleteitem** instead")
