@@ -1,11 +1,8 @@
 add pets
 fix present hope its fixed for now
-sell mysteryskin (admin command)
-mit delitem
 
 fight
 walk find items
-leckerlie maybe
 
 make shop look nice
 quests
@@ -41,5 +38,4 @@ voice line guessing game
 
 schiffe versenken
 black jack
-minesweeper
 schach
