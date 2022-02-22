@@ -8,13 +8,9 @@ import discord
 from discord import Colour
 from discord.ext import commands
 import mysql.connector
+from config import password, ip
 
 
-
-with open("password.txt", "r") as f:
-    password = f.read()
-with open("IP.txt", "r") as f:
-    ip = f.read()
 
 """
     W3SCHOOLS MYSQL CONNECTOR FOR MOR INFO

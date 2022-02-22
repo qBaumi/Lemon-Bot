@@ -7,11 +7,8 @@ import mysql.connector
 import random, asyncio, json
 from .economy import mycursor, mydb
 import cogs.essentialfunctions as es
+from config import ip, password
 
-with open("password.txt", "r") as f:
-    password = f.read()
-with open("IP.txt", "r") as f:
-    ip = f.read()
 
 
 

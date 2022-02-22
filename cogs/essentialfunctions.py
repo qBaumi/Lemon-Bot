@@ -1,10 +1,7 @@
 import mysql.connector, discord, json
 from .economy import mycursor, mydb
 
-with open("password.txt", "r") as f:
-    password = f.read()
-with open("IP.txt", "r") as f:
-    ip = f.read()
+
 
 
 

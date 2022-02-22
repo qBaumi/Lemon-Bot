@@ -2,13 +2,7 @@ import asyncio
 import cogs.essentialfunctions as es
 from discord.ext import commands
 import random
-
-
-
-with open("password.txt", "r") as f:
-    password = f.read()
-with open("IP.txt", "r") as f:
-    ip = f.read()
+from config import ip, password
 
 
 
