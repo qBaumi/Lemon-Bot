@@ -20,7 +20,7 @@ class collectibles(commands.Cog):
         page = int(page)
         em = discord.Embed(title="All collectibles", colour=discord.Color.dark_teal())
 
-        with open("collectibles.json", "r", encoding="utf-8") as f:
+        with open("./json/collectibles.json", "r", encoding="utf-8") as f:
             collectibles = json.load(f)
 
         """
@@ -73,7 +73,7 @@ class collectibles(commands.Cog):
             collection = await self.getcollection(ctx.author.id)
         except:
             collection = []
-        with open("collectibles.json", "r", encoding="utf-8") as f:
+        with open("./json/collectibles.json", "r", encoding="utf-8") as f:
             collectibles = json.load(f)
 
         em = discord.Embed(title="Your Collection", colour=discord.Color.teal())
@@ -112,7 +112,7 @@ class collectibles(commands.Cog):
 
 
 
-        with open("collectibles.json", "r", encoding="utf-8") as f:
+        with open("./json/collectibles.json", "r", encoding="utf-8") as f:
             collectibles = json.load(f)
 
         collectible = random.choice(collectibles)
@@ -161,7 +161,7 @@ class collectibles(commands.Cog):
             collection = await self.getcollection(userid)
         except:
             collection = []
-        with open("collectibles.json", "r", encoding="utf-8") as f:
+        with open("./json/collectibles.json", "r", encoding="utf-8") as f:
             collectibles = json.load(f)
 
         collectibles_amount = 0

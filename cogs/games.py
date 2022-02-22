@@ -155,7 +155,7 @@ class games(commands.Cog):
                 if i == number:
                     break
 
-            img = Image.open("roulette2.png")
+            img = Image.open("./img/roulette/roulette2.png")
             im2 = img.convert('RGBA')
             # rotated image
             rot = im2.rotate(360 / 37 * index)
@@ -170,13 +170,13 @@ class games(commands.Cog):
 
             draw = ImageDraw.Draw(out)
             draw.ellipse((430, 215, 460, 245), fill=(255, 255, 255))
-            out.convert(img.mode).save('roulettesaved.png')
+            out.convert(img.mode).save('./img/roulette/roulettesaved.png')
             # img.save("roulettesaved.png")
 
             if iswon == True:
                 await es.update_balance(user, bet * 2 * timeswin)
 
-            file = discord.File("roulettesaved.png")
+            file = discord.File("./img/roulette/roulettesaved.png")
             em = discord.Embed(colour=discord.Color.gold(),
                                title=f"{user.name} {line} {bet * 2 * timeswin - bet} lemons!",
                                description=f"The ball landed on the {number}!")

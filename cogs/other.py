@@ -23,7 +23,7 @@ class other(commands.Cog):
         em = discord.Embed(colour=discord.Color.dark_purple(), title="Hall of Fame", description="only true and loyal legends get there...")
         for userid in users:
             user = await self.client.fetch_user(userid)
-            em.add_field(name=user.name, value="\u200b")
+            em.add_field(name=user.name, value="\u200b", inline=False)
         await ctx.send(embed=em)
 
     """
