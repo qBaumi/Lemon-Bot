@@ -17,3 +17,7 @@
 -added treat_helper in pets
 -added item treat
 -fixed last item in shop not showing
+--------------20.02.2022 cleaning---------
+put everything into config.py
+deleted some stuff
+added gitignore

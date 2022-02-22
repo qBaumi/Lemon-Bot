@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from riotwatcher import LolWatcher, ApiError
+from config import api_key
 
 class LeagueAPI(commands.Cog):
     def __init__(self, client):
@@ -8,8 +9,7 @@ class LeagueAPI(commands.Cog):
 
     @commands.command()
     async def rank(self, ctx, *, summonername):
-        with open('api-token.txt', 'r') as file:
-            api_key = file.read()
+
         watcher = LolWatcher(api_key)
         my_region = 'euw1'
 
