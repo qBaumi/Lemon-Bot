@@ -2,6 +2,7 @@ import random
 import discord
 from discord.ext import commands
 from discord import Emoji
+from config import token
 
 # Setup the clinet with the prefix and case_insensitive (write BiG or smAll commands) and remove the default help command to make a custom one
 client = commands.Bot(command_prefix=['lem ', 'Lem ', 'LEM ', 'LEm ', 'lEm ', 'lEM '], case_insensitive=True)
@@ -64,6 +65,5 @@ async def hug(ctx, user):
 
 
 
-with open('token.txt', 'r') as file:
-    token = file.read()
+
 client.run(token)
