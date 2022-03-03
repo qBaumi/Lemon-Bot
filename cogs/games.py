@@ -815,6 +815,7 @@ class games(commands.Cog):
         with open("./json/wordlist.json", "r") as f:
             wordlist = json.load(f)
         solution = random.choice(wordlist)
+        print(solution)
 
         async def howtoplay():
             await ctx.send("""**Wordle**\n
@@ -868,6 +869,19 @@ You can try **6 times**
             except asyncio.TimeoutError:
                 await ctx.send(f"You didn't answer in time")
                 return "0"
+        def win():
+            try:
+                print("update")
+                es.mycursor.execute(f"SELECT wins FROM wordle WHERE id = '{ctx.author.id}'")
+                data = es.mycursor.fetchall()
+                prevpoints = int(data[0][0])
+                sql = f"UPDATE wordle SET wins = {prevpoints + 1} WHERE id = '{ctx.author.id}'"
+            except:
+                sql = f"INSERT INTO wordle (id, wins) VALUES ('{ctx.author.id}', 1)"
+                print("insert")
+            es.mycursor.execute(sql)
+            es.mydb.commit()
+
 
         await howtoplay()
         await sendembed(guesses)
@@ -880,6 +894,7 @@ You can try **6 times**
             if guesses[i] == solution:
                 await ctx.send("**Congratulations you won!!!**")
                 await ctx.send(f"{convertToEmoji(solution, 0)} {convertToEmoji(solution, 1)} {convertToEmoji(solution, 2)} {convertToEmoji(solution, 3)} {convertToEmoji(solution, 4)} ")
+                win()
                 return
             await sendembed(guesses)
         await ctx.send(f"**Unfortunately you used all your six tries without guessing the solution :(, the solution was**\n**{solution}**")
@@ -908,6 +923,26 @@ You can try **6 times**
                 emojidict["yellow"][emoji.name[len(emoji.name)-1:len(emoji.name)]] = str(emoji)
 
         print(emojidict)
+
+    @commands.command(name="wordleaderboard", description="Leaderboard for loyalty points", aliases=["wordleleaderboard"])
+    async def wordleaderboard(self, ctx, x=10):
+        """
+        list of tuples
+        user = (user.id, points)
+        data = [(user.id, points), (user.id, points), (user.id, points)...]
+        """
+        es.mycursor.execute(f"SELECT * FROM wordle ORDER BY wins LIMIT 10")
+        data = es.mycursor.fetchall()
+        print(data)
+        print(data[0])
+
+        em = discord.Embed(colour=discord.Color.teal(), title="Wordle Leaderboard")
+        for user in data:
+            member = await self.client.fetch_user(user[0])
+            em.add_field(name=str(member), value=f"{user[1]} Wins", inline=False)
+        await ctx.send(embed=em)
+
+
 
 def setup(client):
     client.add_cog(games(client))
