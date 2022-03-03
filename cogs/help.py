@@ -132,6 +132,10 @@ class help(commands.Cog):
             name="wordle",
             value="try it out!",
             inline=False)
+        em.add_field(
+            name="wordleaderboard",
+            value="A leaderboard for the master minds of Wordle",
+            inline=False)
         await ctx.send(embed=em)
 
 
@@ -343,6 +347,10 @@ class help(commands.Cog):
         page2.add_field(
             name="loyalty",
             value="See who has the most Loyalty Points!",
+            inline=False)
+        page2.add_field(
+            name="wordleaderboard",
+            value="A leaderboard for the master minds of Wordle",
             inline=False)
         await ctx.send(embed=em)
         await ctx.send(embed=page2)

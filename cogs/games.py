@@ -881,6 +881,7 @@ You can try **6 times**
                 print("insert")
             es.mycursor.execute(sql)
             es.mydb.commit()
+            return prevpoints + 1
 
 
         await howtoplay()
@@ -894,7 +895,8 @@ You can try **6 times**
             if guesses[i] == solution:
                 await ctx.send("**Congratulations you won!!!**")
                 await ctx.send(f"{convertToEmoji(solution, 0)} {convertToEmoji(solution, 1)} {convertToEmoji(solution, 2)} {convertToEmoji(solution, 3)} {convertToEmoji(solution, 4)} ")
-                win()
+                wins = win()
+                await ctx.send(f"**You now have {wins} wins in total!**")
                 return
             await sendembed(guesses)
         await ctx.send(f"**Unfortunately you used all your six tries without guessing the solution :(, the solution was**\n**{solution}**")
@@ -924,7 +926,7 @@ You can try **6 times**
 
         print(emojidict)
 
-    @commands.command(name="wordleaderboard", description="Leaderboard for loyalty points", aliases=["wordleleaderboard"])
+    @commands.command(name="wordleaderboard", description="Leaderboard for Wordle", aliases=["wordleleaderboard"])
     async def wordleaderboard(self, ctx, x=10):
         """
         list of tuples
