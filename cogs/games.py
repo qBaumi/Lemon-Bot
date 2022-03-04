@@ -933,7 +933,7 @@ You can try **6 times**
         user = (user.id, points)
         data = [(user.id, points), (user.id, points), (user.id, points)...]
         """
-        es.mycursor.execute(f"SELECT * FROM wordle ORDER BY wins LIMIT 10")
+        es.mycursor.execute(f"SELECT * FROM wordle ORDER BY wins DESC LIMIT 10")
         data = es.mycursor.fetchall()
         print(data)
         print(data[0])
