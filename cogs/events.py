@@ -2,9 +2,6 @@ import asyncio
 import cogs.essentialfunctions as es
 from discord.ext import commands
 import random
-from config import ip, password
-
-
 
 
 class events(commands.Cog):

@@ -8,20 +8,21 @@ import discord
 from discord import Colour
 from discord.ext import commands
 import mysql.connector
-from config import password, ip
+from config import dbargs
 
 
 
 """
     W3SCHOOLS MYSQL CONNECTOR FOR MOR INFO
 """
+
 mydb = mysql.connector.connect(
-  host=ip,
-  user="myserver",
-  password=password,
-  port="3306",
-  database = "lemonbot",
-  auth_plugin="mysql_native_password"
+  host=dbargs["host"],
+  user=dbargs["user"],
+  password=dbargs["password"],
+  port=dbargs["port"],
+  database = dbargs["database"],
+  auth_plugin=dbargs["auth_plugin"]
 
 )
 mycursor = mydb.cursor()
@@ -72,7 +73,7 @@ class economy(commands.Cog):
         # Now if an account wasn't opened the code comes here and sends the embed
         em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
                            description=f"Let me introduce you to our little friend Lemon right here.")
-        em.add_field(name="Welcome you can find out more about me with <lem about>",
+        em.add_field(name="Welcome you can find out more about me with `lem about`",
                      value="Congrats! You already found the *startup command*. \n"
                            "Next is the `lem lemons` or `lem balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `lem help` for more information")
         await ctx.send(embed=em)
@@ -340,7 +341,7 @@ class economy(commands.Cog):
             name = spitem["name"]
             if item.lower() == name.lower():
                 specialitems["MysterySkin"][index]["stock"] = specialitems["MysterySkin"][index]["stock"] - amount
-                with open("spItems.json", "w") as f:
+                with open("./json/spItems.json", "w") as f:
                     json.dump(specialitems, f, indent=4)
                 await ctx.send(f"{user.mention}\nto claim your Item, please click on this link and open a ticket!\nhttps://discord.com/channels/598303095352459305/860863662902083604/881771382185279508")
                 break
@@ -634,19 +635,17 @@ class economy(commands.Cog):
     @commands.command()
     async def leaderboard(self, ctx, x=10):
         def users_list():
-            mysql = "SELECT users.id, pocket, safe.money, (pocket + IFNULL(safe.money, 0)) as total FROM `users` LEFT JOIN `safe` ON safe.id = users.id ORDER BY `total` DESC "
+            mysql = f"SELECT users.id, pocket, safe.money, (pocket + IFNULL(safe.money, 0)) as total FROM `users` LEFT JOIN `safe` ON safe.id = users.id ORDER BY `total` DESC LIMIT {x}"
             mycursor.execute(mysql)
             userlist = []
             for guy in mycursor.fetchall():
                 dict = {"id" : guy[0], "total" : guy[3]}
                 userlist.append(dict)
             return userlist
-        def get_top_n(self, n):
-            # Use a custom function (key) to sort
-            return sorted(users_list(), key=operator.itemgetter("total"), reverse=True)[:n]
+
         em = discord.Embed(title=f"Top {x} richest people", color=discord.Color.dark_gold())
         index = 1
-        for user in get_top_n(self, x):
+        for user in users_list():
             member = await self.client.fetch_user(user["id"])
             em.add_field(name=f"{index}. {member.name}", value=f"`{int(user['total'])}` lemons <:lemon2:881595266757713920>", inline=False)
             index+=1
@@ -663,8 +662,6 @@ class economy(commands.Cog):
         if userid == ctx.author:
             await ctx.send(f"{ctx.author.mention}\nYou cant pay yourself money...well technically, but not anymore!")
             return
-
-
         pay_amount = int(pay_amount)
         if pay_amount > 0:
             user = ctx.author

@@ -3,11 +3,6 @@ from .economy import mycursor, mydb
 
 
 
-
-
-
-
-
 """
 OPENS AN ACCOUNT AND PUTS USER IN DATABASE FOR THE FIRST TIME
 """
@@ -57,7 +52,7 @@ return JSON file
 """
 async def get_item_data():
     # open the json file in read mode to load users and return them
-    with open("spItems.json", "r", encoding="utf-8") as f:
+    with open("./json/spItems.json", "r", encoding="utf-8") as f:
         specialitems = json.load(f)
     return specialitems
 

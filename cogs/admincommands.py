@@ -36,10 +36,6 @@ class admincommands(commands.Cog):
     @commands.has_any_role("Admins", "HM", "Developer")
     async def gift(self, ctx, winner: discord.User, money, *, moneyform="lemons"):
         user = ctx.author
-        role = discord.utils.get(user.guild.roles, id=598307015181467650)
-        print(role)
-        print(user.roles)
-        role2 = discord.utils.get(user.guild.roles, id=825532026462797835)
 
         async def check_account(userid):
             es.mycursor.execute("SELECT id FROM users")
@@ -62,8 +58,6 @@ class admincommands(commands.Cog):
                                "Next is the `lem lemons` or `lem balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `lem help` for more information")
             await ctx.send(f"{winner.mention}", embed=em)
             await es.update_balance(winner, 50)
-
-        users = await es.get_bank_data(winner.id)
         if moneyform == "lemons":
             mode = "pocket"
         else:
@@ -78,7 +72,6 @@ class admincommands(commands.Cog):
         if amount == 0:
             await ctx.send("You didnt specify the amount `lem refill Mysteryskin 10` for example")
             return
-        user = ctx.author
         specialitems = await es.get_item_data()
         index = -1
         exists = 0
@@ -102,12 +95,11 @@ class admincommands(commands.Cog):
             return
         specialitems["MysterySkin"][index]["stock"] = specialitems["MysterySkin"][index]["stock"] + int(amount)
         instock = specialitems["MysterySkin"][index]["stock"]
-        with open("spItems.json", "w") as f:
+        with open("./json/spItems.json", "w") as f:
             json.dump(specialitems, f, indent=4)
         await ctx.send(f"There are now {instock} {name}'s in stock")
 
     """GETS ITEM AMOUNTS FOR A SPECIFIC ITEM AND RETURNS LIST FROM USERS ONLY FOR ADMINS"""
-
     @commands.has_any_role("Admins", "Developer", "HM")
     @commands.command()
     async def listitem(self, ctx, item="None"):

@@ -1,13 +1,9 @@
 import datetime
 import discord
-import mysql
-from discord import Colour
 from discord.ext import commands
-import mysql.connector
 import random, asyncio, json
 from .economy import mycursor, mydb
 import cogs.essentialfunctions as es
-from config import ip, password
 
 
 
@@ -97,7 +93,7 @@ class pets(commands.Cog):
             await es.update_balance(user, -price)
             await ctx.send(f"Congratulations, you officially adopted {name}! You can view your pet now with `lem pet info` or `lem pet view`")
             pet["stock"] = pet["stock"] - 1
-            with open("allpets.json", "w") as f:
+            with open("./json/allpets.json", "w") as f:
                 json.dump(pets, f, indent=4)
             return
 
@@ -139,7 +135,7 @@ class pets(commands.Cog):
                 return
             mycursor.execute(f"DELETE FROM equippedpet WHERE id = {ctx.author.id}")
             pet["stock"] = pet["stock"] + 1
-            with open("allpets.json", "w") as f:
+            with open("./json/allpets.json", "w") as f:
                 json.dump(pets, f, indent=4)
             await es.update_balance(ctx.author, int(price/2))
             await ctx.send(f"{user.mention}\nYou sold your {name} to a man in a dark alley")
@@ -634,7 +630,7 @@ class pets(commands.Cog):
         for pet in pets:
             if pet["name"] in shop:
                 pet["stock"] = 1
-        with open("allpets.json", "w") as f:
+        with open("./json/allpets.json", "w") as f:
             json.dump(pets, f, indent=4)
         return
 
@@ -679,7 +675,7 @@ class pets(commands.Cog):
     # Setup a new json with asmolpets and return it per function because of....problems
     async def allpets(self):
         # open the json file in read mode to load users and return them
-        with open("allpets.json", "r") as f:
+        with open("./json/allpets.json", "r") as f:
             allpets = json.load(f)
         return allpets
 
