@@ -5,3 +5,5 @@ config.py
 /googlesheets/keys.json
 /googlesheets/spreatsheetid.txt
 /img/roulette/roulettesaved.png
+/cogs/__pycache__
+/__pycache__
