@@ -457,7 +457,7 @@ class pets(commands.Cog):
         if addxp == 1:
             embed = discord.Embed(title=f'{pet["name"]} leveled up!', colour=discord.Color.teal(), description=f"{pet['name']} now has:\n❤{pet['hp']+3}\n🗡️{pet['attack']+3}\n💨{pet['speed']+3}")
             await ctx.send(f"{ctx.author.mention}\n", embed=embed)
-        foodlist = ["peas", "a cheesecake", "tacos", "pizza", "chicken with pasta", "chimken with rice", "pasta with tomato sauce", "pizza selam aleykum", "fish", "canned food", "dried animal food", "vegetables", "fruits", "sushi", "thunfish", "carrots"]
+        foodlist = ["peas", "a cheesecake", "tacos", "pizza", "chicken with pasta", "chimken with rice", "pasta with tomato sauce", "pizza selam aleykum", "fish", "canned food", "dried animal food", "vegetables", "fruits", "sushi", "tuna", "carrots"]
         realshi = random.choice(foodlist)
         petreaction = ["they liked it", "they didnt like it", "they didnt eat it", "they threw it up later", "they said guß for food", "they want more!"]
         line = random.choice(petreaction)
