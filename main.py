@@ -16,7 +16,8 @@ client.remove_command("help")
 async def on_ready():
     print('Where am I?')
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="When life gives you lemons, make lemonade!"))
-
+    #channel = client.get_channel(720069988324474971)
+    #await channel.send("I am much better than this turtle <:Evilge:949646545832271934>")
 
 client.load_extension("cogs.admincommands")
 client.load_extension("cogs.collectibles")
