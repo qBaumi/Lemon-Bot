@@ -49,6 +49,19 @@ class other(commands.Cog):
         em = discord.Embed(title="Merry Christmas", description="You claimed your 100 golden lemons!")
         await ctx.send(f"{ctx.author.mention}\n", embed=em)
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author == message.author.bot:
+            return
+        if message.author.id == 881476780765093939:
+            return
+        if "fair enough" in message.content:
+            await message.reply("*fer enough")
+            return
+        if "fair" in message.content:
+            await message.reply("~~fair~~\n*fer")
+            return
+
 async def addhalloffame(userid):
     with open("./json/halloffame.json", "r") as f:
         users = json.load(f)
