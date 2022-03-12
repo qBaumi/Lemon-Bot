@@ -62,6 +62,16 @@ class other(commands.Cog):
             await message.reply("~~fair~~\n*fer")
             return
 
+    @commands.command()
+    async def game(self, ctx):
+        print("test")
+        invite = await ctx.author.voice.channel.create_invite(
+            target_application_id=902271654783242291,
+            target_type=discord.InviteTarget.embedded_application
+        )
+        print(invite)
+        await ctx.send(invite)
+
 async def addhalloffame(userid):
     with open("./json/halloffame.json", "r") as f:
         users = json.load(f)
