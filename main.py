@@ -11,8 +11,7 @@ intents.message_content = True
 # Setup the clinet with the prefix and case_insensitive (write BiG or smAll commands) and remove the default help command to make a custom one
 client = commands.Bot(command_prefix=['lem ', 'Lem ', 'LEM ', 'LEm ', 'lEm ', 'lEM '], case_insensitive=True, intents=intents)
 client.remove_command("help")
-# Current permission integer 173949705280
-# NEW ONE WITH MANAGE MESSAGES 414534990912
+# Current permission integer 414501436481
 
 
 # Print a message in the console when he works properly
