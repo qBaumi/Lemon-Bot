@@ -8,10 +8,12 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 
-# Setup the clinet with the prefix and case_insensitive (write BiG or smAll commands) and remove the default help command to make a custom one
+
 client = commands.Bot(command_prefix=['lem ', 'Lem ', 'LEM ', 'LEm ', 'lEm ', 'lEM '], case_insensitive=True, intents=intents)
 client.remove_command("help")
 # Current permission integer 414501436481
+
+guild = discord.Object(id=598303095352459305)
 
 
 # Print a message in the console when he works properly
@@ -21,6 +23,7 @@ async def on_ready():
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="When life gives you lemons, make lemonade!"))
     #channel = client.get_channel(720069988324474971)
     #await channel.send("I am much better than this turtle <:Evilge:949646545832271934>")
+    await client.tree.sync(guild=guild)
 
 client.load_extension("cogs.admincommands")
 client.load_extension("cogs.collectibles")
@@ -35,7 +38,6 @@ client.load_extension("cogs.pets")
 client.load_extension("cogs.other")
 client.load_extension("cogs.loyalty")
 #client.load_extension("cogs.googlesheets")
-
 
 # About section
 @client.command()
@@ -63,6 +65,15 @@ async def hug(ctx, user):
     await ctx.send(hug)
 
 
+
+@client.tree.command(guild=guild, name="game", description="Start a discord voice channel activity!")
+async def game(interaction : discord.Interaction):
+    invite = await interaction.user.voice.channel.create_invite(
+        target_application_id=891001866073296967,
+        target_type=discord.InviteTarget.embedded_application
+    )
+    print(invite)
+    await interaction.response.send_message(invite)
 
 
 
