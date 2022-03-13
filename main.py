@@ -3,6 +3,8 @@ import discord
 from discord.ext import commands
 from discord import Emoji
 from config import token
+from discord.app_commands import Choice
+from discord import app_commands
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -65,29 +67,30 @@ async def hug(ctx, user):
     await ctx.send(hug)
 
 
-from discord.app_commands import Choice
-@app_commands.describe(game='fruits to choose from')
-@app_commands.choices(fruits=[
-    Choice(name='Watch Together', value=880218394199220334),
-    Choice(name='Poker Night', value=755827207812677713),
-    Choice(name='Betrayal.io', value=773336526917861400),
-    Choice(name='Fishington.io', value=814288819477020702),
-    Choice(name='Chess In The Park', value=832012774040141894),
-    Choice(name='Sketchy Artist', value=879864070101172255),
-    Choice(name='Awkword', value=879863881349087252),
-    Choice(name='Doodle Crew', value=878067389634314250),
-    Choice(name='Sketch Heads', value=902271654783242291),
-    Choice(name='Letter League', value=879863686565621790),
-    Choice(name='Word Snacks', value=879863976006127627),
-    Choice(name='SpellCast', value=852509694341283871),
-    Choice(name='Checkers In The Park', value=832013003968348200),
-    Choice(name='Blazing 8s', value=832025144389533716),
-    Choice(name='Putt Party', value=945737671223947305)
+
+@app_commands.describe(game='The activity you want to start')
+@app_commands.choices(game=[
+    Choice(name='Watch Together', value="880218394199220334"),
+    Choice(name='Poker Night', value="755827207812677713"),
+    Choice(name='Betrayal.io', value="773336526917861400"),
+    Choice(name='Fishington.io', value="814288819477020702"),
+    Choice(name='Chess In The Park', value="832012774040141894"),
+    Choice(name='Sketchy Artist', value="879864070101172255"),
+    Choice(name='Awkword', value="879863881349087252"),
+    Choice(name='Doodle Crew', value="878067389634314250"),
+    Choice(name='Sketch Heads', value="902271654783242291"),
+    Choice(name='Letter League', value="879863686565621790"),
+    Choice(name='Word Snacks', value="879863976006127627"),
+    Choice(name='SpellCast', value="852509694341283871"),
+    Choice(name='Checkers In The Park', value="832013003968348200"),
+    Choice(name='Blazing 8s', value="832025144389533716"),
+    Choice(name='Putt Party', value="945737671223947305")
 ])
 @client.tree.command(guild=guild, name="game", description="Start a discord voice channel activity!")
-async def game(interaction : discord.Interaction, game: Choice[int]):
+async def game(interaction : discord.Interaction, game: Choice[str]):
+    game.value = int(game.value)
     invite = await interaction.user.voice.channel.create_invite(
-        target_application_id=891001866073296967,
+        target_application_id=game.value,
         target_type=discord.InviteTarget.embedded_application
     )
     print(invite)
