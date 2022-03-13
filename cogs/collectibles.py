@@ -5,7 +5,17 @@ import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
 from .economy import mycursor, mydb
-from .other import addhalloffame
+
+async def addhalloffame(userid):
+    with open("./json/halloffame.json", "r") as f:
+        users = json.load(f)
+    userid = int(userid)
+    if not userid in users:
+        users.append(userid)
+
+    with open("./json/halloffame.json", "w") as f:
+        json.dump(users, f)
+
 
 class collectibles(commands.Cog):
     def __init__(self, client):
