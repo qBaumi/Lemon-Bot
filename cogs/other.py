@@ -8,29 +8,29 @@ from discord import ui
 from main import guilds
 from discord.app_commands import Choice
 
-"""
-Other 
-"""
+
 class other(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    """
-    Hall of Fame for all people who collect all collectibles
-    """
-    @commands.command()
-    async def halloffame(self, ctx):
+
+    # Hall of Fame for all people who collect all collectibles
+    @app_commands.command(description="Have a look at legends", name="halloffame")
+    async def halloffame(self, interaction: discord.Interaction):
         with open("./json/halloffame.json", "r") as f:
             users = json.load(f)
-        em = discord.Embed(colour=discord.Color.dark_purple(), title="Hall of Fame", description="only true and loyal legends get there...")
+        em = discord.Embed(colour=discord.Color.dark_purple(), title="Hall of Fame",
+                           description="only true and loyal legends get there...")
+        # Fetch every user that is in the halloffame and add them to the embed
         for userid in users:
             user = await self.client.fetch_user(userid)
             em.add_field(name=user.name, value="\u200b", inline=False)
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
     """
     Present 100 golden lemons for christmas
-    """
+    ARCHIVED
+    
     @commands.command()
     async def present(self, ctx):
         with open("./json/present.json", "r") as f:
@@ -50,7 +50,7 @@ class other(commands.Cog):
             json.dump(users, f)
         em = discord.Embed(title="Merry Christmas", description="You claimed your 100 golden lemons!")
         await ctx.send(f"{ctx.author.mention}\n", embed=em)
-
+    """
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == message.author.bot:
