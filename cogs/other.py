@@ -50,6 +50,7 @@ class other(commands.Cog):
         em = discord.Embed(title="Merry Christmas", description="You claimed your 100 golden lemons!")
         await ctx.send(f"{ctx.author.mention}\n", embed=em)
     """
+    # Fer enough FalseFacePalmLaugh
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == message.author.bot:
@@ -87,7 +88,8 @@ class other(commands.Cog):
             await interaction.response.send_message(f'Thanks for your Suggestion!', ephemeral=True)
 
             # 656636484937449518 this is the suggestion-log channel
-            channel_id = 651364619402739713  # the id of the channel the results get sent to
+            # 651364619402739713 this is the test channel
+            channel_id = 656636484937449518  # the id of the channel the results get sent to
             channel = await self.client.fetch_channel(channel_id)
 
             # Make an embed with the results

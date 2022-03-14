@@ -1,11 +1,10 @@
 import operator
-
 import cogs.essentialfunctions as es
 from discord.ext import commands
 import discord, asyncio
 from discord import app_commands
 from discord import ui
-from config import guilds
+from config import guilds, allowedRoles
 from discord.app_commands import Choice
 
 
@@ -35,7 +34,7 @@ class loyalty(commands.Cog):
         role_ids = [role.id for role in interaction.user.roles]
 
         isAllowed = False
-        allowedRoles = [598307015181467650, 845280788001849345, 598307062086107156]
+
         for role in allowedRoles:
             if role in role_ids:
                 print("You're allowed")
@@ -132,7 +131,6 @@ class loyalty(commands.Cog):
             member = await self.client.fetch_user(user[0])
             em.add_field(name=str(member), value=f"{user[1]} Points", inline=False)
         await interaction.response.send_message(embed=em)
-
 
 
 async def setup(client):
