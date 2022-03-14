@@ -29,7 +29,8 @@ class events(commands.Cog):
                 "rito games", "riot games", "java", "intel", "lem pet feed", "nomel", "hexagon",
                 "dog", "ratjam", "dislike button", "christmas", "linux", "tissue", "fer", "nunu and willump",
                 "glurak", "pants", "hoodie", "covid", "mom", "i dont know what to write anymore", "bored",
-                "connie", "logitech", "wifi", "chocolate", "cacoa", "cereal", "stopbeingmean", "carl", "arcane"
+                "connie", "logitech", "wifi", "chocolate", "cacoa", "cereal", "stopbeingmean", "carl", "arcane",
+                "batchest", "pete", "melon", "summoner"
                 ]
 
 
