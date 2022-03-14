@@ -4,7 +4,7 @@ from riotwatcher import LolWatcher, ApiError
 from config import api_key
 from discord import app_commands
 from discord import ui
-from main import guilds
+from config import guilds
 from discord.app_commands import Choice
 
 class LeagueAPI(commands.Cog):
@@ -84,6 +84,6 @@ class LeagueAPI(commands.Cog):
             else:
                 raise
 
-def setup(client):
-    client.add_cog(LeagueAPI(client), guilds=guilds)
+async def setup(client):
+    await client.add_cog(LeagueAPI(client), guilds=guilds)
 

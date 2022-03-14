@@ -668,9 +668,9 @@ class pets(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.client.loop.create_task(self.ch_stats())
-        self.client.loop.create_task(self.ch_shop())
-        self.client.loop.create_task(self.stayconnected())
+        await self.client.loop.create_task(self.ch_stats())
+        await self.client.loop.create_task(self.ch_shop())
+        await self.client.loop.create_task(self.stayconnected())
 
     # Setup a new json with asmolpets and return it per function because of....problems
     async def allpets(self):
@@ -706,5 +706,5 @@ class pets(commands.Cog):
 
 
 
-def setup(client):
-    client.add_cog(pets(client))
+async def setup(client):
+    await client.add_cog(pets(client))

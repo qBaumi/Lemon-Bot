@@ -5,7 +5,7 @@ from discord.ext import commands
 import discord, asyncio
 from discord import app_commands
 from discord import ui
-from main import guilds
+from config import guilds
 from discord.app_commands import Choice
 
 
@@ -135,5 +135,5 @@ class loyalty(commands.Cog):
 
 
 
-def setup(client):
-    client.add_cog(loyalty(client), guilds=guilds)
+async def setup(client):
+    await client.add_cog(loyalty(client), guilds=guilds)

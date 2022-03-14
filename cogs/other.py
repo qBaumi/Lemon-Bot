@@ -5,7 +5,7 @@ from discord.ext import commands
 import cogs.essentialfunctions as es
 from discord import app_commands
 from discord import ui
-from main import guilds
+from config import guilds
 from discord.app_commands import Choice
 
 
@@ -137,5 +137,5 @@ class other(commands.Cog):
         await interaction.response.send_message(embed=em)
 
 
-def setup(client):
-    client.add_cog(other(client), guilds=guilds)
+async def setup(client):
+    await client.add_cog(other(client), guilds=guilds)

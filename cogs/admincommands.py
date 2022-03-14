@@ -153,5 +153,5 @@ class admincommands(commands.Cog):
         await ctx.send(error)
 
 
-def setup(client):
-    client.add_cog(admincommands(client))
+async def setup(client):
+    await client.add_cog(admincommands(client))

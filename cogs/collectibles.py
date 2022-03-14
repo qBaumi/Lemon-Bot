@@ -183,5 +183,5 @@ class collectibles(commands.Cog):
 
         return collectibles_amount, all_collectibles
 
-def setup(client):
-    client.add_cog(collectibles(client))
+async def setup(client):
+    await client.add_cog(collectibles(client))

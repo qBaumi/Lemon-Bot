@@ -4,7 +4,7 @@ from discord import app_commands
 from discord import ui
 import enum
 from typing import Literal
-from main import guilds
+from config import guilds
 
 
 async def money_help_msg():
@@ -218,7 +218,6 @@ class help(commands.Cog):
 
 
 
-
     @app_commands.command(description="Get some help", name="help")
     async def help(self, interaction: discord.Interaction):
 
@@ -327,5 +326,5 @@ class help(commands.Cog):
         # interaction.response.send_message() returns None, that is why we have to fetch the message first and then set the message attribute
         view.message = await interaction.original_message()
 
-def setup(client):
-    client.add_cog(help(client), guilds=guilds)
+async def setup(client):
+    await client.add_cog(help(client), guilds=guilds)

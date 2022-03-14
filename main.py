@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord import Emoji
 from config import token
 from discord import app_commands
+from config import guilds, guild, asmol
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -14,9 +15,7 @@ client = commands.Bot(command_prefix=['lem ', 'Lem ', 'LEM ', 'LEm ', 'lEm ', 'l
 client.remove_command("help")
 # Current permission integer 414501436481
 
-guild = discord.Object(id=598303095352459305)
-asmol = discord.Object(id=828921143507288064)
-guilds = [guild, asmol]
+
 
 # Print a message in the console when he works properly
 @client.event
@@ -29,20 +28,22 @@ async def on_ready():
         await client.tree.sync(guild=g)
 
 
-client.load_extension("cogs.admincommands")
-client.load_extension("cogs.collectibles")
-client.load_extension("cogs.economy")
-client.load_extension("cogs.events")
-client.load_extension("cogs.games")
-client.load_extension("cogs.help")
-client.load_extension("cogs.items")
-client.load_extension("cogs.jobs")
-client.load_extension("cogs.LeagueAPI")
-client.load_extension("cogs.pets")
-client.load_extension("cogs.other")
-client.load_extension("cogs.loyalty")
 #client.load_extension("cogs.googlesheets")
 
+@client.event
+async def setup_hook():
+    await client.load_extension("cogs.admincommands")
+    await client.load_extension("cogs.collectibles")
+    await client.load_extension("cogs.economy")
+    await client.load_extension("cogs.events")
+    await client.load_extension("cogs.games")
+    await client.load_extension("cogs.help")
+    await client.load_extension("cogs.items")
+    await client.load_extension("cogs.jobs")
+    await client.load_extension("cogs.LeagueAPI")
+    await client.load_extension("cogs.pets")
+    await client.load_extension("cogs.other")
+    await client.load_extension("cogs.loyalty")
 # About section
 @client.command()
 async def about(ctx):

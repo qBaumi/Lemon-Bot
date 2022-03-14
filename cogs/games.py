@@ -946,5 +946,5 @@ You can try **6 times**
 
 
 
-def setup(client):
-    client.add_cog(games(client))
+async def setup(client):
+    await client.add_cog(games(client))

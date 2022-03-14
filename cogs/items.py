@@ -719,6 +719,6 @@ class items(commands.Cog):
             await ctx.send(f"{ctx.author.mention}\nThat item does not exist or has no usage yet")
 
 
-def setup(client):
-    client.add_cog(items(client))
+async def setup(client):
+    await client.add_cog(items(client))
 
