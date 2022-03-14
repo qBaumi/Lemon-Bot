@@ -1,8 +1,7 @@
 import datetime
-
+import random
 import discord, json
 from discord.ext import commands
-import cogs.essentialfunctions as es
 from discord import app_commands
 from discord import ui
 from config import guilds
@@ -87,6 +86,7 @@ class other(commands.Cog):
         async def on_submit(self, interaction: discord.Interaction):
             await interaction.response.send_message(f'Thanks for your Suggestion!', ephemeral=True)
 
+            # 656636484937449518 this is the suggestion-log channel
             channel_id = 651364619402739713  # the id of the channel the results get sent to
             channel = await self.client.fetch_channel(channel_id)
 
@@ -135,6 +135,33 @@ class other(commands.Cog):
         print(invite)
         em = discord.Embed(title="Click the link to start the game in your voice channel", description=invite)
         await interaction.response.send_message(embed=em)
+
+    @app_commands.command(name="about", description="Start a discord voice channel activity!")
+    async def about(self, interaction : discord.Interaction):
+        em = discord.Embed(title="About me", description="Thanks to all the people that helped me making this bot!")
+        em.add_field(name="Creator / Developer", value="qBaumi#1247", inline=False)
+        em.add_field(name="Artist", value="https://twitter.com/lilRoundabout/", inline=False)
+        em.add_field(name="Description",
+                     value=f"Hello, I am the Lemon Bot. \n Let me introduce real quick.\nI am an economy bot for the Nemesis discord server. I can get you precious lemons, if you get some work done for me...of course\nYou can find out more about me when you type **lem help** for example. But only in bot-commands, otherwise my boss will get angry...\nIf you have ANY ideas for items or commands, please share them with my Boss, you will find him at the beginning of this message.\n Thank you to all who helped creating me!",
+                     inline=False)
+        await interaction.response.send_message(embed=em)
+
+    @app_commands.command(name="debug", description="Show the string of an emoji")
+    async def debug(self, interaction: discord.Interaction, emoji: str):
+        print(emoji)
+        embed = discord.Embed(description=f"{emoji[1:len(emoji)-1]}", title=f"emoji: {emoji}")
+
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="hug", description="Start a discord voice channel activity!")
+    async def hug(self, interaction : discord.Interaction, user : discord.User):
+        hugs = ["<:nemeHug:834605591846584391>", "<:nemeHugBack:834971356873490462>",
+                "<:nemeportalhug1:835504785285316648>", "<:nemeportalhug2:835504785586257939>",
+                "<:wideHug1:834605591393206323><:widehug2:835116553812967444><:wideHug3:834605592022220860>",
+                "<:dankHug:832245187614212106>"]
+        hug = random.choice(hugs)
+        await interaction.response.send_message(f"{interaction.user.mention} gave {user} a hug")
+        await interaction.channel.send(hug)
 
 
 async def setup(client):

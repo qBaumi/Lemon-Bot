@@ -153,6 +153,10 @@ async def misc_help_msg():
         title="Things without a category",
         colour=discord.Color.from_rgb(254, 254, 51))
     em.add_field(
+        name="suggest",
+        value="Suggest an emoji or something else",
+        inline=False)
+    em.add_field(
         name="about",
         value="Just try it",
         inline=False)
@@ -183,6 +187,31 @@ async def loyalty_help_msg():
 
     return em
 
+async def golden_lemon_help_msg():
+    em = discord.Embed(
+        title="Golden Lemons",
+        colour=discord.Color.from_rgb(254, 254, 51),
+        description="You can earn Golden Lemons <:GoldenLemon:882634893039923290> through events. You can trade them for prizes, read on for more.")
+    em.add_field(
+        name="`lem balance`",
+        value="First you can look up how many Golden Lemons you have with this command.",
+        inline=False)
+    em.add_field(
+        name="`lem shop`",
+        value="Now you look up what prizes there are and how much they cost in the shop. **Just react with the Golden Lemon Emoji to switch to the prize shop**\nThe normal shop consist just out of ingame-items!",
+        inline=False)
+    em.add_field(
+        name="`lem buy prizename`",
+        value="If you have enough Golden Lemons, you can now buy a prize from the shop. To check your items try `lem bag`",
+        inline=False)
+    em.add_field(
+        name="Message Rocsie",
+        value="**To redeem your prize please make sure to message Rocsie!**",
+        inline=False)
+    em.set_footer(text="Don't be afraid to @ a Mod if you need help to redeem your prize.")
+
+
+    return em
 
 async def help_msg(client):
     em = discord.Embed(
@@ -234,6 +263,7 @@ class help(commands.Cog):
                     discord.SelectOption(label='Economy',
                                          description='Everything with money, the basics and how to earn it(with jobs)',
                                          emoji='🪙'),
+                    discord.SelectOption(label='Golden Lemons', description='How to get and spend Golden Lemons', emoji='<:GoldenLemon:882634893039923290>'),
                     discord.SelectOption(label='Jobs', description='You ofcourse need a job to get money', emoji='💰'),
                     discord.SelectOption(label='Pets', description='How to get and care for your cute pets',
                                          emoji='🐕'),
@@ -268,24 +298,27 @@ class help(commands.Cog):
                 if category == "Economy":
                     em = await money_help_msg()
                     self.options[1].default = True
+                elif category == "Golden Lemons":
+                    em = await golden_lemon_help_msg()
+                    self.options[2].default = True
                 elif category == "Jobs":
                     em = await job_help_msg()
-                    self.options[2].default = True
+                    self.options[3].default = True
                 elif category == "Pets":
                     em = await pet_help_msg()
-                    self.options[3].default = True
+                    self.options[4].default = True
                 elif category == "Games":
                     em = await game_help_msg()
-                    self.options[4].default = True
+                    self.options[5].default = True
                 elif category == "Items":
                     em = await item_help_msg()
-                    self.options[5].default = True
+                    self.options[6].default = True
                 elif category == "Loyalty":
                     em = await loyalty_help_msg()
-                    self.options[6].default = True
+                    self.options[7].default = True
                 elif category == "Miscellaneous":
                     em = await misc_help_msg()
-                    self.options[7].default = True
+                    self.options[8].default = True
                 else:
                     em = await help_msg(self.client)
                     self.options[0].default = True

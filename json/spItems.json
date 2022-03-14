@@ -5,7 +5,7 @@
             "price": 500,
             "desc": "Get a Mystery Skin in League of Legends",
             "money": "golden lemons",
-            "emoji": "<a:Giveaways:881606847096844338>",
+            "emoji": "\ud83c\udf81",
             "stock": 5
         },
         {
@@ -14,7 +14,7 @@
             "desc": "1 Month Nitro Classic",
             "money": "golden lemons",
             "emoji": "<:13627124:884424774502219776>",
-            "stock": 3
+            "stock": 5
         },
         {
             "name": "DiscordNitro",
@@ -37,8 +37,8 @@
             "price": 1000,
             "desc": "Mystery Skin worth at least 975RP",
             "money": "golden lemons",
-            "emoji": "<a:Giveaways:881606847096844338>",
-            "stock": 1
+            "emoji": "\ud83c\udf81",
+            "stock": 2
         }
     ]
 }

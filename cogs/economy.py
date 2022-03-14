@@ -343,7 +343,11 @@ class economy(commands.Cog):
                 specialitems["MysterySkin"][index]["stock"] = specialitems["MysterySkin"][index]["stock"] - amount
                 with open("./json/spItems.json", "w") as f:
                     json.dump(specialitems, f, indent=4)
-                await ctx.send(f"{user.mention}\nto claim your Item, please click on this link and open a ticket!\nhttps://discord.com/channels/598303095352459305/860863662902083604/881771382185279508")
+
+                await ctx.send(f"{user.mention}\n**To redeem your prize please make sure to message Rocsie!**")
+                channel = await self.client.fetch_channel(845281850230308864) # Send message to an admin channel or idk
+                rocsie = await self.client.fetch_user(148086360425758720) # fetch rocsie
+                await channel.send(f"{rocsie.mention}\n{user.mention} claimed {item}!")
                 break
             index+=1
 
