@@ -15,7 +15,6 @@ class loyalty(commands.Cog):
     # Check if the user exists in the loyalty table
     def check_loyalty(self, user):
         es.mycursor.execute(f"SELECT id FROM loyalty WHERE id = '{user.id}'")
-
         id = es.mycursor.fetchall()
         print(id)
         if id:
@@ -30,24 +29,13 @@ class loyalty(commands.Cog):
     @app_commands.describe(points="10 Points for winner, 5 for second, 3 for third and 1 for participation")
     async def reward(self, interaction: discord.Interaction, user: discord.User, points: app_commands.Range[int, 0, 10]):
 
-        # Check if user is allowed
-        role_ids = [role.id for role in interaction.user.roles]
-
-        isAllowed = False
-
-        for role in allowedRoles:
-            if role in role_ids:
-                print("You're allowed")
-                isAllowed = True
-        if not isAllowed:
-            await interaction.response.send_message("You need to be a Mod or Admin in order to use this command!")
+        if not await es.checkPerms(interaction):
             return
 
         # If the user has no loyalty points he gets inserted into the loyalty table
         if not self.check_loyalty(user):
-            sql = f"INSERT INTO loyalty (id, points) VALUES ('{user.id}', {points})"
-            es.mycursor.execute(sql)
-            es.mydb.commit()
+            es.sql_exec(f"INSERT INTO loyalty (id, points) VALUES ('{user.id}', {points})")
+
             await interaction.response.send_message(
                 f"{user.mention} got {points} loyalty points, they now have {points} loyalty points in total!")
 
@@ -72,9 +60,8 @@ class loyalty(commands.Cog):
         data = es.mycursor.fetchall()
         prevpoints = int(data[0][0])
         print(prevpoints)
-        sql = f"UPDATE loyalty SET points = {points + prevpoints} WHERE id = '{user.id}'"
-        es.mycursor.execute(sql)
-        es.mydb.commit()
+        es.sql_exec(f"UPDATE loyalty SET points = {points + prevpoints} WHERE id = '{user.id}'")
+
         await interaction.response.send_message(
             f"{user.mention} got {points} loyalty points, they now have {prevpoints + points} loyalty points in total!")
 

@@ -2,7 +2,11 @@ import json
 import cogs.essentialfunctions as es
 from discord.ext import commands
 import discord, asyncio
-
+from discord import app_commands
+from discord import ui
+from config import guilds, allowedAdminRoles
+from discord.app_commands import Choice
+from config import allowedAdminRoles, guilds
 
 class admincommands(commands.Cog):
     def __init__(self, client):
@@ -32,45 +36,65 @@ class admincommands(commands.Cog):
 
         await ctx.send(f"{item} has been successfully removed from {target.name}'s inventory!")
 
-    @commands.command()
-    @commands.has_any_role("Admins", "HM", "Developer")
-    async def gift(self, ctx, winner: discord.User, money, *, moneyform="lemons"):
-        user = ctx.author
+
+    @app_commands.command(name="gift", description="Admin Command to gift Golden Lemons to users")
+    @app_commands.describe(user="User that receives the Lemons")
+    @app_commands.describe(amount="Amount of Lemons/Golden Lemons")
+    @app_commands.choices(currency=[
+        Choice(name='Golden Lemons', value="golden lemons"),
+        Choice(name='Lemons', value="lemons")
+    ])
+    #@commands.has_any_role("Admins", "HM", "Developer")
+    async def gift(self, interaction : discord.Interaction, user: discord.User, amount : int, *, currency : Choice[str]):
+        adminuser = interaction.user
+        currency = currency.value
+        if not await es.checkPerms(interaction, allowedAdminRoles):
+            return
 
         async def check_account(userid):
-            es.mycursor.execute("SELECT id FROM users")
-
-            ids = es.mycursor.fetchall()
-
+            ids = es.sql_select("SELECT id FROM users")
             for id in ids:
                 ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
                 if str(userid) == id[0]:
                     return True
             return False
 
-        if await check_account(winner.id) == False:
+        if await check_account(user.id) == False:
             # here startup
-            await es.open_account(winner)
+            await es.open_account(user)
             em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
                                description=f"Let me introduce you to our little friend Lemon right here.")
             em.add_field(name="Welcome you can find out more about me with <lem about>",
                          value="Congrats! You already found the *startup command*. \n"
                                "Next is the `lem lemons` or `lem balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `lem help` for more information")
-            await ctx.send(f"{winner.mention}", embed=em)
-            await es.update_balance(winner, 50)
-        if moneyform == "lemons":
+            await interaction.channel.send(f"{user.mention}", embed=em)
+            await es.update_balance(user, 50)
+        if currency == "lemons":
             mode = "pocket"
         else:
             mode = "safe"
-        print(f"{user.name} gifted {winner} {money} {moneyform}")
-        await es.update_balance(winner, int(money), mode=mode)
-        await ctx.send(f"{winner} received {money} {moneyform}")
+        print(f"{adminuser.name} gifted {user} {amount} {currency}")
+        await es.update_balance(user, int(amount), mode=mode)
+        await interaction.response.send_message(f"{user} received {amount} {currency}")
 
-    @commands.has_any_role("Admins", "Developer", "HM")
-    @commands.command()
-    async def refill(self, ctx, item, amount=0):
+
+    #@commands.has_any_role("Admins", "Developer", "HM")
+    @app_commands.command(name="refill", description="Admin command to refill the Golden Lemon Shop")
+    @app_commands.describe(item="Item that gets refilled")
+    @app_commands.describe(amount="Amount of Items")
+    @app_commands.choices(item=[
+        Choice(name='Mystery Skin', value="MysterySkin"),
+        Choice(name='Nitro Classic', value="NitroClassic"),
+        Choice(name='Discord Nitro', value="DiscordNitro"),
+        Choice(name='Tier1sub', value="Tier1sub"),
+        Choice(name='Mystery Skin for 975RP', value="MysterySkin975RP"),
+    ])
+    async def refill(self, interaction : discord.Interaction, item : Choice[str], amount : int):
+        item = item.value
+        if not await es.checkPerms(interaction, allowedAdminRoles):
+            return
         if amount == 0:
-            await ctx.send("You didnt specify the amount `lem refill Mysteryskin 10` for example")
+            await interaction.response.send_message("You didnt specify the amount `lem refill Mysteryskin 10` for example")
             return
         specialitems = await es.get_item_data()
         index = -1
@@ -86,20 +110,20 @@ class admincommands(commands.Cog):
                     exists = 1
                     break
         if exists == 0:
-            await ctx.send("That item cannot be refilled!")
+            await interaction.response.send_message("That item cannot be refilled!")
             str1 = ""
             for thing in specialitems:
                 for specialitem in specialitems[thing]:
                     str1 += f"{specialitem['name']}, "
-            await ctx.send(f"List of items that can be refilled {str1}")
+            await interaction.response.send_message(f"List of items that can be refilled {str1}")
             return
         specialitems["MysterySkin"][index]["stock"] = specialitems["MysterySkin"][index]["stock"] + int(amount)
         instock = specialitems["MysterySkin"][index]["stock"]
         with open("./json/spItems.json", "w") as f:
             json.dump(specialitems, f, indent=4)
-        await ctx.send(f"There are now {instock} {name}'s in stock")
+        await interaction.response.send_message(f"There are now {instock} {name}'s in stock")
 
-    """GETS ITEM AMOUNTS FOR A SPECIFIC ITEM AND RETURNS LIST FROM USERS ONLY FOR ADMINS"""
+    #GETS ITEM AMOUNTS FOR A SPECIFIC ITEM AND RETURNS LIST FROM USERS ONLY FOR ADMINS
     @commands.has_any_role("Admins", "Developer", "HM")
     @commands.command()
     async def listitem(self, ctx, item="None"):
@@ -119,11 +143,6 @@ class admincommands(commands.Cog):
             em.add_field(name=f"name: {user}", value=f"id: {tuple[0]}\namount: {tuple[1]}", inline=False)
 
         await ctx.send(embed=em)
-
-    @gift.error
-    async def on_command_error(self, ctx, error):
-        await ctx.send(
-            f"{ctx.author.mention}\nYou need to be an Admin, in order to use this command\nIf you are a Mod, please use **lem modgift** instead\nAnd the winner **MUST** have startupped with **lem startup**")
 
     @refill.error
     async def on_command_error(self, ctx, error):
@@ -154,4 +173,4 @@ class admincommands(commands.Cog):
 
 
 async def setup(client):
-    await client.add_cog(admincommands(client))
+    await client.add_cog(admincommands(client), guilds=guilds)

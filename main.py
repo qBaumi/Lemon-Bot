@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import Emoji
 from config import token
 from discord import app_commands
-from config import guilds, guild, asmol
+from config import guilds
 
 intents = discord.Intents.all()
 

@@ -1,11 +1,38 @@
 import mysql.connector, discord, json
 from .economy import mycursor, mydb
+from config import allowedRoles
 
+# returns True if user has Perms
+# returns False if not
+# if not await es.checkPerms(interaction):
+#    return
+async def checkPerms(interaction):
+    role_ids = [role.id for role in interaction.user.roles]
+    for role in allowedRoles:
+        if role in role_ids:
+            print("You're allowed")
+            return True
+    await interaction.response.send_message("You need to be a Mod or Admin in order to use this command!")
+    return False
 
+# checkPerms with custom Role List
+async def checkPerms(interaction, roleList):
+    role_ids = [role.id for role in interaction.user.roles]
+    for role in roleList:
+        if role in role_ids:
+            print("You're allowed")
+            return True
+    await interaction.response.send_message("You need to be a Mod or Admin in order to use this command!")
+    return False
 
-"""
-OPENS AN ACCOUNT AND PUTS USER IN DATABASE FOR THE FIRST TIME
-"""
+def sql_exec(sql):
+    mycursor.execute(sql)
+    mydb.commit()
+def sql_select(sql):
+    mycursor.execute(sql)
+    data = mycursor.fetchall()
+    return data
+#OPENS AN ACCOUNT AND PUTS USER IN DATABASE FOR THE FIRST TIME
 async def open_account(user):
     mycursor.execute("SELECT id FROM users")
     ids = mycursor.fetchall()
@@ -14,10 +41,7 @@ async def open_account(user):
         if str(user.id) == id[0]:
             return False
     else:
-        sql = "INSERT INTO users (id, pocket, safe, xp, lvl) VALUES (%s, %s, %s, %s, %s)"
-        val = (user.id, 0, 0, 0, 1)
-        mycursor.execute(sql, val)
-    mydb.commit()
+        sql_exec(f"INSERT INTO users (id, pocket, safe, xp, lvl) VALUES ({user.id}, 0, 0, 0, 1)")
     return True
 
 """
