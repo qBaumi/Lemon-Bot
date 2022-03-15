@@ -142,12 +142,6 @@ class admincommands(commands.Cog):
         await ctx.send(embed=em)
 
 
-    @deleteitem.error
-    async def on_command_error(self, ctx, error):
-        await ctx.send(
-            f"{ctx.author.mention}\nYou need to be an Admin, in order to use this command\nIf you are a Mod, please use **lem moddeleteitem** instead")
-        await ctx.send(error)
-
     @commands.command()
     @commands.has_any_role("Admins", "HM", "Developer")
     async def presentlist(self, ctx):

@@ -60,6 +60,18 @@ async def check_account(ctx):
     await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
     return False
 
+async def check_account(interaction : discord.Interaction):
+    mycursor.execute("SELECT id FROM users")
+
+    ids = mycursor.fetchall()
+
+    for id in ids:
+        ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
+        if str(interaction.user.id) == id[0]:
+            return True
+    await interaction.response.send_message(f"{interaction.user.author.mention}\nUse the `lem startup` command first!")
+    return False
+
 """
 GETS USER BANK DATA
 returns dict with pocket and safe money

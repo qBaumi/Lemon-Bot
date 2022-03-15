@@ -11,6 +11,11 @@ from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 from cogs.economy import globalmainshop
 import cogs.pets
+from discord import app_commands
+from discord import ui
+from config import guilds, allowedAdminRoles
+from discord.app_commands import Choice
+from config import allowedAdminRoles, guilds
 
 
 """Globals"""
@@ -23,14 +28,14 @@ class items(commands.Cog):
 
     mainshop = globalmainshop
 
-    """DISPLAYS USER BAG"""
-    @commands.command(aliases=["items"])
-    async def bag(self, ctx):
+    #DISPLAYS USER BAG
+    @app_commands.command(name="bag", description="Show your items")
+    async def bag(self, interaction : discord.Interaction):
         """FALSY CHECKS"""
-        if not await es.check_account(ctx):
+        if not await es.check_account(interaction):
             return
-        await es.open_account(ctx.author)
-        user = ctx.author
+        await es.open_account(interaction.user)
+        user = interaction.user
 
         try:
             bag = await es.getbag(user.id)
@@ -44,7 +49,7 @@ class items(commands.Cog):
             amount = item["amount"]
             if amount > 0:
                 em.add_field(name=name_, value=amount, inline=False)
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
     @commands.command()
     async def use(self, ctx, item="None"):
@@ -720,5 +725,5 @@ class items(commands.Cog):
 
 
 async def setup(client):
-    await client.add_cog(items(client))
+    await client.add_cog(items(client), guilds=guilds)
 
