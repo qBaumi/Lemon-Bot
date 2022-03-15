@@ -12,29 +12,26 @@ class admincommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command()
-    @commands.has_any_role("Admins", "HM", "Developer")
-    async def deleteitem(self, ctx, target: discord.User):
-
-        await ctx.send(f"Which item do you want to delete from {target.mention}'s bag?")
-
-        # check function for wait_for
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
-
-        # Try waiting for message if 60 seconds passed error comes
-        try:
-            msg = await self.client.wait_for('message', timeout=60, check=check)
-        except asyncio.TimeoutError:
-            await ctx.send('You didnt answer in time')
+    @app_commands.command(name="deleteitem", description="Admin command to delete an item from someones inventory")
+    #@commands.has_any_role("Admins", "HM", "Developer")
+    @app_commands.describe(user="User that gets item removed")
+    @app_commands.describe(item="Item that gets deleted")
+    @app_commands.choices(item=[
+        Choice(name='Mystery Skin', value="mysteryskin"),
+        Choice(name='Nitro Classic', value="nitroclassic"),
+        Choice(name='Discord Nitro', value="discordnitro"),
+        Choice(name='Tier1sub', value="tier1sub"),
+        Choice(name='Mystery Skin for 975RP', value="mysteryskin975rp"),
+    ])
+    async def deleteitem(self, interaction : discord.Interaction, user: discord.User, item : Choice[str]):
+        if not await es.checkPerms(interaction, allowedAdminRoles):
             return
-        item = msg.content.lower()
         try:
-            await es.del_item(target.id, item, 1)
+            await es.del_item(user.id, item.value, 1)
         except:
-            await ctx.send("Error item not found or jlfkadsöjfdf @!<442913791215140875>")
+            await interaction.response.send_message("Error item not found or jlfkadsöjfdf @!<442913791215140875>")
 
-        await ctx.send(f"{item} has been successfully removed from {target.name}'s inventory!")
+        await interaction.response.send_message(f"{item.name} has been successfully removed from {user.name}'s inventory!")
 
 
     @app_commands.command(name="gift", description="Admin Command to gift Golden Lemons to users")
@@ -144,9 +141,6 @@ class admincommands(commands.Cog):
 
         await ctx.send(embed=em)
 
-    @refill.error
-    async def on_command_error(self, ctx, error):
-        await ctx.send(f"{ctx.author.mention}\nYou need to be an Admin to use this command")
 
     @deleteitem.error
     async def on_command_error(self, ctx, error):
