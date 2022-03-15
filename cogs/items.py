@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+from typing import List
 
 import cogs.essentialfunctions as es
 import glob
@@ -31,8 +32,7 @@ class items(commands.Cog):
     #DISPLAYS USER BAG
     @app_commands.command(name="bag", description="Show your items")
     async def bag(self, interaction : discord.Interaction):
-        """FALSY CHECKS"""
-        if not await es.check_account(interaction):
+        if not await es.interaction_check_account(interaction):
             return
         await es.open_account(interaction.user)
         user = interaction.user
@@ -51,18 +51,43 @@ class items(commands.Cog):
                 em.add_field(name=name_, value=amount, inline=False)
         await interaction.response.send_message(embed=em)
 
-    @commands.command()
-    async def use(self, ctx, item="None"):
+    # get choice for each normal item you have in your bag
+    # returns a choice list
+    async def getChoices(self, user):
+        # Get all special items from json
+        specialitems = await es.get_item_data()
+        specialitems = specialitems["MysterySkin"]
+
+        # Make list and append name if they are in spItems [spItemName, spItemName, ...]
+        # to search if item not in spItems
+        spItemList = []
+        for item in specialitems:
+            spItemList.append(item["name"].lower())
+
+        # Get user bag and make a list with every different item
+        bag = es.sql_select(f"SELECT DISTINCT name, amount FROM items WHERE id = {user.id}")
+        # Now make the list for the choices and return it
+        itemlist = []
+        for item in bag:
+            if item[1] > 0 and item[0] not in spItemList:
+                itemlist.append(item[0])
+        return itemlist
 
 
-        if not await es.check_account(ctx):
+
+    @app_commands.command(name="use", description="Use an item from your bag")
+    @app_commands.describe(item="The item you use")
+    async def use(self, interaction : discord.Interaction, item : str):
+        if not await es.interaction_check_account(interaction):
             return
         if item == "None":
-            await ctx.send(f"{ctx.author.mention}\nYou cant use nothing")
+            await interaction.response.send_message(f"{interaction.user.mention}\nYou cant use nothing")
             return
-
+        class ctx():
+            author = interaction.user
+            channel = interaction.channel
         """Globals"""
-        user = ctx.author
+        user = interaction.user
 
         """
         Check if an item is in users bag and amount is bigger than 0
@@ -78,23 +103,23 @@ class items(commands.Cog):
             index = index + 1
             if item.lower() == item_name.lower():
                 if item_amount <= 0:
-                    await ctx.send(f"{ctx.author.mention}\nYou dont have {item_name.capitalize()}")
+                    await interaction.response.send_message(f"{ctx.author.mention}\nYou dont have {item_name.capitalize()}")
                     return
                 else:
                     checkifitem = 1
                 break
         if checkifitem == 0:
             if userbag[index]["item"] != item.lower():
-                await ctx.send(f"{ctx.author.mention}\nYou dont have {item.capitalize()}")
+                await interaction.response.send_message(f"{ctx.author.mention}\nYou dont have {item.capitalize()}")
                 return
 
 
         item = item.lower()
         if item == "lemonade":
-            await ctx.send(
+            await interaction.response.send_message(
                 f"{ctx.author.mention}\nYou just drank lemonade that was made by lemons, that you bought with the lemons, that you get paid as a lemon farmer for harvesting lemons")
-            await ctx.send("But atleast you got refreshed, so who cares")
-            await ctx.send("<:FeelsDankMan:810802803739983903>")
+            await interaction.channel.send("But atleast you got refreshed, so who cares")
+            await interaction.channel.send("<:FeelsDankMan:810802803739983903>")
             await es.del_item(ctx.author.id, item)
 
             return
@@ -103,12 +128,12 @@ class items(commands.Cog):
                      "You spit the candy out, because it was so gross", "Mmmmm lime also tastes good",
                      "You threw the ananas candy in the trash, because you were eating pizza at the same time"]
             line = random.choice(lines)
-            await ctx.send(line)
+            await interaction.response.send_message(line)
             await es.del_item(ctx.author.id, item)
             return
 
         if item == "flowers":
-            await ctx.send(f"{ctx.author.mention}\nWho will be the happy one that gets your beautiful flowers?")
+            await interaction.response.send_message(f"{ctx.author.mention}\nWho will be the happy one that gets your beautiful flowers?")
 
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel
@@ -116,7 +141,7 @@ class items(commands.Cog):
             try:
                 msg = await self.client.wait_for("message", timeout=60, check=check)
             except:
-                await ctx.send("You didnt answer in time")
+                await interaction.channel.send("You didnt answer in time")
                 return
             lines = ["cried of happiness", "said thank you", "thanked you for them", "put them in a vase",
                      "was confused", "is allergic to flowers", "was angry because they are bad ones",
@@ -133,18 +158,18 @@ class items(commands.Cog):
                 print(id)
 
                 await es.del_item(ctx.author.id, item)
-                await ctx.send(f"You gifted your flowers to {msg.content}, they " + line)
+                await interaction.channel.send(f"You gifted your flowers to {msg.content}, they " + line)
 
                 try:
                     await es.add_item(item_name="flowers", userid=id.id, amount=1)
                     return
                 except:
-                    await ctx.send(
+                    await interaction.channel.send(
                         f"{ctx.author.mention}\nSelf defending mechanism activated. Something didnt work, qBaumi doesnt know why, but if anyone lost something CONTACT him. RIGHT NOW")
                     return
 
             except:
-                await ctx.send(
+                await interaction.channel.send(
                     f"{ctx.author.mention}\n{msg.content} is not a user or has never used this bot before. `Answer with @friend if you just typed their name`")
                 return
 
@@ -167,11 +192,11 @@ class items(commands.Cog):
                 money = 0
             em = discord.Embed(colour=discord.Color.dark_gray(), title="Your safe <:safe:885811224418332692>",
                                description=f"`{money}` lemons")
-            await ctx.send(f"{user.mention}\nDo you want to `deposit` or `withdraw` money from your safe?", embed=em)
+            await interaction.response.send_message(f"{user.mention}\nDo you want to `deposit` or `withdraw` money from your safe?", embed=em)
             try:
                 msg = await self.client.wait_for("message", timeout=60, check=check)
             except:
-                await ctx.send(f"{user.mention}\nYou didnt answer in time")
+                await interaction.channel.send(f"{user.mention}\nYou didnt answer in time")
                 return
 
             if msg.content.lower() == "dep" or msg.content.lower() == "depot" or msg.content.lower() == "deposit":
@@ -180,27 +205,27 @@ class items(commands.Cog):
                 def checkmoney(m):
                     return m.author == ctx.author and m.channel == ctx.channel
 
-                await ctx.send(f"{user.mention}\nHow much lemons do you want to deposit?")
+                await interaction.channel.send(f"{user.mention}\nHow much lemons do you want to deposit?")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=checkmoney)
                 except:
-                    await ctx.send(f"{user.mention}\nYou didnt answer in time")
+                    await interaction.channel.send(f"{user.mention}\nYou didnt answer in time")
                     return
                 try:
 
                     amountmoney = int(msg.content)
                 except:
-                    await ctx.send(f"{user.mention}\nNo")
+                    await interaction.channel.send(f"{user.mention}\nNo")
                     return
                 if amountmoney < 0:
-                    await ctx.send(f"{user.mention}\nYou know, you can also `withdraw` money")
+                    await interaction.channel.send(f"{user.mention}\nYou know, you can also `withdraw` money")
                     return
                 if userbal < amountmoney:
-                    await ctx.send(f"{user.mention}\nYou dont have enough money!")
+                    await interaction.channel.send(f"{user.mention}\nYou dont have enough money!")
                     return
                 maxamount = 5000
                 if money + amountmoney > 5000:
-                    await ctx.send(f"{user.mention}\nYou can only store `5000` lemons in your safe!")
+                    await interaction.channel.send(f"{user.mention}\nYou can only store `5000` lemons in your safe!")
                     return
 
                 newamt = money + amountmoney
@@ -208,7 +233,7 @@ class items(commands.Cog):
                 mycursor.execute(sql)
                 mydb.commit()
                 await es.update_balance(user, -1 * amountmoney)
-                await ctx.send(f"{user.mention}\nYou now have `{newamt}` lemons stored in your safe")
+                await interaction.channel.send(f"{user.mention}\nYou now have `{newamt}` lemons stored in your safe")
                 return
             if msg.content.lower() == "withdraw" or msg.content.lower() == "witd" or msg.content.lower() == "with":
                 userbal = users[str(user.id)]["pocket"]
@@ -216,23 +241,23 @@ class items(commands.Cog):
                 def checkmoney(m):
                     return m.author == ctx.author and m.channel == ctx.channel
 
-                await ctx.send(f"{user.mention}\nHow much lemons do you want to withdraw?")
+                await interaction.response.send_message(f"{user.mention}\nHow much lemons do you want to withdraw?")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=checkmoney)
                 except:
-                    await ctx.send(f"{user.mention}\nYou didnt answer in time")
+                    await interaction.channel.send(f"{user.mention}\nYou didnt answer in time")
                     return
                 try:
                     amountmoney = int(msg.content)
                 except:
-                    await ctx.send(f"{user.mention}\nNo")
+                    await interaction.channel.send(f"{user.mention}\nNo")
                     return
                 if amountmoney < 0:
-                    await ctx.send(f"{user.mention}\nYou know, you can also `deposit` money")
+                    await interaction.channel.send(f"{user.mention}\nYou know, you can also `deposit` money")
                     return
 
                 if amountmoney > money:
-                    await ctx.send(f"{user.mention}\nYou dont have enough lemons in your safe!")
+                    await interaction.channel.send(f"{user.mention}\nYou dont have enough lemons in your safe!")
                     return
 
                 newamt = money - amountmoney
@@ -241,12 +266,12 @@ class items(commands.Cog):
                 mydb.commit()
 
                 await es.update_balance(user, amountmoney)
-                await ctx.send(f"{user.mention}\nYou now have `{newamt}` lemons stored in your safe")
+                await interaction.channel.send(f"{user.mention}\nYou now have `{newamt}` lemons stored in your safe")
                 return
             return
 
         if item == "present":
-            await ctx.send(f"{ctx.author.mention}\nWhat item do you want to gift?")
+            await interaction.response.send_message(f"{ctx.author.mention}\nWhat item do you want to gift?")
 
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel
@@ -254,7 +279,7 @@ class items(commands.Cog):
             try:
                 msg = await self.client.wait_for("message", timeout=60, check=check)
             except:
-                await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                 return
 
             present_item_index = -1
@@ -267,12 +292,12 @@ class items(commands.Cog):
                 present_item_name = present_item_name.lower()
                 if msg.content.lower() == present_item_name.lower():
                     if present_item_amount <= 0:
-                        await ctx.send(f"{ctx.author.mention}\nYou dont have {present_item_name.capitalize()}")
+                        await interaction.channel.send(f"{ctx.author.mention}\nYou dont have {present_item_name.capitalize()}")
                         return
                     itemreal = 1
                     break
             if itemreal == 0:
-                await ctx.send(f"{ctx.author.mention}\nThat item doesnt exist or you dont have it!")
+                await interaction.channel.send(f"{ctx.author.mention}\nThat item doesnt exist or you dont have it!")
                 return
 
             ###now user
@@ -280,12 +305,12 @@ class items(commands.Cog):
                      "was confused"]
             line = random.choice(lines)
 
-            await ctx.send(f"{ctx.author.mention}\nWho will be the happy one? (@ them)")
+            await interaction.channel.send(f"{ctx.author.mention}\nWho will be the happy one? (@ them)")
 
             try:
                 msg = await self.client.wait_for("message", timeout=60, check=check)
             except:
-                await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                 return
 
             try:
@@ -297,12 +322,12 @@ class items(commands.Cog):
 
                 print(id)
                 if user.id == id.id:
-                    await ctx.send(f"{ctx.author.mention}\nYou cant just give yourself a present!")
+                    await interaction.channel.send(f"{ctx.author.mention}\nYou cant just give yourself a present!")
                     return
 
                 await es.del_item(ctx.author.id, item)
 
-                await ctx.send(f"{ctx.author.mention}\nYou gifted {present_item_name} to {msg.content}, they " + line)
+                await interaction.channel.send(f"{ctx.author.mention}\nYou gifted {present_item_name} to {msg.content}, they " + line)
 
                 for shopitem in self.mainshop:
                     price = shopitem["price"]
@@ -313,19 +338,19 @@ class items(commands.Cog):
                     await es.add_item(item_name=present_item_name, userid=id.id, amount=1)
                     return
                 except:
-                    await ctx.send(
+                    await interaction.channel.send(
                         f"{ctx.author.mention}\nSelf defending mechanism activated. Something didnt work, qBaumi doesnt know why, but if anyone lost something CONTACT him. RIGHT NOW")
                     return
 
             except:
-                await ctx.send(
+                await interaction.channel.send(
                     f"{ctx.author.mention}\n{msg.content} is not a user or has never used this bot before. `Answer with @friend if you just typed their name`")
                 return
 
             return
 
         if item == "conchshell":
-            await ctx.send(
+            await interaction.response.send_message.send(
                 f"{ctx.author.mention}\nAhhh I see, you need Trustpilot 10⭐ advice...what lies on your heart my friendo?")
 
             def check(m):
@@ -334,9 +359,9 @@ class items(commands.Cog):
             try:
                 msg = await self.client.wait_for("message", timeout=60, check=check)
             except:
-                await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                 return
-            message = await ctx.send("*Ziiip*")
+            message = await interaction.channel.send("*Ziiip*")
             time.sleep(4)
             lines = ["Yes", "No", "Why", "I dont know", "Ask again", "Of course", "No you are not", "Take the RTX 3060",
                      "No dont buy Intel CPUs", "I know the answer", "The answer is:",
@@ -350,7 +375,7 @@ class items(commands.Cog):
             em = discord.Embed(title="Who do you want to call?", colour=discord.Color.dark_blue(),
                                description="`krusty crab`\n`telephone joker`\n`911`")
             em.set_footer(text="Just type the name")
-            await ctx.send(embed=em)
+            await interaction.response.send_message(embed=em)
 
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "krusty crab" or m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "telephone joker" or m.author == ctx.author and m.channel == ctx.channel and m.content.lower() == "911"
@@ -358,9 +383,9 @@ class items(commands.Cog):
             try:
                 msg = await self.client.wait_for("message", timeout=60, check=check)
             except:
-                await ctx.send("You didnt answer in time")
+                await interaction.channel.send("You didnt answer in time")
                 return
-            message = await ctx.send("Beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep")
+            message = await interaction.channel.send("Beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep")
             time.sleep(2.5)
             await message.edit(content="Beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep")
             time.sleep(3)
@@ -419,7 +444,7 @@ class items(commands.Cog):
             def checkreaction(reaction, user):
                 return reaction.message.id == message.id and user == ctx.author
 
-            message = await ctx.send("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`Make memes`")
+            message = await interaction.response.send_message("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`Make memes`")
             await message.add_reaction('<:GoogleChrome:883281638270844958>')
             await message.add_reaction('<:minecra:883287114270261268>')
             await message.add_reaction('<:FeelsDankMan:810802803739983903>')
@@ -427,16 +452,16 @@ class items(commands.Cog):
             try:
                 reaction, useremoji = await self.client.wait_for('reaction_add', timeout=10, check=checkreaction)
             except asyncio.TimeoutError:
-                await ctx.send('You didnt answer fast enough!')
+                await interaction.channel.send('You didnt answer fast enough!')
                 return
             print(reaction.emoji)
             if str(reaction.emoji) == "<:GoogleChrome:883281638270844958>":
-                msg = await ctx.send(
+                msg = await interaction.channel.send(
                     f"{ctx.author.mention}\nWhat do you want to browse on the web?\n`animals`\n`memes`\n`random facts`")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=check)
                 except:
-                    await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                    await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                     return
                 if msg.content.lower() == "animals":
                     embed = discord.Embed(title="*Cute?*")
@@ -447,7 +472,7 @@ class items(commands.Cog):
                     file = discord.File(random_image)
                     print(random_image)
                     embed.set_image(url="attachment://" + random_image)
-                    message = await ctx.send(file=file, embed=embed)
+                    message = await interaction.channel.send(file=file, embed=embed)
                     return
                 elif msg.content.lower() == "memes":
 
@@ -459,7 +484,7 @@ class items(commands.Cog):
                     file = discord.File(random_image)
                     print(random_image)
                     embed.set_image(url="attachment://" + random_image)
-                    message = await ctx.send(file=file, embed=embed)
+                    message = await interaction.channel.send(file=file, embed=embed)
 
                     return
                 elif msg.content.lower() == "random facts":
@@ -472,11 +497,11 @@ class items(commands.Cog):
                     file = discord.File(random_image)
                     print(random_image)
                     embed.set_image(url="attachment://" + random_image)
-                    message = await ctx.send(file=file, embed=embed)
+                    message = await interaction.channel.send(file=file, embed=embed)
 
                     return
                 else:
-                    await ctx.send("You cant browse that!")
+                    await interaction.channel.send("You cant browse that!")
                     return
                 return
             if str(reaction.emoji) == "<:minecra:883287114270261268>":
@@ -499,7 +524,7 @@ class items(commands.Cog):
                          f"<@!{user}> and you built a lemon tree", f"<@!{user}> and you built a big mansion",
                          f"<@!{user}> and you built a giant mob farm"]
                 line = random.choice(lines)
-                await ctx.send(line)
+                await interaction.channel.send(line)
                 return
             if str(reaction.emoji) == "<:FeelsDankMan:810802803739983903>":
                 def check(m):
@@ -513,11 +538,11 @@ class items(commands.Cog):
                         string = path.split(".")
                         em.add_field(name=string[0], value="\u200b", inline=False)
                 em.set_footer(text="Send your templates to qBaumi, NOW!")
-                message = await ctx.send(f"{user.mention}\n", embed=em)
+                message = await interaction.channel.send(f"{user.mention}\n", embed=em)
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=check)
                 except:
-                    await ctx.send("You didnt answer in time!")
+                    await interaction.channel.send("You didnt answer in time!")
                     return
                 isreal = False
 
@@ -530,13 +555,13 @@ class items(commands.Cog):
                         isreal = True
                         break
                 if isreal == False:
-                    await ctx.send("This template does not exist! *But if you have one send it to qBaumi*")
+                    await interaction.channel.send("This template does not exist! *But if you have one send it to qBaumi*")
                     return
-                await ctx.send(f"{user.mention}\nWhat do you want to write on that beautiful template?")
+                await interaction.channel.send(f"{user.mention}\nWhat do you want to write on that beautiful template?")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=check)
                 except:
-                    await ctx.send("You didnt answer in time!")
+                    await interaction.channel.send("You didnt answer in time!")
                     return
                 img = Image.open("./memes/templates/" + path)
                 width, height = img.size
@@ -549,7 +574,7 @@ class items(commands.Cog):
                 em = discord.Embed(colour=discord.Color.green(), title="Great job!")
                 file = discord.File("./memes/templates/img.png")
                 em.set_image(url="attachment://img.png")
-                await ctx.send(file=file, embed=em)
+                await interaction.channel.send(file=file, embed=em)
 
                 return
 
@@ -560,39 +585,39 @@ class items(commands.Cog):
             def checkperson(m):
                 return m.author == ctx.author and m.channel == ctx.channel
 
-            await ctx.send(
+            await interaction.response.send_message(
                 f"{ctx.author.mention}\nDo you want to `eat`, `throw` or `share` the cake? (Answer with `eat`, `throw` or `share`)")
 
             # YOU NEED TO AWAIT LMAO
             try:
                 msg = await self.client.wait_for("message", timeout=60, check=check)
             except:
-                await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                 return
             if msg.content.lower() == "eat":
-                await ctx.send(f"{ctx.author.mention}\nYou ate your cheesecake, it was very delicious")
+                await interaction.channel.send(f"{ctx.author.mention}\nYou ate your cheesecake, it was very delicious")
 
             elif msg.content.lower() == "share":
-                await ctx.send(f"{ctx.author.mention}\nWith whom you want to share your cheesecake?")
+                await interaction.channel.send(f"{ctx.author.mention}\nWith whom you want to share your cheesecake?")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=checkperson)
                 except:
-                    await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                    await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                     return
                 person = msg.content
-                await ctx.send(f"{ctx.author.mention}\nYou shared your cake with {person}!")
+                await interaction.channel.send(f"{ctx.author.mention}\nYou shared your cake with {person}!")
 
             else:
-                await ctx.send(f"{ctx.author.mention}\nWho will be your victim?")
+                await interaction.channel.send(f"{ctx.author.mention}\nWho will be your victim?")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=checkperson)
                 except:
-                    await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                    await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                     return
                 person = msg.content
-                await ctx.send(f"{ctx.author.mention}\nYou throw your cake at {person}")
+                await interaction.channel.send(f"{ctx.author.mention}\nYou throw your cake at {person}")
 
-            await es.del_item(ctx.author.id, item)
+            await es.del_item(interaction.user.id, item)
             return
 
         if item == "pinata":
@@ -603,20 +628,20 @@ class items(commands.Cog):
             def checkperson(m):
                 return m.author == ctx.author and m.channel == ctx.channel
 
-            await ctx.send(
+            await interaction.response.send_message(
                 f"{ctx.author.mention}\nDo you want to `use` or `gift` the pinata? (Answer with `use` or `gift`)")
 
             # YOU NEED TO AWAIT LMAO
             try:
                 msg = await self.client.wait_for("message", timeout=60, check=check)
             except:
-                await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                 return
             if msg.content.lower() == "use":
                 times = random.randrange(2, 10)
                 candy = random.randrange(3, 7)
                 print(candy)
-                await ctx.send(
+                await interaction.channel.send(
                     f"{ctx.author.mention}\nAfter you hit 🏏 the pinata `{times}` times you got {candy} candy!")
                 await es.del_item(ctx.author.id, item)
 
@@ -626,11 +651,11 @@ class items(commands.Cog):
 
 
             else:
-                await ctx.send(f"{ctx.author.mention}\nWho gets the pinata?")
+                await interaction.channel.send(f"{ctx.author.mention}\nWho gets the pinata?")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=checkperson)
                 except:
-                    await ctx.send(f"{ctx.author.mention}\nYou didnt answer in time")
+                    await interaction.channel.send(f"{ctx.author.mention}\nYou didnt answer in time")
                     return
                 try:
                     class id:
@@ -640,14 +665,14 @@ class items(commands.Cog):
                     print(msg.content)
                     print(id)
                     await es.del_item(ctx.author.id, item)
-                    await ctx.send(
+                    await interaction.channel.send(
                         f"{ctx.author.mention}\nYou gifted your pinata to {msg.content}, muchas gracias they said")
 
                     try:
                         await es.add_item("pinata", id.id, 1)
                         return
                     except:
-                        await ctx.send(
+                        await interaction.channel.send(
                             f"{ctx.author.mention}\nSelf defending mechanism activated. Something didnt work, qBaumi doesnt know why, but if anyone lost something CONTACT him. RIGHT NOW")
                         return
                 except:
@@ -717,12 +742,24 @@ class items(commands.Cog):
             await ctx.send(embed=em)"""
         if item == "treat":
             stupidpetsclass = cogs.pets.pets(self.client)
-            await cogs.pets.pets.treat_helper(stupidpetsclass, ctx)
-            await es.del_item(ctx.author.id, item)
+            await cogs.pets.pets.treat_helper(stupidpetsclass, interaction)
+            await es.del_item(interaction.user.id, item)
             stupidpetsclass = None
         else:
-            await ctx.send(f"{ctx.author.mention}\nThat item does not exist or has no usage yet")
+            await interaction.response.send_message.send(f"{ctx.author.mention}\nThat item does not exist or has no usage yet")
 
+    @use.autocomplete('item')
+    async def fruits_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str,
+            namespace: app_commands.Namespace
+    ) -> List[app_commands.Choice[str]]:
+        items = await self.getChoices(interaction.user)
+        return [
+            app_commands.Choice(name=item, value=item.lower())
+            for item in items if current.lower() in item.lower()
+        ]
 
 async def setup(client):
     await client.add_cog(items(client), guilds=guilds)

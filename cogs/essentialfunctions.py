@@ -1,6 +1,8 @@
 import mysql.connector, discord, json
 from .economy import mycursor, mydb
 from config import allowedRoles
+import discord
+from discord.ext import commands
 
 # returns True if user has Perms
 # returns False if not
@@ -60,7 +62,7 @@ async def check_account(ctx):
     await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
     return False
 
-async def check_account(interaction : discord.Interaction):
+async def interaction_check_account(interaction : discord.Interaction):
     mycursor.execute("SELECT id FROM users")
 
     ids = mycursor.fetchall()

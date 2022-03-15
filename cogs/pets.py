@@ -680,27 +680,27 @@ class pets(commands.Cog):
         return allpets
 
     @staticmethod
-    async def treat_helper(self, ctx):
-        pet = await self.userpet(ctx.author.id, "equippedpet")
+    async def treat_helper(self, interaction : discord.Interaction):
+        pet = await self.userpet(interaction.user.id, "equippedpet")
         if bool(pet) == False:
-            await ctx.send(f"{ctx.author.mention}\nYou dont have a pet equipped!")
+            await interaction.channel.send(f"{interaction.user.mention}\nYou dont have a pet equipped!")
             return
-        stats = await self.getstats(ctx.author.id)
+        stats = await self.getstats(interaction.user.id)
         if stats["food"] > 80:
-            await ctx.send(f"{ctx.author.mention}\n{pet['name']} isn't hungry! Try again later")
+            await interaction.channel.send(f"{interaction.user.mention}\n{pet['name']} isn't hungry! Try again later")
             return
-        users = await es.get_bank_data(ctx.author.id)
+        users = await es.get_bank_data(interaction.user.id)
         hunger = int(stats["food"]) + 5
-        self.updatestat(ctx.author.id, "food", hunger)
-        addxp = await self.addxp(ctx.author.id, 5)
+        self.updatestat(interaction.user.id, "food", hunger)
+        addxp = await self.addxp(interaction.user.id, 5)
         if addxp == 1:
             embed = discord.Embed(title=f'{pet["name"]} leveled up!', colour=discord.Color.teal(),
                                   description=f"{pet['name']} now has:\n❤{pet['hp'] + 3}\n🗡️{pet['attack'] + 3}\n💨{pet['speed'] + 3}")
-            await ctx.send(f"{ctx.author.mention}\n", embed=embed)
+            await interaction.channel.send(f"{interaction.user.mention}\n", embed=embed)
 
         embed = discord.Embed(title=f"You gave {pet['name']} a treat!", colour=discord.Color.teal())
-        await ctx.send(f"{ctx.author.mention}\n", embed=embed)
-        await ctx.send(f"<a:nemerub:853296247606476800>")
+        await interaction.channel.send(f"{interaction.user.mention}\n", embed=embed)
+        await interaction.channel.send(f"<a:nemerub:853296247606476800>")
 
 
 
