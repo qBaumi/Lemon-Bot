@@ -86,6 +86,7 @@ class items(commands.Cog):
         class ctx():
             author = interaction.user
             channel = interaction.channel
+
         """Globals"""
         user = interaction.user
 
@@ -443,8 +444,8 @@ class items(commands.Cog):
 
             def checkreaction(reaction, user):
                 return reaction.message.id == message.id and user == ctx.author
-
-            message = await interaction.response.send_message("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`Make memes`")
+            await interaction.response.send_message("💻")
+            message = await interaction.channel.send("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`Make memes`")
             await message.add_reaction('<:GoogleChrome:883281638270844958>')
             await message.add_reaction('<:minecra:883287114270261268>')
             await message.add_reaction('<:FeelsDankMan:810802803739983903>')
@@ -676,7 +677,7 @@ class items(commands.Cog):
                             f"{ctx.author.mention}\nSelf defending mechanism activated. Something didnt work, qBaumi doesnt know why, but if anyone lost something CONTACT him. RIGHT NOW")
                         return
                 except:
-                    await ctx.send(
+                    await interaction.channel.send(
                         f"{ctx.author.mention}\n{msg.content} is not a user or has never used this bot before. `Answer with @friend if you just typed their name`")
                     return
         """
