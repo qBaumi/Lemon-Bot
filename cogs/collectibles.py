@@ -1,11 +1,16 @@
 import json
 import math
 import random
+from typing import Optional
+
 import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
 from .economy import mycursor, mydb
+from discord import app_commands
+from config import guilds
 
+# Add a person to the halloffame in the json file
 async def addhalloffame(userid):
     with open("./json/halloffame.json", "r") as f:
         users = json.load(f)
@@ -16,33 +21,42 @@ async def addhalloffame(userid):
     with open("./json/halloffame.json", "w") as f:
         json.dump(users, f)
 
+# Calculate max pages of collectibles
+def getMaxPages():
+
+    collectibles = getCollectibles()
+
+    all_collectibles = 0
+    for collectible in collectibles:
+        all_collectibles += 1
+    pages = math.ceil(all_collectibles / 10)
+    return pages
+
+def getCollectibles():
+    with open("./json/collectibles.json", "r", encoding="utf-8") as f:
+        return json.load(f)
 
 class collectibles(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    """
-    10 collectibles per page
-    shows all collectibles
-    """
-    @commands.command()
-    async def collectibles(self, ctx, page=1):
-        page = int(page)
+
+
+    #10 collectibles per page
+    #shows all collectibles
+    @app_commands.command(name="collectibles", description="Show all collectibles that exist")
+    @app_commands.describe(page="Specify a page")
+    async def collectibles(self, interaction : discord.Interaction, page : Optional[app_commands.Range[int, 1, getMaxPages()]]):
+
+        if page==None:
+            page = 1
         em = discord.Embed(title="All collectibles", colour=discord.Color.dark_teal())
 
-        with open("./json/collectibles.json", "r", encoding="utf-8") as f:
-            collectibles = json.load(f)
-
-        """
-        Calculate pages
-        """
-        all_collectibles = 0
-        for collectible in collectibles:
-            all_collectibles += 1
-        pages = math.ceil(all_collectibles / 10)
+        pages = getMaxPages()
+        collectibles = getCollectibles()
 
         if page > pages or page < 1:
-            await ctx.send(f"There are only {pages} pages")
+            await interaction.response.send_message(f"There are only {pages} pages")
             return
 
         for i in range(page * 10 - 10, page * 10):
@@ -55,7 +69,7 @@ class collectibles(commands.Cog):
             em.add_field(name=f"{name} {emoji}", value=f"{desc}", inline=False)
 
         em.set_footer(text=f"{page} / {pages}")
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
     """
     returns list with all collectibles
@@ -73,21 +87,21 @@ class collectibles(commands.Cog):
         return bag
 
 
-    @commands.command()
-    async def collection(self, ctx, page=1):
+    @app_commands.command(name="collection", description="take a look at your collection, you can get collectibles with /vendingmachine")
+    async def collection(self, interaction : discord.Interaction):
 
-        if not await es.check_account(ctx):
+        user = interaction.user
+        if not await es.interaction_check_account(interaction):
             return
 
         try:
-            collection = await self.getcollection(ctx.author.id)
+            collection = await self.getcollection(user.id)
         except:
             collection = []
-        with open("./json/collectibles.json", "r", encoding="utf-8") as f:
-            collectibles = json.load(f)
+        collectibles = getCollectibles()
 
         em = discord.Embed(title="Your Collection", colour=discord.Color.teal())
-        collectibles_amount, all_collectibles = await self.getcollectiblesamout(ctx.author.id)
+        collectibles_amount, all_collectibles = await self.getcollectiblesamout(user.id)
         for item in collection:
             name = item["name"]
             name_ = name.capitalize()
@@ -101,29 +115,29 @@ class collectibles(commands.Cog):
             if amount > 0:
                 em.add_field(name=f"{name_} {emoji}", value=f"amount: `{amount}`", inline=False)
         em.set_footer(text=f"{collectibles_amount} / {all_collectibles} collectibles")
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
-        """ADD HALL OF FAME"""
+        #ADD HALL OF FAME
         if collectibles_amount == all_collectibles:
-            await addhalloffame(ctx.author.id)
+            await addhalloffame(user.id)
 
 
-    @commands.command()
-    async def vendingmachine(self, ctx):
+    @app_commands.command(name="vendingmachine", description="Throw 150 Lemons into a vending machine to collect a useless toy")
+    async def vendingmachine(self, interaction : discord.Interaction):
 
-        users = await es.get_bank_data(ctx.author.id)
-        user = ctx.author
+        user = interaction.user
+        users = await es.get_bank_data(user.id)
 
-        if not await es.check_account(ctx):
+
+        if not await es.interaction_check_account(interaction):
             return
         if users[str(user.id)]["pocket"] < 150:
-            await ctx.send(f"{ctx.author.mention}\nYou dont have enough money!")
+            await interaction.response.send_message(f"{user.mention}\nYou dont have enough money!")
             return
 
 
 
-        with open("./json/collectibles.json", "r", encoding="utf-8") as f:
-            collectibles = json.load(f)
+        collectibles = getCollectibles()
 
         collectible = random.choice(collectibles)
         name = collectible["name"]
@@ -140,39 +154,35 @@ class collectibles(commands.Cog):
                 if n == name:
                     old_amt = thing["amount"]
                     new_amt = old_amt + 1
-                    sql = f"UPDATE collectibles SET amount = {new_amt} WHERE id = {user.id} AND name = '{name}'"
-                    mycursor.execute(sql)
-                    mydb.commit()
+                    es.sql_exec(f"UPDATE collectibles SET amount = {new_amt} WHERE id = {user.id} AND name = '{name}'")
+
                     t = 1
                     break
             if t == None:
-                sql = f"INSERT INTO collectibles (id, name, amount) VALUES ({user.id}, '{name}', 1)"
-                mycursor.execute(sql)
-                mydb.commit()
-        except:
-            sql = f"INSERT INTO collectibles (id, name, amount) VALUES ({user.id}, '{name}', 1)"
-            mycursor.execute(sql)
-            mydb.commit()
+                es.sql_exec(f"INSERT INTO collectibles (id, name, amount) VALUES ({user.id}, '{name}', 1)")
 
-        await es.update_balance(ctx.author, -150)
+        except:
+            es.sql_exec(f"INSERT INTO collectibles (id, name, amount) VALUES ({user.id}, '{name}', 1)")
+
+
+        await es.update_balance(user, -150)
         em = discord.Embed(
             title=f"You threw your 150 <:lemon2:881595266757713920> lemons into a vending machine and got a {name} {emoji}",
             description="Dont ask me how you can throw 150 lemons in there", colour=discord.Color.dark_blue())
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
 
         """ADD HALL OF FAME"""
-        collectibles_amount, all_collectibles = await self.getcollectiblesamout(ctx.author.id)
+        collectibles_amount, all_collectibles = await self.getcollectiblesamout(user.id)
         if collectibles_amount == all_collectibles:
-            await addhalloffame(ctx.author.id)
+            await addhalloffame(user.id)
 
     async def getcollectiblesamout(self, userid):
         try:
             collection = await self.getcollection(userid)
         except:
             collection = []
-        with open("./json/collectibles.json", "r", encoding="utf-8") as f:
-            collectibles = json.load(f)
+        collectibles = getCollectibles()
 
         collectibles_amount = 0
         all_collectibles = 0
@@ -184,4 +194,4 @@ class collectibles(commands.Cog):
         return collectibles_amount, all_collectibles
 
 async def setup(client):
-    await client.add_cog(collectibles(client))
+    await client.add_cog(collectibles(client), guilds=guilds)
