@@ -5,32 +5,34 @@ from PIL import Image, ImageDraw
 from discord.ext import commands
 import random, asyncio
 import cogs.essentialfunctions as es
+from discord import app_commands
+from config import guilds
 
 class games(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command()
-    async def lottery(self, ctx, bet=0):
+    @app_commands.command(name="lottery", description="Gamba in the loterry")
+    @app_commands.describe(bet="How much money you want to risk")
+    async def lottery(self, interaction : discord.Interaction, bet : int):
 
-        """Globals"""
-        users = await es.get_bank_data(ctx.author.id)
-        user = ctx.author
+        #Globals
+        users = await es.get_bank_data(interaction.user.id)
+        user = interaction.user
 
-        """False checks"""
-        if not await es.check_account(ctx):
+        if not await es.interaction_check_account(interaction):
             return
         if bet == 0:
-            await ctx.send(f"{ctx.author.mention}\nYou didn't set a bet, try again `lem lottery 10` for example")
+            await interaction.response.send_message(f"{user.mention}\n<:FeelsDankMan:810802803739983903>")
             return
         if bet < 0:
-            await ctx.send(f"{ctx.author.mention}\nYou think I wouldnt see that coming? :)")
+            await interaction.response.send_message(f"{user.mention}\nYou think I wouldnt see that coming? :)")
             return
         if users[str(user.id)]['pocket'] < bet:
-            await ctx.send(f"{ctx.author.mention}\nYou don't have enough money")
+            await interaction.response.send_message(f"{user.mention}\nYou don't have enough money")
             return
 
-        await es.update_balance(ctx.author, bet * -1)
+        await es.update_balance(user, bet * -1)
 
         fruits = ['<:pineapple:881594630888620052>', '<:grapes:881594630888620052>', '<:cherries:881594630888620052>',
                   '<:green_apple:881594630888620052>', '<:lemon:881594630888620052>']
@@ -70,40 +72,35 @@ class games(commands.Cog):
             em.set_footer(text="No luck today? :(")
         if multiplier == 4:
             em.set_footer(text="JACKPOOOOOOOOOOOT")
-        await ctx.send(embed=em)
-        await es.update_balance(ctx.author, win)
+        await interaction.response.send_message(embed=em)
+        await es.update_balance(user, win)
 
-    """
-    Gamba
-    doubles money 50% chance of win
-    """
+    @app_commands.command(name="roulette", description="Gamba in the casino, set your bet to red, black, odd, even or on a number")
+    @app_commands.describe(bet="How much money you want to risk")
+    async def roulette(self, interaction : discord.Interaction, bet : int):
 
-    @commands.command()
-    async def roulette(self, ctx, bet=0):
+        #Globals
+        users = await es.get_bank_data(interaction.user.id)
+        user = interaction.user
 
-        """Globals"""
-        users = await es.get_bank_data(ctx.author.id)
-        user = ctx.author
-
-        """False checks"""
-        if not await es.check_account(ctx):
-            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
+        if not await es.interaction_check_account(interaction):
+            await interaction.response.send_message(f"{user.mention}\nYou need to use `lem startup` first")
             return
         if bet == 0:
-            await ctx.send(f"{ctx.author.mention}\nYou didn't set a bet, try again `lem roulette 10` for example")
+            await interaction.response.send_message(f"{user.mention}\n<:FeelsDankMan:810802803739983903>")
             return
         if bet < 0:
-            await ctx.send(f"{ctx.author.mention}\nYou think I wouldnt see that coming? :)")
+            await interaction.response.send_message(f"{user.mention}\nYou think I wouldnt see that coming? :)")
             return
         if users[str(user.id)]['pocket'] < bet:
-            await ctx.send(f"{ctx.author.mention}\nYou don't have enough money in their pocket!")
+            await interaction.response.send_message(f"{user.mention}\nYou don't have enough money in their pocket!")
             return
 
         def check(message):
-            return message.channel == ctx.channel and message.author == ctx.author
+            return message.channel == interaction.channel and message.author == user
 
-        await ctx.send(
-            "Where do you set your bet on?\n`red`🟥\n`black`⬛\n`odd` 1️⃣\n`even` ⃣\nnumber between `0` and `36`")
+        await interaction.response.send_message(
+            "Where do you set your bet on?\n`red`🟥\n`black`⬛\n`odd` 1️⃣\n`even` 2️⃣\nnumber between `0` and `36`")
 
         try:
             # I can get both of the parameters of checkreaction like this
@@ -111,14 +108,14 @@ class games(commands.Cog):
             bid = "None"
             if msg.content.lower() == "red" or msg.content.lower() == "black" or msg.content.lower() == "odd" or msg.content.lower() == "even" or int(
                     msg.content) >= 0 and int(msg.content) <= 36:
-                await ctx.send(f"{ctx.author.mention}\nYou set your bet on {msg.content}")
+                await interaction.channel.send(f"{user.mention}\nYou set your bet on {msg.content}")
                 try:
                     bid = int(msg.content)
                 except:
                     bid = msg.content.lower()
 
             else:
-                await ctx.send(f"{ctx.author.mention}\nYou cant set your bet on that!")
+                await interaction.channel.send(f"{user.mention}\nYou cant set your bet on that!")
                 return
             await es.update_balance(user, -bet)
             number = random.randrange(0, 37)
@@ -181,15 +178,15 @@ class games(commands.Cog):
                                title=f"{user.name} {line} {bet * 2 * timeswin - bet} lemons!",
                                description=f"The ball landed on the {number}!")
             em.set_image(url="attachment://roulettesaved.png")
-            await ctx.send(f"{user.mention}\n", embed=em, file=file)
+            await interaction.channel.send(f"{user.mention}\n", embed=em, file=file)
 
 
         except asyncio.TimeoutError:
-            await ctx.send(f"{user.name} did not accept in time")
+            await interaction.response.send_message(f"{user.name} did not answer in time")
             return
 
-    @commands.command()
-    async def minesweeper(self, ctx,):
+    @app_commands.command(name="minesweeper", description="Play a round of minesweeper Gladge")
+    async def minesweeper(self, interaction : discord.Interaction):
 
         rows = 9
         col = 9
@@ -216,7 +213,6 @@ class games(commands.Cog):
                 if coords not in bombcoords:
                     bombcoords.append(coords)
                     break
-        print(bombcoords)
 
         """
             return : int
@@ -310,35 +306,20 @@ class games(commands.Cog):
                 line += numToEmoji(gameboard[x][y])
                 line += "||"
             line += "\n"
-        await ctx.send(line)
-        print(gameboard)
+        await interaction.response.send_message(line)
 
-    @commands.command()
-    async def tictactoe(self, ctx, enemy: discord.User, bet=0):
-        """Globals"""
-        users = await es.get_bank_data(ctx.author.id)
-        usersenemy = await es.get_bank_data(enemy.id)
-        user = ctx.author
+    @app_commands.command(name="tictactoe", description="Play tictactoe with a friend")
+    @app_commands.describe(enemy="Who do you want to play against?")
+    async def tictactoe(self, interaction : discord.Interaction, enemy: discord.User):
+        # Globals
 
-        """False checks"""
-        if not await es.check_account(ctx):
-            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
-            return
-        if bet == 0:
-            await ctx.send(
-                f"{ctx.author.mention}\nYou didn't set a bet, try again `lem tictactoe `{enemy.name}` 10` for example")
-            return
-        if bet < 0:
-            await ctx.send(f"{ctx.author.mention}\nYou think I wouldnt see that coming? :)")
-            return
-        if users[str(user.id)]['pocket'] < bet or usersenemy[str(enemy.id)]['pocket'] < bet:
-            await ctx.send(f"{ctx.author.mention}\nYou or your enemy doesn't have enough money in their pocket!")
-            return
+        challenger = interaction.user
+        await interaction.response.defer()
 
         def checkreaction(reaction, user):
             return reaction.message.id == msg.id and user == enemy and reaction.emoji == "✅" or reaction.message.id == msg.id and user == enemy and reaction.emoji == "❌"
 
-        msg = await ctx.send(f"{enemy.name} has 60 seconds to accept!")
+        msg = await interaction.channel.send(f"{enemy.name} has 60 seconds to accept!")
         await msg.add_reaction("✅")
         await msg.add_reaction("❌")
         try:
@@ -346,24 +327,24 @@ class games(commands.Cog):
             reaction, user = await self.client.wait_for('reaction_add', timeout=60, check=checkreaction)
 
             if reaction.emoji == "❌":
-                await ctx.send(
-                    f"{ctx.author.mention}\n{enemy.name} dosent wanna play tictactoe with you right now <:Sadge:720250426892615745>")
+                await interaction.followup.send(
+                    f"{challenger.mention}\n{enemy.name} dosent wanna play tictactoe with you right now <:Sadge:720250426892615745>")
                 return
 
 
         except asyncio.TimeoutError:
-            await ctx.send(f"{enemy.name} did not accept in time")
+            await interaction.followup.send(f"{enemy.name} did not accept in time")
             return
 
-        await ctx.send(f"{enemy.name} accepted, let the battle begin!")
+        await interaction.followup.send(f"{enemy.name} accepted, let the battle begin!")
 
         gameboard = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-        player1 = ctx.author
+        player1 = challenger
         player2 = enemy
         players = [player1, player2]
         starter = random.choice(players)
 
-        await ctx.send(
+        await interaction.channel.send(
             f"{starter.name} starts\nNow type `top left` , `top mid` , `top right` , `mid left`, `mid mid` , `mid right` , `bot left`, `bot mid` or `bot right`")
         topleft1 = "<:rect843:881875152630059019>"
         topleft2 = "<:rect843:881875152630059019>"
@@ -507,7 +488,7 @@ class games(commands.Cog):
                 botright3 = "<:o4:881935448501547018>"
                 botright4 = "<:o4:881935426330431548>"
 
-            await ctx.send(
+            await interaction.channel.send(
                 f"{topleft1}{topleft2}:white_large_square:{topmid1}{topmid2}:white_large_square:{topright1}{topright2}\n"
                 f"{topleft3}{topleft4}:white_large_square:{topmid3}{topmid4}:white_large_square:{topright3}{topright4}\n"
                 f":white_large_square::white_large_square::white_large_square::white_large_square::white_large_square::white_large_square::white_large_square::white_large_square:\n"
@@ -518,12 +499,12 @@ class games(commands.Cog):
                 f"{botleft3}{botleft4}:white_large_square:{botmid3}{botmid4}:white_large_square:{botright3}{botright4}\n")
 
             def checkturn(m):
-                if m.author != starter or m.channel != ctx.channel:
+                if m.author != starter or m.channel != interaction.channel:
                     return False
                 return m.content == f"top left" or m.content == f"top mid" or m.content == f"top right" or m.content == f"mid left" or m.content == f"mid mid" or m.content == f"mid right" or m.content == f"bot left" or m.content == f"bot mid" or m.content == f"bot right"
 
             if turn != 0:
-                await ctx.send(
+                await interaction.channel.send(
                     f"Now it's {starter.mention}'s turn.\nType `top left` , `top mid` , `top right` , `mid left`, `mid mid` , `mid right` , `bot left`, `bot mid` or `bot right`")
             turn = turn + 1
             while True:
@@ -535,55 +516,55 @@ class games(commands.Cog):
                             gameboard[0][0] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "top mid" and starter == player1:
                         if gameboard[0][1] == 0:
                             gameboard[0][1] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "top right" and starter == player1:
                         if gameboard[0][2] == 0:
                             gameboard[0][2] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "mid left" and starter == player1:
                         if gameboard[1][0] == 0:
                             gameboard[1][0] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "mid mid" and starter == player1:
                         if gameboard[1][1] == 0:
                             gameboard[1][1] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "mid right" and starter == player1:
                         if gameboard[1][2] == 0:
                             gameboard[1][2] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "bot left" and starter == player1:
                         if gameboard[2][0] == 0:
                             gameboard[2][0] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "bot mid" and starter == player1:
                         if gameboard[2][1] == 0:
                             gameboard[2][1] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "bot right" and starter == player1:
                         if gameboard[2][2] == 0:
                             gameboard[2][2] = 1
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
 
                     # player2
                     if msg.content == "top left" and starter == player2:
@@ -591,58 +572,58 @@ class games(commands.Cog):
                             gameboard[0][0] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "top mid" and starter == player2:
                         if gameboard[0][1] == 0:
                             gameboard[0][1] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "top right" and starter == player2:
                         if gameboard[0][2] == 0:
                             gameboard[0][2] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "mid left" and starter == player2:
                         if gameboard[1][0] == 0:
                             gameboard[1][0] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "mid mid" and starter == player2:
                         if gameboard[1][1] == 0:
                             gameboard[1][1] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "mid right" and starter == player2:
                         if gameboard[1][2] == 0:
                             gameboard[1][2] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "bot left" and starter == player2:
                         if gameboard[2][0] == 0:
                             gameboard[2][0] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "bot mid" and starter == player2:
                         if gameboard[2][1] == 0:
                             gameboard[2][1] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
                     if msg.content == "bot right" and starter == player2:
                         if gameboard[2][2] == 0:
                             gameboard[2][2] = 2
                             break
                         else:
-                            await ctx.send("You can't mark this field")
+                            await interaction.channel.send("You can't mark this field")
 
                 except:
-                    await ctx.send(f"{enemy.name} did not answer in time")
+                    await interaction.channel.send(f"{enemy.name} did not answer in time")
                     return
 
             if gameboard[0][0] == 1 and gameboard[0][1] == 1 and gameboard[0][2] == 1:
@@ -702,20 +683,19 @@ class games(commands.Cog):
             if isWon == True:
 
                 em = discord.Embed(colour=discord.Color.gold(),
-                                   title=f"Congratulations, {winner.name} won the bet of {bet} lemons!")
+                                   title=f"Congratulations, {winner.name} won!")
                 if winner == player2:
                     looser = player1
                 else:
                     looser = player2
-                await es.update_balance(winner, bet)
-                await es.update_balance(looser, -1 * bet)
-                await ctx.send(embed=em)
+
+                await interaction.channel.send(embed=em)
                 return
 
             if gameboard[0][0] != 0 and gameboard[0][1] != 0 and gameboard[0][2] != 0 and gameboard[1][0] != 0 and \
                     gameboard[1][1] != 0 and gameboard[1][2] != 0 and gameboard[2][0] != 0 and gameboard[2][1] != 0 and \
                     gameboard[2][2] != 0:
-                await ctx.send("It's a draw, nobody won. What a pitty!")
+                await interaction.channel.send("It's a draw, nobody won. What a pitty!")
                 return
 
     # TODO: BLACKJACK
@@ -786,10 +766,8 @@ class games(commands.Cog):
         await ctx.send("You drew " + out)
         """
 
-
-    """Would you rather for free now"""
-    @commands.command(aliases=["wouldyourather", "would you rather"])
-    async def wyr(self, ctx):
+    @app_commands.command(name="wouldyourather", description="Hmm, what am I gonna put as description?")
+    async def wouldyourather(self, interaction : discord.Interaction):
 
         with open("./json/wyr.json", "r") as f:
             wyr = json.load(f)
@@ -800,15 +778,15 @@ class games(commands.Cog):
                 break
         scene = scenedict["scene"]
         scene2 = scenedict2["scene"]
-        await ctx.send(f"{ctx.author.mention}\nWould you rather {scene} or {scene2}")
+        await interaction.response.send_message(f"{interaction.user.mention}\nWould you rather {scene} or {scene2}")
 
-    """Wordle from soap"""
-    @commands.command()
-    async def wordle(self, ctx):
+    @app_commands.command(name="wordle", description="Play a game of wordle")
+    async def wordle(self, interaction : discord.Interaction):
+
         with open("./json/wordle_emojis.json", "r") as f:
             emojis = json.load(f)
-        empty = "<:empty:941356986476408873>"
 
+        empty = "<:empty:941356986476408873>"
         guesses = {0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : ""}
 
         # Get solution
@@ -818,7 +796,7 @@ class games(commands.Cog):
         print(solution)
 
         async def howtoplay():
-            await ctx.send("""**Wordle**\n
+            await interaction.response.send_message("""**Wordle**\n
 **How to play**
 Type a word that has **5 letters**
 It will appear :green_square: if it is at the **right place** of the **solution**
@@ -834,12 +812,12 @@ You can try **6 times**
                 if previousguess == "":
                     return
                 if guesses[i] == "":
-                    await ctx.send(f"{empty} {empty} {empty} {empty} {empty} ")
+                    await interaction.channel.send(f"{empty} {empty} {empty} {empty} {empty} ")
                 else:
                     sendstr = ""
                     for x in range(5):
                         sendstr += f"{convertToEmoji(guesses[i], x)} "
-                    await ctx.send(sendstr)
+                    await interaction.channel.send(sendstr)
                 previousguess = guesses[i]
         def convertToEmoji(guess, letterindex):
             return emojis[getLetterColor(guess, letterindex)][guess[letterindex]]
@@ -850,34 +828,34 @@ You can try **6 times**
                 return "yellow"
             return "blue"
         def check(message):
-            return message.channel == ctx.channel and message.author == ctx.author
+            return message.channel == interaction.channel and message.author == interaction.user
         async def getguess():
             try:
                 while True:
                     msg = await self.client.wait_for('message', timeout=300, check=check)
                     msg.content = msg.content.lower()
                     if len(msg.content) != 5:
-                        await ctx.send("**The word must be 5 letters long!**")
+                        await interaction.channel.send("**The word must be 5 letters long!**")
                         #await getguess()
                     elif not msg.content.isalpha() or " " in msg.content:
-                        await ctx.send("**Only letters are allowed! Nice try MTD :)**")
+                        await interaction.channel.send("**Only letters are allowed! Nice try MTD :)**")
                         #await getguess()
                     elif not msg.content in wordlist:
-                        await ctx.send("**This isn't an allowed word**")
+                        await interaction.channel.send("**This isn't an allowed word**")
                     else:
                         return msg.content
             except asyncio.TimeoutError:
-                await ctx.send(f"You didn't answer in time")
+                await interaction.channel.send(f"You didn't answer in time")
                 return "0"
         def win():
             try:
                 print("update")
-                es.mycursor.execute(f"SELECT wins FROM wordle WHERE id = '{ctx.author.id}'")
+                es.mycursor.execute(f"SELECT wins FROM wordle WHERE id = '{interaction.user.id}'")
                 data = es.mycursor.fetchall()
                 prevpoints = int(data[0][0])
-                sql = f"UPDATE wordle SET wins = {prevpoints + 1} WHERE id = '{ctx.author.id}'"
+                sql = f"UPDATE wordle SET wins = {prevpoints + 1} WHERE id = '{interaction.user.id}'"
             except:
-                sql = f"INSERT INTO wordle (id, wins) VALUES ('{ctx.author.id}', 1)"
+                sql = f"INSERT INTO wordle (id, wins) VALUES ('{interaction.user.id}', 1)"
                 print("insert")
             es.mycursor.execute(sql)
             es.mydb.commit()
@@ -893,13 +871,13 @@ You can try **6 times**
             if guesses[i] == "0":
                 return
             if guesses[i] == solution:
-                await ctx.send("**Congratulations you won!!!**")
-                await ctx.send(f"{convertToEmoji(solution, 0)} {convertToEmoji(solution, 1)} {convertToEmoji(solution, 2)} {convertToEmoji(solution, 3)} {convertToEmoji(solution, 4)} ")
+                await interaction.channel.send("**Congratulations you won!!!**")
+                await interaction.channel.send(f"{convertToEmoji(solution, 0)} {convertToEmoji(solution, 1)} {convertToEmoji(solution, 2)} {convertToEmoji(solution, 3)} {convertToEmoji(solution, 4)} ")
                 wins = win()
-                await ctx.send(f"**You now have {wins} wins in total!**")
+                await interaction.channel.send(f"**You now have {wins} wins in total!**")
                 return
             await sendembed(guesses)
-        await ctx.send(f"**Unfortunately you used all your six tries without guessing the solution :(, the solution was**\n**{solution}**")
+        await interaction.channel.send(f"**Unfortunately you used all your six tries without guessing the solution :(, the solution was**\n**{solution}**")
 
 
 
@@ -926,25 +904,24 @@ You can try **6 times**
 
         print(emojidict)
 
-    @commands.command(name="wordleaderboard", description="Leaderboard for Wordle", aliases=["wordleleaderboard"])
-    async def wordleaderboard(self, ctx, x=10):
+    @app_commands.command(name="wordleaderboard", description="Leaderboard for Wordle")
+    async def wordleaderboard(self, interaction : discord.Interaction):
+
         """
         list of tuples
         user = (user.id, points)
         data = [(user.id, points), (user.id, points), (user.id, points)...]
         """
-        es.mycursor.execute(f"SELECT * FROM wordle ORDER BY wins DESC LIMIT 10")
-        data = es.mycursor.fetchall()
-        print(data)
-        print(data[0])
+        data = es.sql_select(f"SELECT * FROM wordle ORDER BY wins DESC LIMIT 10")
+
 
         em = discord.Embed(colour=discord.Color.teal(), title="Wordle Leaderboard")
         for user in data:
             member = await self.client.fetch_user(user[0])
             em.add_field(name=str(member), value=f"{user[1]} Wins", inline=False)
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
 
 
 async def setup(client):
-    await client.add_cog(games(client))
+    await client.add_cog(games(client), guilds=guilds)
