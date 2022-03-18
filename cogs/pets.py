@@ -4,7 +4,7 @@ from discord.ext import commands
 import random, asyncio, json
 from .economy import mycursor, mydb
 import cogs.essentialfunctions as es
-
+from config import guilds
 
 
 
@@ -707,4 +707,4 @@ class pets(commands.Cog):
 
 
 async def setup(client):
-    await client.add_cog(pets(client))
+    await client.add_cog(pets(client), guilds=guilds)
