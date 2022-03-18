@@ -333,9 +333,9 @@ class pet(commands.Cog, app_commands.Group):
     async def pat(self, interaction : discord.Interaction):
         await self.pat_helper(interaction)
 
-    @commands.command()
-    async def walk(self, ctx):
-        await self.walk_helper(ctx)
+    @app_commands.command(name='walk', description="Take a walk with your pet")
+    async def walk(self, interaction : discord.Interaction):
+        await self.walk_helper(interaction)
 
     async def pets_embed(self, interaction : discord.Interaction):
         user = interaction.user
@@ -398,47 +398,47 @@ class pet(commands.Cog, app_commands.Group):
         await interaction.response.send_message(f"{user.mention}\nYou started petting {pet['name']}")
         await interaction.channel.send("<:nemePat:781659265244200981><:nemePat:781659265244200981><:nemePat:781659265244200981>")
 
-    async def walk_helper(self, ctx):
-        user = ctx.author
+    async def walk_helper(self, interaction : discord.Interaction):
+        user = interaction.user
         pet = await self.userpet(user.id, "equippedpet")
         pet1 = await self.userpet(user.id, "petslot1")
         pet2 = await self.userpet(user.id, "petslot2")
         pet3 = await self.userpet(user.id, "petslot3")
         if bool(pet) == False and bool(pet1) == False and bool(pet2) == False and bool(pet3) == False:
-            await ctx.send("You dont have a pet!")
+            await interaction.response.send_message("You dont have a pet!")
             return
         if bool(pet) == False:
-            await ctx.send("You dont have a pet equipped!")
+            await interaction.response.send_message("You dont have a pet equipped!")
             return
         stats = await self.getstats(user.id)
         if stats["fun"] <= 90:
             self.updatestat(user.id, "fun", stats["fun"] + 10)
-
-        message = await ctx.send(f"{user.mention}\n*You are putting a leash on {pet['name']}*")
+        await interaction.response.send_message("<a:nemerub:853296247606476800>") # Respond to interaction
+        message = await interaction.channel.send(f"{user.mention}\n*You are putting a leash on {pet['name']}*")
         await asyncio.sleep(4)
         if stats["stamina"] < 25:
-            await ctx.send(f"{ctx.author.mention}\n{pet['name']} is too tired")
-            await ctx.send("<:Bedge:829750057502375997>")
+            await interaction.channel.send(f"{user.mention}\n{pet['name']} is too tired")
+            await interaction.channel.send("<:Bedge:829750057502375997>")
             return
         self.updatestat(user.id, "stamina", stats["stamina"]-25)
         lemons = random.randrange(10, 50)
         events = [f"You and {pet['name']} are humming to Life is a highway!", f"{pet['name']} smells something...maybe you should go shower", f"{pet['name']} starts barking at a dog", f"A lemon from an lemon tree fell on {pet['name']}, you put in in your wallet", f"{pet['name']} found {lemons} lemons on the street", f"A stranger gave {pet['name']} 10 lemons because they where so cute <:nemePat:781659265244200981>", f"An old man pat {pet['name']}"]
         rndmevent = random.choice(events)
         if rndmevent == events[3]:
-            await es.update_balance(ctx.author, 1)
+            await es.update_balance(user, 1)
         elif rndmevent == events[4]:
-            await es.update_balance(ctx.author, lemons)
+            await es.update_balance(user, lemons)
         elif rndmevent == events[5]:
-            await es.update_balance(ctx.author, 10)
-        await message.edit(content=f"{ctx.author.mention}\nYou leave the house with {pet['name']}")
+            await es.update_balance(user, 10)
+        await message.edit(content=f"{user.mention}\nYou leave the house with {pet['name']}")
         await asyncio.sleep(3)
-        await message.edit(content=f"{ctx.author.mention}\nYou are going down the road")
+        await message.edit(content=f"{user.mention}\nYou are going down the road")
         await asyncio.sleep(3)
-        await message.edit(content=f"{ctx.author.mention}\n{rndmevent}")
+        await message.edit(content=f"{user.mention}\n{rndmevent}")
         await asyncio.sleep(5)
-        await message.edit(content=f"{ctx.author.mention}\nYou continue your journey")
+        await message.edit(content=f"{user.mention}\nYou continue your journey")
         await asyncio.sleep(3)
-        await message.edit(content=f"{ctx.author.mention}\nYou and {pet['name']} are back home again!")
+        await message.edit(content=f"{user.mention}\nYou and {pet['name']} are back home again!")
     async def feed(self, ctx):
         pet = await self.userpet(ctx.author.id, "equippedpet")
         if bool(pet) == False:
