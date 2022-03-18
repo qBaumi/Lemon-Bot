@@ -11,7 +11,7 @@ import discord
 from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 from cogs.economy import globalmainshop
-import cogs.pets
+import cogs.pet
 from discord import app_commands
 from discord import ui
 from config import guilds, allowedAdminRoles
@@ -742,8 +742,8 @@ class items(commands.Cog):
             em = discord.Embed(title=f"You opened the door of the {day}th december and you got `{prizes[i]['amount']}` {moneyemoji} {money}!", colour=discord.Color.teal(), description="Have a great day!")
             await ctx.send(embed=em)"""
         if item == "treat":
-            stupidpetsclass = cogs.pets.pets(self.client)
-            await cogs.pets.pets.treat_helper(stupidpetsclass, interaction)
+            stupidpetsclass = cogs.pet.pet(self.client)
+            await cogs.pet.pet.treat_helper(stupidpetsclass, interaction)
             await es.del_item(interaction.user.id, item)
             stupidpetsclass = None
         else:
@@ -753,8 +753,7 @@ class items(commands.Cog):
     async def fruits_autocomplete(
             self,
             interaction: discord.Interaction,
-            current: str,
-            namespace: app_commands.Namespace
+            current: str
     ) -> List[app_commands.Choice[str]]:
         items = await self.getChoices(interaction.user)
         return [

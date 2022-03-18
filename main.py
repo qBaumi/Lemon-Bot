@@ -40,7 +40,7 @@ async def setup_hook():
     await client.load_extension("cogs.items")
     await client.load_extension("cogs.jobs")
     await client.load_extension("cogs.LeagueAPI")
-    await client.load_extension("cogs.pets")
+    await client.load_extension("cogs.pet")
     await client.load_extension("cogs.other")
     await client.load_extension("cogs.loyalty")
 
