@@ -568,7 +568,7 @@ class economy(commands.Cog):
 
         isOnCooldown, sec = es.isOnCooldown(user, "daily")
         if isOnCooldown:
-            await interaction.response.send_message(f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>")
+            await interaction.response.send_message(f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>", ephemeral=True)
             return
         es.setCooldown(user, "daily")
 
@@ -609,7 +609,7 @@ class economy(commands.Cog):
         isOnCooldown, sec = es.isOnCooldown(user, "steal")
         if isOnCooldown:
             await interaction.response.send_message(
-                f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>")
+                f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>", ephemeral=True)
             return
 
         """FALSE CHECKS"""
