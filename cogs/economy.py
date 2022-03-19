@@ -2,6 +2,8 @@ import json
 import math
 import operator
 import random
+from typing import Optional
+
 import cogs.essentialfunctions as es
 import asyncio
 import discord
@@ -9,7 +11,8 @@ from discord import Colour
 from discord.ext import commands
 import mysql.connector
 from config import dbargs
-
+from discord import app_commands
+from config import guilds
 
 
 """
@@ -80,16 +83,16 @@ class economy(commands.Cog):
         await es.update_balance(user, STARTMONEY)
 
 
-    # Get your balance/poop
-    @commands.command(aliases=["curr", "bal", "currency", "lemons", "glemons", "bank"])
-    async def balance(self, ctx):
-        if not await es.check_account(ctx):
+    # Get your balance
+    @app_commands.command(name="balance", description="Your bank account details")
+    async def balance(self, interaction : discord.Interaction):
+        if not await es.interaction_check_account(interaction):
             return
         # Get currency with helper function and send it in an embed
         # If you returned several things in one variable you can get one specific with
         # f. E. money[0]      *the first index*
         # START WITH ZERO
-        money = await es.currency(ctx.author)
+        money = await es.currency(interaction.user)
 
         # Make a nice looking embed
         em = discord.Embed(title="Your currency", colour=Colour.gold())
@@ -102,7 +105,7 @@ class economy(commands.Cog):
         em.add_field(name="You have ", value=f"`{int(round(money[0], 0)):g}` <:lemon2:881595266757713920> lemons in your pocket", inline=False)
         em.add_field(name="You have ", value=f"`{int(round(money[1], 0)):g}` <:GoldenLemon:882634893039923290> golden lemons", inline=False)
 
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
     # Shop
     mainshop = globalmainshop
@@ -636,52 +639,56 @@ class economy(commands.Cog):
     Leaderboard of all lemons inclusive safe
     gets list with join from tables users and safe
     """
-    @commands.command()
-    async def leaderboard(self, ctx, x=10):
+    @app_commands.command(name="leaderboard", description="Who has the most lemons")
+    @app_commands.describe(limit="Limit for how many users will be shown")
+    async def leaderboard(self, interaction : discord.Interaction, limit : Optional[app_commands.Range[int, 1, 25]]):
+        await interaction.response.defer()
+        if limit is None:
+            limit = 10
         def users_list():
-            mysql = f"SELECT users.id, pocket, safe.money, (pocket + IFNULL(safe.money, 0)) as total FROM `users` LEFT JOIN `safe` ON safe.id = users.id ORDER BY `total` DESC LIMIT {x}"
-            mycursor.execute(mysql)
+            data = es.sql_select(f"SELECT users.id, pocket, safe.money, (pocket + IFNULL(safe.money, 0)) as total FROM `users` LEFT JOIN `safe` ON safe.id = users.id ORDER BY `total` DESC LIMIT {limit}")
             userlist = []
-            for guy in mycursor.fetchall():
+            for guy in data:
                 dict = {"id" : guy[0], "total" : guy[3]}
                 userlist.append(dict)
             return userlist
 
-        em = discord.Embed(title=f"Top {x} richest people", color=discord.Color.dark_gold())
+        em = discord.Embed(title=f"Top {limit} richest people", color=discord.Color.dark_gold())
         index = 1
         for user in users_list():
             member = await self.client.fetch_user(user["id"])
             em.add_field(name=f"{index}. {member.name}", value=f"`{int(user['total'])}` lemons <:lemon2:881595266757713920>", inline=False)
             index+=1
-        await ctx.send(embed=em)
+        await interaction.followup.send(embed=em)
 
-
-    @commands.command(aliases=['give', 'send'])
-    async def Pay(self, ctx, userid: discord.User, pay_amount):
-
+    @app_commands.command(name="pay", description="Pay another user")
+    @app_commands.describe(user="Person you pay")
+    @app_commands.describe(amount="How much you pay them")
+    async def pay(self, interaction : discord.Interaction, user: discord.User, amount : int):
+        userid = user
+        author = interaction.user
         """False checks"""
-        if not await es.check_account(ctx):
-            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
+        if not await es.interaction_check_account(interaction):
+            await interaction.response.send_message(f"{author.mention}\nYou need to use `lem startup` first")
             return
-        if userid == ctx.author:
-            await ctx.send(f"{ctx.author.mention}\nYou cant pay yourself money...well technically, but not anymore!")
+        if userid == author:
+            await interaction.response.send_message(f"{author.mention}\nYou cant pay yourself money...well technically, but not anymore!")
             return
-        pay_amount = int(pay_amount)
-        if pay_amount > 0:
-            user = ctx.author
-            users = await es.get_bank_data(ctx.author.id)
-            await self.Pay_helper(ctx=ctx, userid=userid, pay_amount=pay_amount)
+        if amount > 0:
+            user = author
+            users = await es.get_bank_data(author.id)
+            await self.Pay_helper(interaction=interaction, userid=userid, pay_amount=amount)
             wallet_amt = users[str(user.id)]['pocket']
-            if True and pay_amount <= wallet_amt:
-                await ctx.send(
-                    f"{ctx.author.mention}\nYou paid {userid.name} {pay_amount} lemons. If you have an emberassing image, dont forget to TAX THE HELL OUT OF THEM")
+            if True and amount <= wallet_amt:
+                await interaction.response.send_message(
+                    f"{author.mention}\nYou paid {userid.name} {amount} lemons. If you have an emberassing image, dont forget to TAX THE HELL OUT OF THEM")
         else:
-            await ctx.send(f"{ctx.author.mention}\nNo")
+            await interaction.response.send_message(f"{author.mention}\nNo")
 
     """Helper for Pay"""
-    async def Pay_helper(self, ctx, userid: discord.User, pay_amount):
-        user = ctx.author
-        users = await es.get_bank_data(ctx.author.id)
+    async def Pay_helper(self, interaction, userid: discord.User, pay_amount):
+        user = interaction.user
+        users = await es.get_bank_data(user.id)
 
         pay_amount = int(pay_amount)
         wallet_amt = users[str(user.id)]['pocket']
@@ -690,11 +697,11 @@ class economy(commands.Cog):
             await es.update_balance(user=userid, change=pay_amount, mode='pocket')
 
         else:
-            await ctx.send(
-                f"{ctx.author.mention}\nYou dont have enough money!")
+            await interaction.response.send_message(
+                f"{user.mention}\nYou dont have enough money!")
         return [True]
 
 
 
 async def setup(client):
-    await client.add_cog(economy(client))
+    await client.add_cog(economy(client), guilds=guilds)
