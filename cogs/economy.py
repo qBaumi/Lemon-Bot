@@ -197,76 +197,78 @@ class economy(commands.Cog):
 
         return em
 
-    @commands.command()
-    async def Shop(self, ctx, page=1, shop="normal"):
-        if not await es.check_account(ctx):
+    class ShopButtons(discord.ui.View):
+
+        def __init__(self, ecoclass, timeout):
+            super().__init__(timeout=timeout)
+            self.ecoclass = ecoclass
+            self.shop = "normal"
+            self.notlisted = ["Candy", "Adventcalendar"]
+            self.switch_emoji = "<:GoldenLemon:882634893039923290>"
+            self.switch_emoji_normal = "<:lemon2:881595266757713920>"
+            self.itemsperpage = 5
+            self.timeoutsec = 60
+            self.switch = self.switch_emoji
+            self.page = 1
+        @discord.ui.button(label='◀', style=discord.ButtonStyle.blurple)
+        async def left(self, button: discord.ui.Button, interaction: discord.Interaction):
+            if await self.ecoclass.getshopembed(self.page - 1, self.itemsperpage, self.switch, self.notlisted, self.shop):
+                self.page -= 1
+                em = await self.ecoclass.getshopembed(self.page, self.itemsperpage, self.switch, self.notlisted, self.shop)
+            else:
+                await interaction.response.send_message("This is the first page!", ephemeral=True)
+                return
+            await interaction.response.edit_message(view=self, embed=em)
+
+        @discord.ui.button(label="▶", style=discord.ButtonStyle.blurple)
+        async def right(self, button: discord.ui.Button, interaction: discord.Interaction):
+
+            if await self.ecoclass.getshopembed(self.page + 1, self.itemsperpage, self.switch, self.notlisted, self.shop):
+                self.page += 1
+                em = await self.ecoclass.getshopembed(self.page, self.itemsperpage, self.switch, self.notlisted, self.shop)
+            else:
+                await interaction.response.send_message("This is the last page!", ephemeral=True)
+                return
+            await interaction.response.edit_message(view=self, embed=em)
+        @discord.ui.button(label='Golden Lemons', style=discord.ButtonStyle.green)
+        async def golden(self, button: discord.ui.Button, interaction: discord.Interaction):
+            if self.shop == "normal":
+                em = await self.ecoclass.getshopembed(1, self.itemsperpage, self.switch, self.notlisted, shop="special")
+                self.shop = "special"
+                button.label = "Lemons"
+                self.page = 1
+            elif self.shop == "special":
+                em = await self.ecoclass.getshopembed(1, self.itemsperpage, self.switch, self.notlisted, shop="normal")
+                self.shop = "normal"
+                self.page = 1
+                button.label = "Golden Lemons"
+            await interaction.response.edit_message(view=self, embed=em)
+
+        async def on_timeout(self):
+            for child in self.children:  # We need to iterate over all the buttons/selects in the View (self.children returns a list of all the Items in the View)
+                child.disabled = True  # And set disabled = True to disable them
+            await self.message.edit(view=self)  # Now we just need to update our old message with the updated buttons
+
+    @app_commands.command(name="shop", description="Have a look at the shop")
+    async def shop(self, interaction : discord.Interaction):
+        if not await es.interaction_check_account(interaction):
             return
-
-
+        page = 1
+        shop = "normal"
         notlisted = ["Candy", "Adventcalendar"]
         switch_emoji = "<:GoldenLemon:882634893039923290>"
         switch_emoji_normal = "<:lemon2:881595266757713920>"
         itemsperpage = 5
         timeoutsec = 60
         switch = switch_emoji
+        user = interaction.user
 
         em = await self.getshopembed(page, itemsperpage, switch_emoji, notlisted, shop)
-        msg = await ctx.send(f"{ctx.author.mention}", embed=em)
-        if shop=="special":
-            switch = switch_emoji_normal
+        view = self.ShopButtons(ecoclass=self, timeout=300)
+        await interaction.response.send_message(f"{user.mention}", embed=em, view=view)
+        view.message = await interaction.original_message()
+        return
 
-        """
-            Here comes the switch pages part after the embed was sent the first time
-        """
-        await msg.add_reaction("◀️")
-        await msg.add_reaction("▶️")
-        await msg.add_reaction(switch_emoji)
-
-        def check(reaction, user):
-            return reaction.message.id == msg.id and user == ctx.author
-        while True:
-            try:
-                reaction, useremoji = await self.client.wait_for('reaction_add', timeout=timeoutsec, check=check)
-            except asyncio.TimeoutError:
-
-                """
-                    IT ONLY WORKS LIKE THIS REMOVE OWN REACTION BLYAT EDKLFSÖJLKJSDFL
-                """
-                await msg.remove_reaction("◀️", self.client.user)
-                await msg.remove_reaction("▶️", self.client.user)
-                await msg.remove_reaction(switch, self.client.user)
-                return
-
-            if reaction.emoji == "◀️":
-
-                if await self.getshopembed(page-1, itemsperpage, switch, notlisted, shop):
-                    page -= 1
-                    em = await self.getshopembed(page, itemsperpage, switch, notlisted, shop)
-                await msg.remove_reaction("◀️", ctx.author)
-            elif str(reaction.emoji) == "▶️":
-
-                if await self.getshopembed(page+1, itemsperpage, switch, notlisted, shop):
-                    page += 1
-                    em = await self.getshopembed(page, itemsperpage, switch, notlisted, shop)
-                await msg.remove_reaction("▶️", ctx.author)
-            elif str(reaction.emoji) == str(switch_emoji):
-                print("yas")
-                em = await self.getshopembed(1, itemsperpage, switch, notlisted, shop="special")
-                await msg.remove_reaction(switch, self.client.user)
-                switch = switch_emoji_normal
-                shop = "special"
-                await msg.remove_reaction(switch_emoji, ctx.author)
-            elif str(reaction.emoji) == str(switch_emoji_normal):
-                em = await self.getshopembed(1, itemsperpage, switch, notlisted, shop="normal")
-                await msg.remove_reaction(switch, self.client.user)
-                switch = switch_emoji
-                shop = "normal"
-                await msg.remove_reaction(switch_emoji_normal, ctx.author)
-
-
-            await msg.edit(embed=em)
-            #msg = await ctx.send(f"{ctx.author.mention}\n", embed=em)
-            await msg.add_reaction(switch) #here it is
 
 
 
