@@ -43,6 +43,8 @@ async def setup_hook():
     await client.load_extension("cogs.pet")
     await client.load_extension("cogs.other")
     await client.load_extension("cogs.loyalty")
+    await client.load_extension("cogs.work")
+
 
 
 

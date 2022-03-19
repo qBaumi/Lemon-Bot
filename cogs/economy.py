@@ -2,8 +2,9 @@ import json
 import math
 import operator
 import random
-from typing import Optional
-
+import time
+from typing import Optional, List
+from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 import asyncio
 import discord
@@ -43,12 +44,14 @@ globalmainshop = [{"name": "Lemonade", "price": 5, "desc": "Everyone likes lemon
                 {"name": "Candy", "price": 10, "desc": "f", "money": "lemons","emoji": "🍬"}]
                 #{"name": "Adventcalendar", "price": 10000, "desc": "Open a door and get a price everyday", "money": "lemons", "emoji": "🎅"}
 
+
+
 class economy(commands.Cog):
     def __init__(self, client):
         self.client = client
+
+
     petcursor = mycursor
-
-
 
     """---------------------------------------------------------------------------------------------"""
     """---------------------------------------COMMANDS----------------------------------------------"""
@@ -57,20 +60,20 @@ class economy(commands.Cog):
 
 
     # Startup command to open account
-    @commands.command(aliases=["start"])
-    async def startup(self, ctx):
+    @app_commands.command(name="startup", description="Get a quick introduction")
+    async def startup(self, interaction : discord.Interaction):
         # Use the open_account function and give a quick overview to the bot, help, some commands etc
         # GLOBALS
         STARTMONEY = 50
-        user = ctx.author
+        user = interaction.user
         # Get the function into accountopened to check if already an account was made
         accountopened = await es.open_account(user=user)
 
         if accountopened == False:
             em = discord.Embed()
             em.add_field(name=f"Sorry, you already created an account!",
-                         value=f"If you didn't read the message the first time you used this command, try: `lem help` , to get more information")
-            await ctx.send(f"{ctx.author.mention}\n", embed=em)
+                         value=f"If you didn't read the message the first time you used this command, try: `/help` , to get more information")
+            await interaction.response.send_message(f"{user.mention}\n", embed=em)
             return
 
         # Now if an account wasn't opened the code comes here and sends the embed
@@ -78,8 +81,8 @@ class economy(commands.Cog):
                            description=f"Let me introduce you to our little friend Lemon right here.")
         em.add_field(name="Welcome you can find out more about me with `lem about`",
                      value="Congrats! You already found the *startup command*. \n"
-                           "Next is the `lem lemons` or `lem balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `lem help` for more information")
-        await ctx.send(embed=em)
+                           "Next is the `/balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `/help` for more information")
+        await interaction.response.send_message(embed=em)
         await es.update_balance(user, STARTMONEY)
 
 
@@ -271,33 +274,42 @@ class economy(commands.Cog):
 
 
 
+    with open("./json/spItems.json", "r", encoding="utf-8") as f:
+        specialitems = json.load(f)
+    specialitems = specialitems["MysterySkin"]
+
+    itemlist = []
+    for item in globalmainshop:
+        itemlist.append(Choice(name=item["name"], value=item["name"].lower()))
+    for item in specialitems:
+        itemlist.append(Choice(name=item["name"], value=item["name"].lower()))
+
+    print(itemlist)
 
 
-
-
-
-
-
-    # Buy Sell etc
-    @commands.command()
-    async def buy(self, ctx, item, amount=1):
+    @app_commands.describe(item='The name of the item you want to buy')
+    @app_commands.describe(amount='Amount of items you want to buy')
+    @app_commands.choices(item=itemlist)
+    @app_commands.command(name="buy", description="Buy an item from the shop")
+    async def buy(self, interaction : discord.Interaction, item : str, amount : Optional[int]):
 
         # GLOBALS
         blacklist = ["safe", "adventcalendar"]
-        user = ctx.author
+        user = interaction.user
 
-        """FALSE CHECKS"""
-        if not await es.check_account(ctx):
+        if amount is None:
+            amount = 1
+        if not await es.interaction_check_account(interaction):
             return
         if amount < 1:
-            await ctx.send(":)")
+            await interaction.response.send_message(":)")
             return
 
         """CHECK IF ITEM BOUGHT TWICE"""
         """First check if you want to lem buy safe 2"""
         """Then check if item is in users bag and amount is bigger than 1"""
         if item.lower() in blacklist and amount > 1:
-            await ctx.send(f"{ctx.author.mention}\nYou can only buy one {item}")
+            await interaction.response.send_message(f"{user.mention}\nYou can only buy one {item}")
             print("that")
             return
         try:
@@ -319,23 +331,23 @@ class economy(commands.Cog):
         for useritem in bag:
             if useritem["item"] == blacklist[index] and useritem["amount"] > 0 and item.lower() == blacklist[index]:
                 print("this")
-                await ctx.send(f"{ctx.author.mention}\nYou can only buy one {item}!")
+                await interaction.response.send_message(f"{user.mention}\nYou can only buy one {item}!")
                 return
 
 
         """Get response from res and respond then if bought was successful"""
-        res = await self.buy_this(ctx.author, item, amount)
+        res = await self.buy_this(user, item, amount)
 
 
         if not res[0]:
             if res[1] == 1:
-                await ctx.send(f"{ctx.author.mention}\nThat Item isn't there!")
+                await interaction.response.send_message(f"{user.mention}\nThat Item isn't there!")
                 return
             if res[1] == 2:
-                await ctx.send(f"{ctx.author.mention}\nYou don't have enough money in your wallet to buy {amount} {item}")
+                await interaction.response.send_message(f"{user.mention}\nYou don't have enough money in your wallet to buy {amount} {item}")
                 return
             if res[1] == 5:
-                await ctx.send(f"{ctx.author.mention}\nThat item isnt in stock!")
+                await interaction.response.send_message(f"{user.mention}\nThat item isnt in stock!")
                 return
 
         """Loop through items to get index and get stock minus amount"""
@@ -349,18 +361,14 @@ class economy(commands.Cog):
                 with open("./json/spItems.json", "w") as f:
                     json.dump(specialitems, f, indent=4)
 
-                await ctx.send(f"{user.mention}\n**To redeem your prize please make sure to message Rocsie!**")
+                await interaction.channel.send(f"{user.mention}\n**To redeem your prize please make sure to message Rocsie!**")
                 channel = await self.client.fetch_channel(845281850230308864) # Send message to an admin channel or idk
                 rocsie = await self.client.fetch_user(148086360425758720) # fetch rocsie
                 await channel.send(f"{rocsie.mention}\n{user.mention} claimed {item}!")
                 break
             index+=1
 
-        await ctx.send(f"{ctx.author.mention}\nYou just bought {amount} {item}")
-
-
-
-
+        await interaction.response.send_message(f"{user.mention}\nYou just bought {amount} {item}")
     """
     FUNCTION FOR BUY
     :returns
@@ -436,34 +444,50 @@ class economy(commands.Cog):
 
         return [True, "Worked"]
 
+    @app_commands.describe(item='The name of the item you want to sell')
+    @app_commands.describe(amount='Amount of items you want to sell')
+    @app_commands.command(name="sell", description="Sell an item")
+    async def sell(self, interaction : discord.Interaction, item : str, amount : Optional[int]):
 
+        if amount is None:
+            amount = 1
 
-    @commands.command()
-    async def sell(self, ctx, item, amount=1):
-
-        """FALSY CHECKS"""
-        if not await es.check_account(ctx):
+        if not await es.interaction_check_account(interaction):
             return
         if amount < 1:
-            await ctx.send(":)")
+            await interaction.response.send_message(":)")
             return
+        user = interaction.user
 
 
 
-        res = await self.sell_this(ctx.author, item, amount)
+        res = await self.sell_this(user, item, amount)
 
         if not res[0]:
             if res[1] == 1:
-                await ctx.send(f"{ctx.author.mention}\nThat Object isn't there!")
+                await interaction.response.send_message(f"{user.mention}\nThat Object isn't there!")
                 return
             if res[1] == 2:
-                await ctx.send(f"{ctx.author.mention}\nYou don't have {amount} {item} in your bag.")
+                await interaction.response.send_message(f"{user.mention}\nYou don't have {amount} {item} in your bag.")
                 return
             if res[1] == 3:
-                await ctx.send(f"{ctx.author.mention}\nYou don't have {item} in your bag.")
+                await interaction.response.send_message(f"{user.mention}\nYou don't have {item} in your bag.")
                 return
 
-        await ctx.send(f"{ctx.author.mention}\nYou just sold {amount} {item}.")
+        await interaction.response.send_message(f"{user.mention}\nYou just sold {amount} {item}.")
+
+    @sell.autocomplete('item')
+    async def sell_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str
+    ) -> List[app_commands.Choice[str]]:
+        items = await es.getChoices(interaction.user)
+        return [
+            app_commands.Choice(name=item, value=item.lower())
+            for item in items if current.lower() in item.lower()
+        ]
+
 
 
     """
@@ -536,30 +560,27 @@ class economy(commands.Cog):
 
 
     # daily lemons and cooldown 86400 is one day in seconds
-    @commands.cooldown(1, 86400, commands.BucketType.user)
-    @commands.command()
-    async def daily(self, ctx):
-        """FALSY CHECKS"""
-        if not await es.check_account(ctx):
+    @app_commands.command(name="daily", description="Get your daily 20 lemons")
+    async def daily(self, interaction : discord.Interaction):
+        if not await es.interaction_check_account(interaction):
             return
+        user = interaction.user
+
+        isOnCooldown, sec = es.isOnCooldown(user, "daily")
+        if isOnCooldown:
+            await interaction.response.send_message(f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>")
+            return
+        es.setCooldown(user, "daily")
 
         daily_lemons = 20
 
-        await es.update_balance(ctx.author, daily_lemons, "pocket")
+        await es.update_balance(user, daily_lemons, "pocket")
         # Send an embed to show him and get currency
-        money = await es.currency(ctx.author)
+        money = await es.currency(user)
         em = discord.Embed(colour=Colour.red(), title=f"You got your daily {daily_lemons} lemons! "
                                                       f"Dont eat them all at the same time!",
                            description=f"You have now `{int(money[0])}` lemons")
-        await ctx.send(embed=em)
-
-    # Send the error in an embed and add the exact number of seconds in the footer
-    @daily.error
-    async def on_command_error(self, ctx, error):
-        embed = discord.Embed(colour=Colour.dark_red(), title='You can only use this command once a day')
-        embed.set_footer(text=error)
-
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=em)
 
 
 
@@ -570,12 +591,12 @@ class economy(commands.Cog):
     both users need 100 lemons
     cooldown 369 seconds
     """
-    @commands.cooldown(1, 369, commands.BucketType.user)
-    @commands.command(aliases=["rob"])
-    async def steal(self, ctx, victim : discord.User):
+    @app_commands.command(name="steal", description="Steal from another person or get slapped")
+    @app_commands.describe(victim="The person you want to steal from")
+    async def steal(self, interaction : discord.Interaction, victim : discord.User):
 
         """Globals"""
-        user = ctx.author
+        user = interaction.user
         users = await es.get_bank_data(user.id)
         usersvictim = await es.get_bank_data(victim.id)
         sentences = [f"You were captured when you tried to open {victim.name}'s bag",
@@ -585,26 +606,27 @@ class economy(commands.Cog):
             , f"Robbing in front of a cop...you should try to type that in youtube!",
                      f"When you opened {victim.name}'s bag, her little chihuahua (Yeah I googled that name before) jumped into your face and bit you"]
 
+        isOnCooldown, sec = es.isOnCooldown(user, "steal")
+        if isOnCooldown:
+            await interaction.response.send_message(
+                f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>")
+            return
+
         """FALSE CHECKS"""
         if victim == user:
-            await ctx.send(f"{ctx.author.mention}\nHwat? You wanna rob yourself?!?!? I am always a thought ahead of you...trust me")
-            self.steal.reset_cooldown(ctx)
+            await interaction.response.send_message(f"{user.mention}\nHwat? You wanna rob yourself?!?!? I am always a thought ahead of you...trust me")
             return
-        if not await es.check_account(ctx):
-            self.steal.reset_cooldown(ctx)
+        if not await es.interaction_check_account(interaction):
             return
         if users[str(user.id)]['pocket'] < 100:
-            await ctx.send(f"{ctx.author.mention}\nYou need atleast `100 lemons` in your pocket in order to steal from another person")
-            self.steal.reset_cooldown(ctx)
+            await interaction.response.send_message(f"{user.mention}\nYou need atleast `100 lemons` in your pocket in order to steal from another person")
             return
         try:
             if usersvictim[str(victim.id)]['pocket'] < 100:
-                await ctx.send(f"{ctx.author.mention}\n{victim.mention} is too `poor` to get robbed")
-                self.steal.reset_cooldown(ctx)
+                await interaction.response.send_message(f"{user.mention}\n{victim.mention} is too `poor` to get robbed")
                 return
         except:
-            await ctx.send(f"{ctx.author.mention}\nYour victim hasn't opened an account yet")
-            self.steal.reset_cooldown(ctx)
+            await interaction.response.send_message(f"{user.mention}\nYour victim hasn't opened an account yet")
             return
 
 
@@ -622,20 +644,19 @@ class economy(commands.Cog):
             em = discord.Embed(colour=discord.Color.red(),
                                title=f"{user.name} lost {loss:g} lemons when trying to steal from {victim.name}",
                                description=funnysentence)
-            await ctx.send(embed=em)
+            await interaction.response.send_message(embed=em)
             await es.update_balance(user, loss * -1)
             await es.update_balance(victim, loss)
+            es.setCooldown(user, "steal")
             return
 
         await es.update_balance(victim, int(round(usersvictim[str(victim.id)]['pocket']*percent, 0)*-1))
         await es.update_balance(user, int(round(usersvictim[str(victim.id)]['pocket']*percent, 0)))
         em = discord.Embed(colour=discord.Color.red(), title=f"{user.name} stole {victim.name} {round(usersvictim[str(victim.id)]['pocket']*percent, 0):g} lemons", description=f"Less lemonade for {victim.name} I guess")
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
+        es.setCooldown(user, "steal")
 
-    @steal.error
-    async def on_command_error(self, ctx, error):
-        em = discord.Embed(colour=discord.Color.red(), title=error, description="If your user wasnt found, you need to tag them with an @ `lem steal @name` for example")
-        await ctx.send(embed=em)
+
 
     """
     Leaderboard of all lemons inclusive safe
@@ -702,6 +723,7 @@ class economy(commands.Cog):
             await interaction.response.send_message(
                 f"{user.mention}\nYou dont have enough money!")
         return [True]
+
 
 
 

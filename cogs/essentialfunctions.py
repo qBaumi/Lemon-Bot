@@ -1,5 +1,10 @@
+import math
+import time
+
 import mysql.connector, discord, json
-from .economy import mycursor, mydb
+from discord.app_commands import Choice
+
+from .economy import mycursor, mydb, globalmainshop
 from config import allowedRoles
 import discord
 from discord.ext import commands
@@ -188,3 +193,62 @@ async def add_item(item_name, userid, amount):
         sql = f"INSERT INTO items (id, name, amount) VALUES ({userid}, '{item_name}', {amount})"
         mycursor.execute(sql)
         mydb.commit()
+
+# get choice for each normal item you have in your bag
+# returns a choice list
+async def getChoices(user):
+    # Get all special items from json
+    specialitems = await get_item_data()
+    specialitems = specialitems["MysterySkin"]
+
+    # Make list and append name if they are in spItems [spItemName, spItemName, ...]
+    # to search if item not in spItems
+    spItemList = []
+    for item in specialitems:
+        spItemList.append(item["name"].lower())
+
+    # Get user bag and make a list with every different item
+    bag = sql_select(f"SELECT DISTINCT name, amount FROM items WHERE id = {user.id}")
+    # Now make the list for the choices and return it
+    itemlist = []
+    for item in bag:
+        if item[1] > 0 and item[0] not in spItemList:
+            itemlist.append(item[0])
+    return itemlist
+
+# Check if user is on cooldown in database, returns True if is on cooldown, returns False if he can use the command again
+# types
+# daily
+# work
+# steal
+"""
+    isOnCooldown, sec = self.isOnCooldown(user, "daily")
+    if isOnCooldown:
+        await interaction.response.send_message(f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>")
+        return
+    self.setCooldown(user, "daily")
+"""
+def isOnCooldown(user, type):
+    data = sql_select(f"SELECT time FROM cooldowns WHERE id = '{user.id}' AND type = '{type}'")
+
+    current_time = time.time()
+    if not data:
+        return False, 0
+    data = data[0][0]
+    print(f"Momentane Zeit: {current_time}")
+    print(f"Cooldown geht bis: {data}")
+    if data > current_time:
+        return True, math.floor(data - current_time)
+    sql_exec(f"DELETE FROM cooldowns WHERE id = '{user.id}' AND type = '{type}'")
+    return False, 0
+
+def setCooldown(user, type):
+    if type == "daily":
+        sec = 86400
+    elif type == "work":
+        sec = 300
+    elif type == "steal":
+        sec = 369
+    else:
+        sec = 0
+    sql_exec(f"INSERT INTO cooldowns VALUES ('{user.id}', {time.time()+sec},'{type}')")

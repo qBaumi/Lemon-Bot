@@ -51,27 +51,7 @@ class items(commands.Cog):
                 em.add_field(name=name_, value=amount, inline=False)
         await interaction.response.send_message(embed=em)
 
-    # get choice for each normal item you have in your bag
-    # returns a choice list
-    async def getChoices(self, user):
-        # Get all special items from json
-        specialitems = await es.get_item_data()
-        specialitems = specialitems["MysterySkin"]
 
-        # Make list and append name if they are in spItems [spItemName, spItemName, ...]
-        # to search if item not in spItems
-        spItemList = []
-        for item in specialitems:
-            spItemList.append(item["name"].lower())
-
-        # Get user bag and make a list with every different item
-        bag = es.sql_select(f"SELECT DISTINCT name, amount FROM items WHERE id = {user.id}")
-        # Now make the list for the choices and return it
-        itemlist = []
-        for item in bag:
-            if item[1] > 0 and item[0] not in spItemList:
-                itemlist.append(item[0])
-        return itemlist
 
 
 
@@ -750,12 +730,12 @@ class items(commands.Cog):
             await interaction.response.send_message.send(f"{ctx.author.mention}\nThat item does not exist or has no usage yet")
 
     @use.autocomplete('item')
-    async def fruits_autocomplete(
+    async def use_autocomplete(
             self,
             interaction: discord.Interaction,
             current: str
     ) -> List[app_commands.Choice[str]]:
-        items = await self.getChoices(interaction.user)
+        items = await es.getChoices(interaction.user)
         return [
             app_commands.Choice(name=item, value=item.lower())
             for item in items if current.lower() in item.lower()
