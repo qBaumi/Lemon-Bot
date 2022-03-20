@@ -65,42 +65,11 @@ class other(commands.Cog):
             await message.reply("~~fair~~\n*fer")
             return
 
-    class Suggestion(ui.Modal, title='Suggestion'):
 
-        def __init__(self, client):
-            super().__init__()
-            self.client = client
-
-        """ Select menu isnt released yet pepeHands
-        options = [
-            discord.SelectOption(label='Emoji', description='Submit an Emote', emoji='🟩'),
-            discord.SelectOption(label='Suggestion', description='Submit any other Suggestion', emoji='🟩'),
-            discord.SelectOption(label='Feedback', description='Give us some Feedback, we\'d love to hear it!',
-                                 emoji='🟩')
-        ]
-        dropdown = ui.Select(custom_id = "type", placeholder="type", min_values=1, max_values=1)
-        """
-        name = ui.TextInput(label='title/emoji name', placeholder="Title or emoji name")
-        desc = ui.TextInput(label='Description/Link', style=discord.TextStyle.paragraph,
-                            placeholder="If you submit an emoji please put the link to the image here!")
-
-        async def on_submit(self, interaction: discord.Interaction):
-            await interaction.response.send_message(f'Thanks for your Suggestion!', ephemeral=True)
-
-            # 656636484937449518 this is the suggestion-log channel
-            # 651364619402739713 this is the test channel
-            channel_id = 656636484937449518  # the id of the channel the results get sent to
-            channel = await self.client.fetch_channel(channel_id)
-
-            # Make an embed with the results
-            em = discord.Embed(title="Suggestion", description=f"by {interaction.user}")
-            em.add_field(name=self.name, value=self.desc)
-
-            await channel.send(embed=em)
 
     @app_commands.command(name="suggest", description="Suggest an emote or something else!")
     async def suggest(self, interaction: discord.Interaction):
-        modal = self.Suggestion(client=self.client)
+        modal = Suggestion(client=self.client)
         await interaction.response.send_modal(modal)
 
     @app_commands.describe(game='The activity you want to start')
@@ -204,6 +173,39 @@ class SheetLink(discord.ui.View):
         url = "https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing"
 
         self.add_item(discord.ui.Button(label='Prediction Sheet', url=url))
+
+class Suggestion(ui.Modal, title='Suggestion'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+    """ Select menu isnt released yet pepeHands
+    options = [
+        discord.SelectOption(label='Emoji', description='Submit an Emote', emoji='🟩'),
+        discord.SelectOption(label='Suggestion', description='Submit any other Suggestion', emoji='🟩'),
+        discord.SelectOption(label='Feedback', description='Give us some Feedback, we\'d love to hear it!',
+                             emoji='🟩')
+    ]
+    dropdown = ui.Select(custom_id = "type", placeholder="type", min_values=1, max_values=1)
+    """
+    name = ui.TextInput(label='title/emoji name', placeholder="Title or emoji name")
+    desc = ui.TextInput(label='Description/Link', style=discord.TextStyle.paragraph,
+                        placeholder="If you submit an emoji please put the link to the image here!")
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'Thanks for your Suggestion!', ephemeral=True)
+
+        # 656636484937449518 this is the suggestion-log channel
+        # 651364619402739713 this is the test channel
+        channel_id = 656636484937449518  # the id of the channel the results get sent to
+        channel = await self.client.fetch_channel(channel_id)
+
+        # Make an embed with the results
+        em = discord.Embed(title="Suggestion", description=f"by {interaction.user}")
+        em.add_field(name=self.name, value=self.desc)
+
+        await channel.send(embed=em)
 
 async def setup(client):
     await client.add_cog(other(client), guilds=guilds)

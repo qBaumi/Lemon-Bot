@@ -359,5 +359,7 @@ class help(commands.Cog):
         # interaction.response.send_message() returns None, that is why we have to fetch the message first and then set the message attribute
         view.message = await interaction.original_message()
 
+
+
 async def setup(client):
     await client.add_cog(help(client), guilds=guilds)
