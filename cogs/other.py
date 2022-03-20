@@ -166,5 +166,44 @@ class other(commands.Cog):
         await interaction.channel.send(hug)
 
 
+    class Prediction(ui.Modal, title='LEC Spring Split Playoffs 2022'):
+
+        def __init__(self, client):
+            super().__init__()
+            self.client = client
+
+
+        email = ui.TextInput(label='Email Adress', placeholder="Put your email adress here to access the Google Sheet later")
+
+        async def on_submit(self, interaction: discord.Interaction):
+            await interaction.response.send_message(f'You can soon access the prediction sheet!', ephemeral=True, view=SheetLink())
+
+            # 656636484937449518 this is the suggestion-log channel
+            # 651364619402739713 this is the test channel
+            # 820728066514354206 prediction sheet
+            channel_id = 820728066514354206  # the id of the channel the results get sent to
+            channel = await self.client.fetch_channel(channel_id)
+
+            # Make an embed with the results
+            em = discord.Embed(title="LEC Spring Split Playoffs 2022", description=f"by {interaction.user.mention}")
+            em.add_field(name="Email", value=self.email)
+
+            await channel.send(embed=em)
+
+
+
+    @app_commands.command(name="lec", description="Sign up for the Prediction Sheet!")
+    async def lec(self, interaction: discord.Interaction):
+        modal = self.Prediction(client=self.client)
+        await interaction.response.send_modal(modal)
+
+class SheetLink(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+
+        url = "https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing"
+
+        self.add_item(discord.ui.Button(label='Prediction Sheet', url=url))
+
 async def setup(client):
     await client.add_cog(other(client), guilds=guilds)
