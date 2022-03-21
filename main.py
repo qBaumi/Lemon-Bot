@@ -2,6 +2,8 @@ import random
 import discord
 from discord.ext import commands
 from discord import Emoji
+
+from cogs.support import DropdownView, support_message_id
 from config import token
 from discord import app_commands
 from config import guilds
@@ -45,7 +47,7 @@ async def setup_hook():
     await client.load_extension("cogs.loyalty")
     await client.load_extension("cogs.work")
     await client.load_extension("cogs.support")
-
+    client.add_view(DropdownView(client), message_id=support_message_id)
 
 
 

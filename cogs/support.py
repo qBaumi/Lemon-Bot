@@ -7,15 +7,40 @@ import discord, json
 from discord.ext import commands
 from discord import app_commands
 from discord import ui
-from config import guilds
+from config import guilds, allowedAdminRoles, allowedRoles
 from discord.app_commands import Choice
 from .other import Suggestion
 import chat_exporter
 import io
 
-channel_id = 651364619402739713  # test channel
+channel_id = 651364619402739713  # this is the channel where results get sent in archive, aka #actions
 support_category_id = 955151615252385854
 openmessage = "{} @ Rocsie @ Head Mods"
+support_message_id = 955459465631629444
+
+def getmsgids():
+    with open("./json/viewmsgids.json", "r", encoding="utf-8") as f:
+        msgids = json.load(f)
+    return msgids
+def addid(msgid):
+    msgids = getmsgids()
+    msgids.append(msgid)
+    with open("./json/viewmsgids.json", "w") as f:
+        json.dump(msgids, f, indent=4)
+async def setadminperms(user, channel, client):
+    guild = await client.fetch_guild(598303095352459305)
+    for id in allowedAdminRoles:
+        role = discord.utils.get(guild.roles, id=id)
+        await channel.set_permissions(guild.default_role, view_channel=False)
+    await channel.set_permissions(user, view_channel=True)
+
+
+async def setmodperms(user, channel, client):
+    guild = await client.fetch_guild(598303095352459305)
+    for id in allowedRoles:
+        role = discord.utils.get(guild.roles, id=id)
+        await channel.set_permissions(guild.default_role, view_channel=False)
+    await channel.set_permissions(user, view_channel=True)
 
 class support(commands.Cog):
     def __init__(self, client):
@@ -24,42 +49,50 @@ class support(commands.Cog):
     @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="permsupport", description="Permanent message for support channel, admincommand")
     async def permsupport(self, ctx):
-        await ctx.send(view=DropdownView(self.client))
+        em = discord.Embed(title="Ticket Support", colour=discord.Color.from_rgb(229, 196, 89))
+        em.add_field(name="Open a ticket to get help from staff members", value="""🪙  - Verification
+        🎁 - Claim a reward
+        ❗ - Make a report
+        📔 - Other
+        📥 - Suggestions""")
+        em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
+        await ctx.send(embed=em, view=DropdownView(self.client))
+
+    @app_commands.command(name="support", description="Open a Support Ticket")
+    async def support(self, interaction : discord.Interaction):
+        em = discord.Embed(title="Ticket Support", colour=discord.Color.from_rgb(229, 196, 89))
+        em.add_field(name="Open a ticket to get help from staff members", value="""🪙  - Verification
+        🎁 - Claim a reward
+        ❗ - Make a report
+        📔 - Other
+        📥 - Suggestions""")
+        em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
+        await interaction.response.send_message(embed=em, view=DropdownView(self.client), ephemeral=True)
+
+
 
 class DropdownView(discord.ui.View):
     def __init__(self, client):
         # Pass the timeout in the initilization of the super class
-        super().__init__(timeout=300)
+        super().__init__(timeout=None)
 
         # Adds the dropdown to our view object.
         self.add_item(Dropdown(client))
-
-"""
-Verification
-  - description
-Claim reward
-  - reward name
-Report a user
-  - User name
-  - Description
-Suggestion
-  - like in the command
-"""
 
 class Dropdown(discord.ui.Select):
     def __init__(self, client):
         # Set the options that will be presented inside the dropdown
         options = [
-            discord.SelectOption(label='Verification', description='Get support for the Verification', emoji='❔'),
-            discord.SelectOption(label='Claim a reward', description='Claim a reward you won', emoji='❔'),
-            discord.SelectOption(label='Make a Report', description='Report one or multiple users', emoji='❔'),
-            discord.SelectOption(label='Other', description='Open a ticket with staff members', emoji='❔'),
-            discord.SelectOption(label='Suggestion', description='Suggest and emote or something else', emoji='❔'),
+            discord.SelectOption(label='Verification', description='Get support for the Verification', emoji='🪙'),
+            discord.SelectOption(label='Claim a reward', description='Claim a reward you won', emoji='🎁'),
+            discord.SelectOption(label='Make a Report', description='Report one or multiple users', emoji='❗'),
+            discord.SelectOption(label='Other', description='Open a ticket with staff members', emoji='📔'),
+            discord.SelectOption(label='Suggestion', description='Suggest and emote or something else', emoji='📥'),
 
         ]
 
         super().__init__(placeholder='Open a Ticket', min_values=1, max_values=1,
-                         options=options)
+                         options=options, custom_id='persistent_view:selectdropdown')
         self.client = client
 
     async def callback(self, interaction: discord.Interaction):
@@ -90,12 +123,17 @@ class GetToChannelButton(discord.ui.View):
         url = f"https://discord.com/channels/598303095352459305/{channel_id}/"
 
         self.add_item(discord.ui.Button(label='Ticket Channel', url=url))
-
+"""
+class ticketlinkbutton(discord.ui.View):
+    def __init__(self, url):
+        super().__init__()
+        self.add_item(discord.ui.Button(label='Archive', url=url))
+"""
 
 class CloseButtons(discord.ui.View):
 
     def __init__(self, client, ticketchannel, opener):
-        super().__init__()
+        super().__init__(timeout=None)
         self.client = client
         self.ticketchannel = ticketchannel
         self.opener = opener
@@ -116,121 +154,14 @@ class CloseButtons(discord.ui.View):
 
         modal = CloseWithReason(client=self.client, ticketchannel=self.ticketchannel, opener=self.opener)
         await interaction.response.send_modal(modal)
-
-
-
-
-class Verification(ui.Modal, title='Verification'):
-
-    def __init__(self, client):
-        super().__init__()
-        self.client = client
-
-
-    description = ui.TextInput(label='Description', placeholder="Describe your problem and we will try to help you :)")
-
-    async def on_submit(self, interaction: discord.Interaction):
-
-        ticketchannel = await openticket(self.client, interaction)
-
-        # Make an embed with the results
-        em = discord.Embed(title="Verification", description=f"by {interaction.user.mention}")
-        em.add_field(name="Description", value=self.description, inline=False)
-
-        await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
-
-        await interaction.response.send_message(f'Click on the button to get to your ticket channel!', ephemeral=True, view=GetToChannelButton(ticketchannel.id))
-
+async def openTicketResponse(interaction, ticketchannel):
+    await interaction.response.send_message(f'Click on the button to get to your ticket channel!', ephemeral=True,
+                                            view=GetToChannelButton(ticketchannel.id))
 async def openticket(client, interaction):
     category = await client.fetch_channel(support_category_id)
     guild = await client.fetch_guild(598303095352459305)
     ticketchannel = await guild.create_text_channel(f'ticket-{interaction.user}', category=category)
     return ticketchannel
-
-class Claim(ui.Modal, title='Claim a reward'):
-
-    def __init__(self, client):
-        super().__init__()
-        self.client = client
-
-
-    name = ui.TextInput(label='Name of the reward', placeholder="Put the prize you want to claim here")
-    description = ui.TextInput(label='Description', placeholder="If you have something else to say", required=False)
-
-    async def on_submit(self, interaction: discord.Interaction):
-
-        ticketchannel = await openticket(self.client, interaction)
-
-        # Make an embed with the results
-        em = discord.Embed(title="Claim a reward", description=f"by {interaction.user.mention}")
-        em.add_field(name="Name", value=self.name, inline=False)
-        if str(self.description) != "":
-            em.add_field(name="Description", value=self.description, inline=False)
-
-        await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
-
-        await interaction.response.send_message(f'Click on the button to get to your ticket channel!', ephemeral=True, view=GetToChannelButton(ticketchannel.id))
-
-
-class Report(ui.Modal, title='Report'):
-
-    def __init__(self, client):
-        super().__init__()
-        self.client = client
-
-    name = ui.TextInput(label='Title', placeholder="Title of your Report")
-    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)")
-
-    async def on_submit(self, interaction: discord.Interaction):
-
-        ticketchannel = await openticket(self.client, interaction)
-
-        # Make an embed with the results
-        em = discord.Embed(title="Report", description=f"by {interaction.user.mention}")
-        em.add_field(name="Title", value=self.name, inline=False)
-        em.add_field(name="Description", value=self.description, inline=False)
-
-        await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
-        await interaction.response.send_message(f'Click on the button to get to your ticket channel!', ephemeral=True, view=GetToChannelButton(ticketchannel.id))
-
-class Other(ui.Modal, title='Other'):
-
-    def __init__(self, client):
-        super().__init__()
-        self.client = client
-
-    name = ui.TextInput(label='Title', placeholder="I like trains")
-    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)")
-
-    async def on_submit(self, interaction: discord.Interaction):
-
-        ticketchannel = await openticket(self.client, interaction)
-
-
-        # Make an embed with the results
-        em = discord.Embed(title="Other", description=f"by {interaction.user.mention}")
-        em.add_field(name="Title", value=self.name, inline=False)
-        em.add_field(name="Description", value=self.description, inline=False)
-
-        await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
-        await interaction.response.send_message(f'Click on the button to get to your ticket channel!', ephemeral=True, view=GetToChannelButton(ticketchannel.id))
-
-class CloseWithReason(ui.Modal, title='Close Ticket with Reason'):
-
-    def __init__(self, client, ticketchannel, opener):
-        super().__init__()
-        self.client = client
-        self.ticketchannel = ticketchannel
-        self.opener = opener
-    reason = ui.TextInput(label='Reason', placeholder="Sara, hello, didnt ask + ratio")
-
-    async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f'Closed Ticket with reason {self.reason}', ephemeral=True)
-
-        resultschannel = await self.client.fetch_channel(channel_id)
-        await archive(self.ticketchannel, resultschannel, self.client, self.opener,interaction.user.mention,str(self.reason))
-        time.sleep(5)
-        await self.ticketchannel.delete()
 async def archive(channel, archive_channel, client, opener, closer, reason=""):
 
     if channel and archive_channel:
@@ -247,13 +178,124 @@ async def archive(channel, archive_channel, client, opener, closer, reason=""):
         em.add_field(name="Opened by", value=opener, inline=False)
         em.add_field(name="Closed by", value=closer, inline=False)
         em.add_field(name="Opened at", value=f"<t:{math.floor(time.time())}>", inline=False)
+        em.add_field(name="Archive", value=f"[Click here]({message.attachments[0].url})", inline=False)
+        await archive_channel.send(embed=em) # , view=ticketlinkbutton(url=message.attachments[0].url)
+class CloseWithReason(ui.Modal, title='Close Ticket with Reason'):
 
-        await archive_channel.send(embed=em, view=ticketlinkbutton(url=message.attachments[0].url))
-
-class ticketlinkbutton(discord.ui.View):
-    def __init__(self, url):
+    def __init__(self, client, ticketchannel, opener):
         super().__init__()
-        self.add_item(discord.ui.Button(label='Archive', url=url))
+        self.client = client
+        self.ticketchannel = ticketchannel
+        self.opener = opener
+    reason = ui.TextInput(label='Reason', placeholder="Sara, hello, didnt ask + ratio")
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'Closed Ticket with reason {self.reason}', ephemeral=True)
+
+        resultschannel = await self.client.fetch_channel(channel_id)
+        await archive(self.ticketchannel, resultschannel, self.client, self.opener,interaction.user.mention,str(self.reason))
+        time.sleep(5)
+        await self.ticketchannel.delete()
+
+
+"""
+Verification
+  - description
+Claim reward
+  - reward name
+Report
+  - Title
+  - Description
+Suggestion
+  - like in the command
+"""
+class Verification(ui.Modal, title='Verification'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+
+    description = ui.TextInput(label='Description', placeholder="Describe your problem and we will try to help you :)")
+
+    async def on_submit(self, interaction: discord.Interaction):
+
+        ticketchannel = await openticket(self.client, interaction)
+        # Make an embed with the results
+        em = discord.Embed(title="Verification", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
+        em.add_field(name="Description", value=self.description, inline=False)
+
+        msg = await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id)
+        await openTicketResponse(interaction, ticketchannel)
+class Claim(ui.Modal, title='Claim a reward'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+
+    name = ui.TextInput(label='Name of the reward', placeholder="Put the prize you want to claim here")
+    description = ui.TextInput(label='Description', placeholder="If you have something else to say", required=False)
+
+    async def on_submit(self, interaction: discord.Interaction):
+
+        ticketchannel = await openticket(self.client, interaction)
+
+        # Make an embed with the results
+        em = discord.Embed(title="Claim a reward", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
+        em.add_field(name="Name", value=self.name, inline=False)
+        if str(self.description) != "":
+            em.add_field(name="Description", value=self.description, inline=False)
+
+        msg = await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id)
+
+        await openTicketResponse(interaction, ticketchannel)
+class Report(ui.Modal, title='Report'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+    name = ui.TextInput(label='Title', placeholder="Title of your Report")
+    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)")
+
+    async def on_submit(self, interaction: discord.Interaction):
+
+        ticketchannel = await openticket(self.client, interaction)
+
+        # Make an embed with the results
+        em = discord.Embed(title="Report", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
+        em.add_field(name="Title", value=self.name, inline=False)
+        em.add_field(name="Description", value=self.description, inline=False)
+
+        msg = await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id)
+
+        await openTicketResponse(interaction, ticketchannel)
+class Other(ui.Modal, title='Other'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+    name = ui.TextInput(label='Title', placeholder="I like trains")
+    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)")
+
+    async def on_submit(self, interaction: discord.Interaction):
+
+        ticketchannel = await openticket(self.client, interaction)
+
+
+        # Make an embed with the results
+        em = discord.Embed(title="Other", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
+        em.add_field(name="Title", value=self.name, inline=False)
+        em.add_field(name="Description", value=self.description, inline=False)
+
+        msg = await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id)
+        await openTicketResponse(interaction, ticketchannel)
 
 
 async def setup(client):
