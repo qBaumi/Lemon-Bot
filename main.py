@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 from discord import Emoji
 
-from cogs.support import DropdownView, support_message_id
+from cogs.support import DropdownView, support_message_id, getmsgids, CloseButtons
 from config import token
 from discord import app_commands
 from config import guilds
@@ -48,6 +48,16 @@ async def setup_hook():
     await client.load_extension("cogs.work")
     await client.load_extension("cogs.support")
     client.add_view(DropdownView(client), message_id=support_message_id)
+    guild = await client.fetch_guild(598303095352459305)
+    for msg in getmsgids():
+        msgid = msg["msg_id"]
+        print(msg["ticketchannel_id"])
+        ticketchannel = await guild.fetch_channel(msg["ticketchannel_id"])
+        print(ticketchannel)
+        opener = await guild.fetch_member(msg["opener_id"])
+        print(msg["opener_id"])
+        print(opener)
+        client.add_view(CloseButtons(client=client, ticketchannel=ticketchannel, opener=opener), message_id=msgid)
 
 
 

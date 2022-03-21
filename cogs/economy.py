@@ -11,6 +11,8 @@ import discord
 from discord import Colour
 from discord.ext import commands
 import mysql.connector
+
+from cogs.support import support_channel_id
 from config import dbargs
 from discord import app_commands
 from config import guilds
@@ -361,7 +363,8 @@ class economy(commands.Cog):
                 with open("./json/spItems.json", "w") as f:
                     json.dump(specialitems, f, indent=4)
 
-                await interaction.channel.send(f"{user.mention}\n**To redeem your prize please make sure to message Rocsie!**")
+                supportchannel = await self.client.fetch_channel(support_channel_id)
+                await interaction.channel.send(f"{user.mention}\n**To redeem your prize please open a ticket in {supportchannel.mention}")
                 channel = await self.client.fetch_channel(845281850230308864) # Send message to an admin channel or idk
                 rocsie = await self.client.fetch_user(148086360425758720) # fetch rocsie
                 await channel.send(f"{rocsie.mention}\n{user.mention} claimed {item}!")

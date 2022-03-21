@@ -15,32 +15,49 @@ import io
 
 channel_id = 651364619402739713  # this is the channel where results get sent in archive, aka #actions
 support_category_id = 955151615252385854
-openmessage = "{} @ Rocsie @ Head Mods"
+support_channel_id = 955476670352093204
 support_message_id = 955459465631629444
+TESTMODE = True
 
 def getmsgids():
     with open("./json/viewmsgids.json", "r", encoding="utf-8") as f:
         msgids = json.load(f)
     return msgids
-def addid(msgid):
+def addid(msgid, ticketchannelid, openerid):
     msgids = getmsgids()
-    msgids.append(msgid)
+    msgids.append({"msg_id" : msgid, "ticketchannel_id" : ticketchannelid, "opener_id" : openerid})
     with open("./json/viewmsgids.json", "w") as f:
         json.dump(msgids, f, indent=4)
-async def setadminperms(user, channel, client):
+async def removeid(ticketchannelid):
+    msgids = getmsgids()
+    for msg in msgids:
+        print(ticketchannelid)
+        print(msg["msg_id"])
+        if msg["ticketchannel_id"] == ticketchannelid:
+            msgids.remove(msg)
+    with open("./json/viewmsgids.json", "w") as f:
+        json.dump(msgids, f, indent=4)
+
+async def setheadmodperms(user, channel, client, enabled):
     guild = await client.fetch_guild(598303095352459305)
-    for id in allowedAdminRoles:
-        role = discord.utils.get(guild.roles, id=id)
-        await channel.set_permissions(guild.default_role, view_channel=False)
+    role = discord.utils.get(guild.roles, id=845280788001849345)
+    await channel.set_permissions(guild.default_role, view_channel=False)
+    await channel.set_permissions(role, view_channel=enabled)
+    await channel.set_permissions(user, view_channel=True)
+async def setmodperms(user, channel, client, enabled):
+    guild = await client.fetch_guild(598303095352459305)
+
+    role = discord.utils.get(guild.roles, id=598307062086107156)
+    await channel.set_permissions(guild.default_role, view_channel=False)
+    await channel.set_permissions(role, view_channel=enabled)
+    await channel.set_permissions(user, view_channel=True)
+async def setverifiedperms(user, channel, client, enabled):
+    guild = await client.fetch_guild(598303095352459305)
+    role = discord.utils.get(guild.roles, id=955467902738378853)
+    await channel.set_permissions(guild.default_role, view_channel=False)
+    await channel.set_permissions(role, view_channel=enabled)
     await channel.set_permissions(user, view_channel=True)
 
-
-async def setmodperms(user, channel, client):
-    guild = await client.fetch_guild(598303095352459305)
-    for id in allowedRoles:
-        role = discord.utils.get(guild.roles, id=id)
-        await channel.set_permissions(guild.default_role, view_channel=False)
-    await channel.set_permissions(user, view_channel=True)
 
 class support(commands.Cog):
     def __init__(self, client):
@@ -69,8 +86,6 @@ class support(commands.Cog):
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await interaction.response.send_message(embed=em, view=DropdownView(self.client), ephemeral=True)
 
-
-
 class DropdownView(discord.ui.View):
     def __init__(self, client):
         # Pass the timeout in the initilization of the super class
@@ -78,7 +93,6 @@ class DropdownView(discord.ui.View):
 
         # Adds the dropdown to our view object.
         self.add_item(Dropdown(client))
-
 class Dropdown(discord.ui.Select):
     def __init__(self, client):
         # Set the options that will be presented inside the dropdown
@@ -100,6 +114,12 @@ class Dropdown(discord.ui.Select):
         # we can get the values of the selection, cause self is the dropdown class and it has the attribute values
         category = self.values[0]
 
+        # Check if user has Lemon role
+        user = interaction.user
+        verified = False
+        for role in user.roles:
+            if role.id == 955101166088368179:
+                verified = True
         # Now the embed will be changed depending on the value of the selection
         # Also we set the option to True so it will be shown down in the select menu and not be empty again
         if category == "Verification":
@@ -112,7 +132,9 @@ class Dropdown(discord.ui.Select):
             modal = Suggestion(self.client)
         else: # this is for category other
             modal = Other(self.client)
-
+        if category != "Verification" and verified == False:
+            await interaction.response.send_message("You need to be verified to open a ticket!", ephemeral=True)
+            return
 
         await interaction.response.send_modal(modal)
 
@@ -129,7 +151,6 @@ class ticketlinkbutton(discord.ui.View):
         super().__init__()
         self.add_item(discord.ui.Button(label='Archive', url=url))
 """
-
 class CloseButtons(discord.ui.View):
 
     def __init__(self, client, ticketchannel, opener):
@@ -140,26 +161,39 @@ class CloseButtons(discord.ui.View):
 
 
 
-    @discord.ui.button(label='Close', style=discord.ButtonStyle.red)
+    @discord.ui.button(label='Close', style=discord.ButtonStyle.red, custom_id="close")
     async def close(self, button: discord.ui.Button, interaction: discord.Interaction):
         resultschannel = await self.client.fetch_channel(channel_id)
+
+        print(self.ticketchannel)
+        print(resultschannel)
+        print(self.client)
+        print(self.opener)
+        print(interaction.user.mention)
+
         await archive(self.ticketchannel, resultschannel, self.client, self.opener, interaction.user.mention)
 
         await interaction.response.send_message("Ticket closed", ephemeral=True)
         time.sleep(5)
+        await removeid(self.ticketchannel.id)
         await self.ticketchannel.delete()
-
-    @discord.ui.button(label='Close with Reason', style=discord.ButtonStyle.red)
+    @discord.ui.button(label='Close with Reason', style=discord.ButtonStyle.red, custom_id="closewithreason")
     async def closewithreason(self, button: discord.ui.Button, interaction: discord.Interaction):
 
         modal = CloseWithReason(client=self.client, ticketchannel=self.ticketchannel, opener=self.opener)
         await interaction.response.send_modal(modal)
+
 async def openTicketResponse(interaction, ticketchannel):
-    await interaction.response.send_message(f'Click on the button to get to your ticket channel!', ephemeral=True,
+    await interaction.followup.send(f'{interaction.user.mention}\nClick on the button to get to your ticket channel!', ephemeral=True,
                                             view=GetToChannelButton(ticketchannel.id))
 async def openticket(client, interaction):
     category = await client.fetch_channel(support_category_id)
     guild = await client.fetch_guild(598303095352459305)
+    for channel in category.channels:
+
+        if str(channel) == f"ticket-{interaction.user}".lower().replace("#", "") and str(channel) != "ticket-qbaumi1247":
+            print("here")
+            return None
     ticketchannel = await guild.create_text_channel(f'ticket-{interaction.user}', category=category)
     return ticketchannel
 async def archive(channel, archive_channel, client, opener, closer, reason=""):
@@ -195,6 +229,7 @@ class CloseWithReason(ui.Modal, title='Close Ticket with Reason'):
         resultschannel = await self.client.fetch_channel(channel_id)
         await archive(self.ticketchannel, resultschannel, self.client, self.opener,interaction.user.mention,str(self.reason))
         time.sleep(5)
+        await removeid(self.ticketchannel.id)
         await self.ticketchannel.delete()
 
 
@@ -219,14 +254,31 @@ class Verification(ui.Modal, title='Verification'):
     description = ui.TextInput(label='Description', placeholder="Describe your problem and we will try to help you :)")
 
     async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer()
 
+        # openticket returns None if user already has an open ticket
         ticketchannel = await openticket(self.client, interaction)
+        if ticketchannel == None:
+            await interaction.followup.send(f"{interaction.user.mention}\nYou can only open one ticket at a time!", ephemeral=True)
+            return
+
         # Make an embed with the results
         em = discord.Embed(title="Verification", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
         em.add_field(name="Description", value=self.description, inline=False)
 
-        msg = await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
-        addid(msg.id)
+        guild = await self.client.fetch_guild(598303095352459305)
+        verificationrole = guild.get_role(955467902738378853)
+
+        await setmodperms(interaction.user, ticketchannel, self.client, False)
+        await setheadmodperms(interaction.user, ticketchannel, self.client, False)
+        await setverifiedperms(interaction.user, ticketchannel, self.client, True)
+
+        mention = verificationrole
+        if TESTMODE == False:
+            mention = verificationrole.mention
+
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id, ticketchannel.id, interaction.user.id)
         await openTicketResponse(interaction, ticketchannel)
 class Claim(ui.Modal, title='Claim a reward'):
 
@@ -240,7 +292,11 @@ class Claim(ui.Modal, title='Claim a reward'):
 
     async def on_submit(self, interaction: discord.Interaction):
 
+        await interaction.response.defer()
         ticketchannel = await openticket(self.client, interaction)
+        if ticketchannel == None:
+            await interaction.followup.send(f"{interaction.user.mention}\nYou can only open one ticket at a time!", ephemeral=True)
+            return
 
         # Make an embed with the results
         em = discord.Embed(title="Claim a reward", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
@@ -248,8 +304,17 @@ class Claim(ui.Modal, title='Claim a reward'):
         if str(self.description) != "":
             em.add_field(name="Description", value=self.description, inline=False)
 
-        msg = await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
-        addid(msg.id)
+        # Get Rocsie
+        rocsie = await self.client.fetch_user(148086360425758720)
+        mention = rocsie
+        if TESTMODE == False:
+            mention = rocsie.mention
+
+        await setmodperms(interaction.user, ticketchannel, self.client, False)
+        await setheadmodperms(interaction.user, ticketchannel, self.client, False)
+
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id, ticketchannel.id, interaction.user.id)
 
         await openTicketResponse(interaction, ticketchannel)
 class Report(ui.Modal, title='Report'):
@@ -262,16 +327,33 @@ class Report(ui.Modal, title='Report'):
     description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)")
 
     async def on_submit(self, interaction: discord.Interaction):
-
+        await interaction.response.defer()
         ticketchannel = await openticket(self.client, interaction)
+        if ticketchannel == None:
+            await interaction.followup.send(f"{interaction.user.mention}\nYou can only open one ticket at a time!", ephemeral=True)
+            return
 
         # Make an embed with the results
         em = discord.Embed(title="Report", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
         em.add_field(name="Title", value=self.name, inline=False)
         em.add_field(name="Description", value=self.description, inline=False)
 
-        msg = await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
-        addid(msg.id)
+
+        guild = await self.client.fetch_guild(598303095352459305)
+        modrole = guild.get_role(598307062086107156)
+        headmodrole = guild.get_role(845280788001849345)
+
+        mention = modrole
+        mention2 = headmodrole
+        if TESTMODE == False:
+            mention = modrole.mention
+            mention2 = headmodrole.mention
+
+        await setmodperms(interaction.user, ticketchannel, self.client, True)
+        await setheadmodperms(interaction.user, ticketchannel, self.client, True)
+
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}{mention2}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id, ticketchannel.id, interaction.user.id)
 
         await openTicketResponse(interaction, ticketchannel)
 class Other(ui.Modal, title='Other'):
@@ -284,17 +366,32 @@ class Other(ui.Modal, title='Other'):
     description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)")
 
     async def on_submit(self, interaction: discord.Interaction):
-
+        await interaction.response.defer()
         ticketchannel = await openticket(self.client, interaction)
-
+        if ticketchannel == None:
+            await interaction.followup.send(f"{interaction.user.mention}\nYou can only open one ticket at a time!", ephemeral=True)
+            return
 
         # Make an embed with the results
         em = discord.Embed(title="Other", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
         em.add_field(name="Title", value=self.name, inline=False)
         em.add_field(name="Description", value=self.description, inline=False)
+        guild = await self.client.fetch_guild(598303095352459305)
+        modrole = guild.get_role(598307062086107156)
+        headmodrole = guild.get_role(845280788001849345)
 
-        msg = await ticketchannel.send(openmessage.format(interaction.user.mention), embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
-        addid(msg.id)
+        mention = modrole
+        mention2 = headmodrole
+        if TESTMODE == False:
+            mention = modrole.mention
+            mention2 = headmodrole.mention
+
+
+        await setmodperms(interaction.user, ticketchannel, self.client, True)
+        await setheadmodperms(interaction.user, ticketchannel, self.client, True)
+
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}{mention2}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id, ticketchannel.id, interaction.user.id)
         await openTicketResponse(interaction, ticketchannel)
 
 
