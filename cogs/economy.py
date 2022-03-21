@@ -286,7 +286,7 @@ class economy(commands.Cog):
     for item in specialitems:
         itemlist.append(Choice(name=item["name"], value=item["name"].lower()))
 
-    print(itemlist)
+    #print(itemlist)
 
 
     @app_commands.describe(item='The name of the item you want to buy')
