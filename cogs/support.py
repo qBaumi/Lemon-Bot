@@ -13,11 +13,11 @@ from .other import Suggestion
 import chat_exporter
 import io
 
-channel_id = 651364619402739713  # this is the channel where results get sent in archive, aka #actions
+channel_id = 801121140612661268  # this is the channel where results get sent in archive, aka #actions
 support_category_id = 955151615252385854
-support_channel_id = 955476670352093204
-support_message_id = 955459465631629444
-TESTMODE = True
+support_channel_id = 955476670352093204 # #support for the claim message in cogs.economy
+support_message_id = 955846031004811274 # message in #support
+TESTMODE = False
 
 def getmsgids():
     with open("./json/viewmsgids.json", "r", encoding="utf-8") as f:
@@ -64,8 +64,21 @@ class support(commands.Cog):
         self.client = client
 
     @commands.has_any_role("Admins", "Head Mods", "Developer")
+    @commands.command(name="supportembed", description="Embed for the support channel")
+    async def supportembed(self, ctx):
+        em = discord.Embed(colour=discord.Color.from_rgb(229, 196, 89))
+        em.set_image(
+            url="https://media.discordapp.net/attachments/651364619402739713/881551197608218644/Support.png?width=1440&height=458")
+        await ctx.send(embed=em)
+
+    @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="permsupport", description="Permanent message for support channel, admincommand")
     async def permsupport(self, ctx):
+        em = discord.Embed(colour=discord.Color.from_rgb(229, 196, 89))
+        em.set_image(
+            url="https://media.discordapp.net/attachments/651364619402739713/881551197608218644/Support.png?width=1440&height=458")
+        await ctx.send(embed=em)
+
         em = discord.Embed(title="Ticket Support", colour=discord.Color.from_rgb(229, 196, 89))
         em.add_field(name="\u200b", value="""🪙 **- Verification** If you have read the Verification tab under <#945162520275079199> and you need further support, feel free to open a ticket that will allow our staff members to offer you further assistance.
 
@@ -75,7 +88,7 @@ class support(commands.Cog):
 
 📔 **- Other** If you have any other issue with the server, questions for the staff members, event ideas or suggestions you'd like to further discuss etc. feel free to open a ticket.
 
-📥 **- Suggestions** This will open a form that will be sent to us to consider, however, this will not open a channel where we can discuss it, so make sure you include as much detail as you can (e.g. Emote name and a like we can download it from)""")
+📥 **- Suggestions** This will open a form that will be sent to us to consider, however, this will not open a channel where we can discuss it, so make sure you include as much detail as you can (e.g. Emote name and a link we can download it from)""")
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await ctx.send(embed=em, view=DropdownView(self.client))
 
@@ -90,7 +103,7 @@ class support(commands.Cog):
 
         📔 **- Other** If you have any other issue with the server, questions for the staff members, event ideas or suggestions you'd like to further discuss etc. feel free to open a ticket.
 
-        📥 **- Suggestions** This will open a form that will be sent to us to consider, however, this will not open a channel where we can discuss it, so make sure you include as much detail as you can (e.g. Emote name and a like we can download it from)""")
+        📥 **- Suggestions** This will open a form that will be sent to us to consider, however, this will not open a channel where we can discuss it, so make sure you include as much detail as you can (e.g. Emote name and a link we can download it from)""")
 
 
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
