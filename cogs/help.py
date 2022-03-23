@@ -12,7 +12,7 @@ async def money_help_msg():
     em = discord.Embed(
         title="Help to the economy system <:coin:881559702033535067>",
         description="You can earn money through various commands, but most important is the difference between lemons and golden lemons. You use lemons to buy normal items in the shop and golden lemons are the more precious ones which you can earn through events",
-        colour=discord.Color.from_rgb(254, 254, 51))
+        colour=discord.Color.from_rgb(229, 196, 89))
     em.add_field(
         name="startup",
         value="Use this command first to get a quick introduction",
@@ -56,7 +56,7 @@ async def job_help_msg():
     em = discord.Embed(
         title='Help for the job command:',
         description="First use `/job list` to take a look which jobs you can appeal for, then you can select them with `/job select lemon farmer` for example. After that you can work with `/work` and complete several tasks",
-        colour=discord.Color.from_rgb(254, 254, 51))
+        colour=discord.Color.from_rgb(229, 196, 89))
     em.add_field(
         name='Job info',
         value='Look up your current job!',
@@ -81,7 +81,7 @@ async def item_help_msg():
     em = discord.Embed(
         title="How to use, view your items <:handbag:881564066924089365>",
         description="You can buy items from the shop `/shop`",
-        colour=discord.Color.from_rgb(254, 254, 51))
+        colour=discord.Color.from_rgb(229, 196, 89))
     em.add_field(name="bag", value="Have a look at your items", inline=False)
     em.add_field(name="use", value="Use a specific item", inline=False)
     em.add_field(name="collectibles", value="View all collectibles `/collectibles *page*`", inline=False)
@@ -96,7 +96,7 @@ async def item_help_msg():
 
 
 async def pet_help_msg():
-    em = discord.Embed(title="Pets", colour=discord.Color.from_rgb(254, 254, 51),
+    em = discord.Embed(title="Pets",colour=discord.Color.from_rgb(229, 196, 89),
                        description="You can buy a pet from the `/pet shop` and look and care for your equipped pet with `/pet info`. You can have a maximum of 4 pets. You can buy them as adults and babys, an adult is the maximum level but has not that good stats as the same pet leveled up from a baby to the maximum level!")
     em.add_field(name="pet shop", value="Look which pets are currently available!", inline=False)
     em.add_field(name="pet adopt | pet buy", value="Adopt a pet from the shop", inline=False)
@@ -117,7 +117,7 @@ async def game_help_msg():
     em = discord.Embed(
         title="Yes, there are games! Not much, but enought",
         description="Which champions has the voiceline of the second sentence in the title? You get 10 lemons if you tell it qBaumi",
-        colour=discord.Color.from_rgb(254, 254, 51))
+        colour=discord.Color.from_rgb(229, 196, 89))
     em.add_field(
         name="tictactoe",
         value="`/tictactoe @friend 10` (10 is the amount of lemons you play against)",
@@ -152,7 +152,7 @@ async def game_help_msg():
 async def misc_help_msg():
     em = discord.Embed(
         title="Things without a category",
-        colour=discord.Color.from_rgb(254, 254, 51))
+        colour=discord.Color.from_rgb(229, 196, 89))
     em.add_field(
         name="suggest",
         value="Suggest an emoji or something else",
@@ -175,7 +175,7 @@ async def misc_help_msg():
 async def loyalty_help_msg():
     em = discord.Embed(
         title="Loyalty",
-        colour=discord.Color.from_rgb(254, 254, 51),
+        colour=discord.Color.from_rgb(229, 196, 89),
         description="You earn Loyalty Points from events and at the end of the year, the person with the most points gets a custom color role!")
     em.add_field(
         name="profile",
@@ -191,7 +191,7 @@ async def loyalty_help_msg():
 async def golden_lemon_help_msg():
     em = discord.Embed(
         title="Golden Lemons",
-        colour=discord.Color.from_rgb(254, 254, 51),
+        colour=discord.Color.from_rgb(229, 196, 89),
         description="You can earn Golden Lemons <:GoldenLemon:882634893039923290> through events. You can trade them for prizes, read on for more.")
     em.add_field(
         name="`/balance`",
@@ -216,29 +216,13 @@ async def golden_lemon_help_msg():
 
 async def help_msg(client):
     em = discord.Embed(
-        title="Help <:question:881562906993508374>",
-        description="Frequently asked questions",
-        colour=discord.Color.from_rgb(254, 254, 51))
+        title="Help",
+        colour=discord.Color.from_rgb(229, 196, 89))
     em.add_field(
-        name="IMPORTANT NOTE!!!",
-        value="The bot is currently transferring to slash commands, all commands that have something to do with money are normal commands and you can access them via `/` and then the command name. This is because I am currently not able to use features like cooldowns yet, but I hope it will be added soon to the library.",
+        name="Q: What is the Lemon Bot",
+        value="A: Lemon Bot is our server-own Discord Bot. If you've never used a Discord Bot before you can ask one of our Mods for help. With Lemon Bot you can earn Lemons, which is the ingame-currency and is used to buy ingame items or pets. You can play different games, gamble, collect items and much more. To get started just go to <#598309398976397332> and type `/startup`",
         inline=False)
-    em.add_field(
-        name="What is the bot about",
-        value="The bot is mainly an economy bot themed around Nemesis. You can earn money, buy items and pets, play games, gamble, and much more.",
-        inline=False)
-    em.add_field(
-        name="What commands are there",
-        value="As mentioned there are a lot of features and you can look all the commands up with `/help`",
-        inline=False)
-    em.add_field(
-        name="I encountered an error",
-        value="If the bot does something weird, doesn't work don't be afraid to @qBaumi",
-        inline=False)
-    em.add_field(
-        name="I can't find what I am looking for",
-        value="Just @qBaumi",
-        inline=False)
+    em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
     em.set_thumbnail(url=client.user.avatar.url)
     return em
 
@@ -250,14 +234,11 @@ class help(commands.Cog):
 
     @app_commands.command(description="Get some help", name="help")
     async def help(self, interaction: discord.Interaction):
-
-
-
         # Custom Help Command with Select View
 
         # Class for initializing the Dropdown menu, we can edit the default options later
         class Dropdown(discord.ui.Select):
-            def __init__(self):
+            def __init__(self, client):
                 # Set the options that will be presented inside the dropdown
                 options = [
                     discord.SelectOption(label='FAQ', description='Fundamentals for the bot', emoji='❔', default=True),
@@ -281,7 +262,7 @@ class help(commands.Cog):
                 # The options parameter defines the dropdown options. We defined this above
                 super().__init__(placeholder='Category', min_values=1, max_values=1,
                                  options=options)
-
+                self.client = client
 
             # Callback will be called every time the user changes the selection
             # self equals the Dropdown class, a discord.ui.Select type
@@ -330,12 +311,12 @@ class help(commands.Cog):
                 await interaction.response.edit_message(embed=em, view=EditedDropdownView(self))
 
         class DropdownView(discord.ui.View):
-            def __init__(self):
+            def __init__(self, client):
                 # Pass the timeout in the initilization of the super class
                 super().__init__(timeout=300)
 
                 # Adds the dropdown to our view object.
-                self.add_item(Dropdown())
+                self.add_item(Dropdown(client))
 
             async def on_timeout(self):
                 # Set every component on disabled
@@ -355,7 +336,7 @@ class help(commands.Cog):
                 self.add_item(dropdown)
 
         # this is for the default message
-        view = DropdownView()
+        view = DropdownView(self.client)
         await interaction.response.send_message(embed=await help_msg(self.client), view=view)
         # interaction.response.send_message() returns None, that is why we have to fetch the message first and then set the message attribute
         view.message = await interaction.original_message()
