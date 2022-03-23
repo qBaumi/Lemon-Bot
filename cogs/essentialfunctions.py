@@ -52,7 +52,7 @@ async def open_account(user):
     return True
 
 """
-RETURNS TRUE IF USER USED LEM STARTUP
+RETURNS TRUE IF USER USED /STARTUP
 OR RETURNS FALSE IF NOT AND GIVES MESSAGE
 """
 async def check_account(ctx):
@@ -64,7 +64,7 @@ async def check_account(ctx):
         ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
         if str(ctx.author.id) == id[0]:
             return True
-    await ctx.send(f"{ctx.author.mention}\nUse the `lem startup` command first!")
+    await ctx.send(f"{ctx.author.mention}\nUse the `/startup` command first!")
     return False
 
 async def interaction_check_account(interaction : discord.Interaction):
@@ -76,7 +76,7 @@ async def interaction_check_account(interaction : discord.Interaction):
         ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
         if str(interaction.user.id) == id[0]:
             return True
-    await interaction.response.send_message(f"{interaction.user.author.mention}\nUse the `lem startup` command first!")
+    await interaction.response.send_message(f"{interaction.user.author.mention}\nUse the `/startup` command first!")
     return False
 
 """

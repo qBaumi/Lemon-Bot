@@ -22,12 +22,12 @@ joblist = [{'Name': 'Lemon Farmer', 'Verdienst': 10, 'Beschreibung': ' Start lit
 
 async def job_helper():
     embed = discord.Embed(title='Help for the job command:',
-                          description="First use `lem job list` to take a look which jobs you can appeal for, then you can select them with `lem job select lemon farmer` for example. After that you can work with `lem work` and complete several tasks")
+                          description="First use `/job list` to take a look which jobs you can appeal for, then you can select them with `/job select lemon farmer` for example. After that you can work with `/work` and complete several tasks")
     embed.add_field(name='Job info', value='Look up your current job!', inline=False)
     embed.add_field(name='Job list', value='List every job!', inline=False)
     embed.add_field(name='Job select', value='Select a job that is in the list!',
                     inline=False)
-    embed.add_field(name='lem work', value='Work, work, work, work...', inline=False)
+    embed.add_field(name='/work', value='Work, work, work, work...', inline=False)
     embed.set_footer(text='Send job ideas to @qBaumi#1247!')
     return embed
 
@@ -69,7 +69,7 @@ class job(commands.Cog, app_commands.Group):
             userjob = []
         if not userjob:
             embed = discord.Embed(title='You dont have a job!',
-                                  description='Try: *lem job list*, then *lem job select <Job>*')
+                                  description='Try: */job list*, then */job select <Job>*')
             await interaction.response.send_message(embed=embed)
         else:
             embed = discord.Embed(title='Your Job:')

@@ -28,7 +28,7 @@ class pet(commands.Cog, app_commands.Group):
             return
         if bool(pet) == False:
             await interaction.response.send_message(
-                "You dont have a pet equipped! You can buy one with `lem pet buy petname` from the `lem pet shop` or equip a pet with `lem pet equip`.\nFor further information try `lem pet help`")
+                "You dont have a pet equipped! You can buy one with `/pet buy petname` from the `/pet shop` or equip a pet with `/pet equip`.\nFor further information try `/pet help`")
             return
 
         em = discord.Embed(colour=discord.Color.teal(), title=pet["name"])
@@ -126,7 +126,7 @@ class pet(commands.Cog, app_commands.Group):
         users = await es.get_bank_data(user.id)
         equippedpet = await self.userpet(user.id, "equippedpet")
         if bool(equippedpet) == True:
-            await interaction.response.send_message("You currently have a pet equipped, to move it to a different slot try `lem pet unequip`")
+            await interaction.response.send_message("You currently have a pet equipped, to move it to a different slot try `/pet unequip`")
             return
         doespetexist = False
         for pet in pets:
@@ -179,7 +179,7 @@ class pet(commands.Cog, app_commands.Group):
 
         await es.update_balance(user, -price)
         await interaction.response.send_message(
-            f"Congratulations, you officially adopted {name}! You can view your pet now with `lem pet info` or `lem pet view`")
+            f"Congratulations, you officially adopted {name}! You can view your pet now with `/pet info` or `/pet view`")
         pet["stock"] = pet["stock"] - 1
         with open("./json/allpets.json", "w") as f:
             json.dump(pets, f, indent=4)
@@ -321,7 +321,7 @@ class pet(commands.Cog, app_commands.Group):
         print(slot)
         if bool(await self.userpet(user.id, slot)) == True:
             await interaction.channel.send(
-                f'{user.mention}\nThere is already a pet in this slot, if you want it equipped do so with `lem pet equip`')
+                f'{user.mention}\nThere is already a pet in this slot, if you want it equipped do so with `/pet equip`')
             return
         mycursor.execute(f"INSERT INTO {slot} SELECT * FROM equippedpet WHERE id = '{user.id}'")
         mycursor.execute(f"DELETE FROM equippedpet WHERE id = '{user.id}';")
@@ -348,12 +348,12 @@ class pet(commands.Cog, app_commands.Group):
         await interaction.response.send_message(f"{user.mention}", embed=em)
         return
     async def pet_help(self, interaction : discord.Interaction):
-        em = discord.Embed(title="Pets", colour=discord.Color.from_rgb(254, 254, 51), description="You can buy a pet from the `lem pet shop` and look and care for your equipped pet with `lem pet info`. You can have a maximum of 4 pets. You can buy them as adults and babys, an adult is the maximum level but has not that good stats as the same pet leveled up from a baby to the maximum level!")
+        em = discord.Embed(title="Pets", colour=discord.Color.from_rgb(254, 254, 51), description="You can buy a pet from the `/pet shop` and look and care for your equipped pet with `/pet info`. You can have a maximum of 4 pets. You can buy them as adults and babys, an adult is the maximum level but has not that good stats as the same pet leveled up from a baby to the maximum level!")
         em.add_field(name="pet shop", value="Look which pets are currently available!", inline=False)
         em.add_field(name="pet adopt | pet buy", value="Adopt a pet from the shop", inline=False)
         em.add_field(name="pet sell", value="Sadge", inline=False)
         em.add_field(name="pet info", value="Have a look at your equipped pet's stats!", inline=False)
-        em.add_field(name="pet feed | pet care | pet play", value="You can also use them with `lem pet info` and then react to the emojis!", inline=False)
+        em.add_field(name="pet feed | pet care | pet play", value="You can also use them with `/pet info` and then react to the emojis!", inline=False)
         em.add_field(name="pet pat", value="Gladge", inline=False)
         em.add_field(name="pet walk", value="Walk your pet, it needs to go to the toilet as well", inline=False)
         em.add_field(name="pet equip | pet unequip", value="Equip a pet from a different slot | Unequip a pet to buy another one", inline=False)

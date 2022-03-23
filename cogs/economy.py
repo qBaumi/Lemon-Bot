@@ -81,7 +81,7 @@ class economy(commands.Cog):
         # Now if an account wasn't opened the code comes here and sends the embed
         em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
                            description=f"Let me introduce you to our little friend Lemon right here.")
-        em.add_field(name="Welcome you can find out more about me with `lem about`",
+        em.add_field(name="Welcome you can find out more about me with `/about`",
                      value="Congrats! You already found the *startup command*. \n"
                            "Next is the `/balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `/help` for more information")
         await interaction.response.send_message(embed=em)
@@ -308,7 +308,7 @@ class economy(commands.Cog):
             return
 
         """CHECK IF ITEM BOUGHT TWICE"""
-        """First check if you want to lem buy safe 2"""
+        """First check if you want to /buy safe 2"""
         """Then check if item is in users bag and amount is bigger than 1"""
         if item.lower() in blacklist and amount > 1:
             await interaction.response.send_message(f"{user.mention}\nYou can only buy one {item}")
@@ -695,7 +695,7 @@ class economy(commands.Cog):
         author = interaction.user
         """False checks"""
         if not await es.interaction_check_account(interaction):
-            await interaction.response.send_message(f"{author.mention}\nYou need to use `lem startup` first")
+            await interaction.response.send_message(f"{author.mention}\nYou need to use `/startup` first")
             return
         if userid == author:
             await interaction.response.send_message(f"{author.mention}\nYou cant pay yourself money...well technically, but not anymore!")

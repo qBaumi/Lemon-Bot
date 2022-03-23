@@ -61,9 +61,9 @@ class admincommands(commands.Cog):
             await es.open_account(user)
             em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
                                description=f"Let me introduce you to our little friend Lemon right here.")
-            em.add_field(name="Welcome you can find out more about me with <lem about>",
+            em.add_field(name="Welcome you can find out more about me with `/about`",
                          value="Congrats! You already found the *startup command*. \n"
-                               "Next is the `lem lemons` or `lem balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `lem help` for more information")
+                               "Next is the `/lemons` or `/balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `/help` for more information")
             await interaction.channel.send(f"{user.mention}", embed=em)
             await es.update_balance(user, 50)
         if currency == "lemons":
@@ -91,7 +91,7 @@ class admincommands(commands.Cog):
         if not await es.checkPerms(interaction, allowedAdminRoles):
             return
         if amount == 0:
-            await interaction.response.send_message("You didnt specify the amount `lem refill Mysteryskin 10` for example")
+            await interaction.response.send_message("You didnt specify the amount `/refill Mysteryskin 10` for example")
             return
         specialitems = await es.get_item_data()
         index = -1
@@ -153,11 +153,7 @@ class admincommands(commands.Cog):
             list += str(user) + "\n"
         await ctx.send(list)
 
-    @presentlist.error
-    async def on_command_error(self, ctx, error):
-        await ctx.send(
-            f"{ctx.author.mention}\nYou need to be an Admin, in order to use this command\nIf you are a Mod, please use **lem moddeleteitem** instead")
-        await ctx.send(error)
+
 
 
 async def setup(client):

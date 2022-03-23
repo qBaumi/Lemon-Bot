@@ -48,9 +48,9 @@ class loyalty(commands.Cog):
             # If he didnt startup then this comes
             em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
                                description=f"Let me introduce you to our little friend Lemon right here.")
-            em.add_field(name="Welcome you can find out more about me with <lem about>",
+            em.add_field(name="Welcome you can find out more about me with /about",
                          value="Congrats! You already found the *startup command*. \n"
-                               "Next is the `lem lemons` or `lem balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `lem help` for more information")
+                               "Next is the `/lemons` or `/balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `/help` for more information")
             await interaction.response.send_message(f"{user.mention}", embed=em)
             # Also give them the startup money
             await es.update_balance(user, 50)
@@ -86,7 +86,7 @@ class loyalty(commands.Cog):
         except:
             lemons = 0
             glemons = 0
-            await interaction.response.send_message("If you haven't already use `lem startup` first!")
+            await interaction.response.send_message("If you haven't already use `/startup` first!")
 
         em = discord.Embed(colour=discord.Color.teal(), title=f"Profile of {user.name}")
         em.add_field(name="You have ",

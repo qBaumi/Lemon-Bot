@@ -5,6 +5,7 @@ from discord import ui
 import enum
 from typing import Literal
 from config import guilds
+from cogs.support import support_channel_id
 
 
 async def money_help_msg():
@@ -30,11 +31,11 @@ async def money_help_msg():
         inline=False)
     em.add_field(
         name="jobs",
-        value="To earn money you need to get a job, for more information use `lem job help`",
+        value="To earn money you need to get a job, for more information use `/job help`",
         inline=False)
     em.add_field(
         name="jobs",
-        value="Or you can go and steal money from someone *hehehe*... `lem steal @victim`",
+        value="Or you can go and steal money from someone *hehehe*... `/steal @victim`",
         inline=False)
     em.add_field(
         name="daily",
@@ -46,7 +47,7 @@ async def money_help_msg():
         inline=False)
     em.add_field(
         name="pay",
-        value="Pay someone some money. `lem pay @person 69`",
+        value="Pay someone some money. `/pay @person 69`",
         inline=False)
     return em
 
@@ -54,7 +55,7 @@ async def money_help_msg():
 async def job_help_msg():
     em = discord.Embed(
         title='Help for the job command:',
-        description="First use `lem job list` to take a look which jobs you can appeal for, then you can select them with `lem job select lemon farmer` for example. After that you can work with `lem work` and complete several tasks",
+        description="First use `/job list` to take a look which jobs you can appeal for, then you can select them with `/job select lemon farmer` for example. After that you can work with `/work` and complete several tasks",
         colour=discord.Color.from_rgb(254, 254, 51))
     em.add_field(
         name='Job info',
@@ -69,7 +70,7 @@ async def job_help_msg():
         value='Select a job that is in the list!',
         inline=False)
     em.add_field(
-        name='lem work',
+        name='/work',
         value='Work, work, work, work...',
         inline=False)
     em.set_footer(text='Send job ideas to @qBaumi#1247!')
@@ -79,11 +80,11 @@ async def job_help_msg():
 async def item_help_msg():
     em = discord.Embed(
         title="How to use, view your items <:handbag:881564066924089365>",
-        description="You can buy items from the shop `lem shop`",
+        description="You can buy items from the shop `/shop`",
         colour=discord.Color.from_rgb(254, 254, 51))
     em.add_field(name="bag", value="Have a look at your items", inline=False)
     em.add_field(name="use", value="Use a specific item", inline=False)
-    em.add_field(name="collectibles", value="View all collectibles `lem collectibles *page*`", inline=False)
+    em.add_field(name="collectibles", value="View all collectibles `/collectibles *page*`", inline=False)
     em.add_field(name="collection", value="View all your collectibles", inline=False)
     em.add_field(name="vendingmachine",
                  value="Get a random collectible. You can also suggest collectibles (if you have a better name for this command dm qBaumi)",
@@ -96,13 +97,13 @@ async def item_help_msg():
 
 async def pet_help_msg():
     em = discord.Embed(title="Pets", colour=discord.Color.from_rgb(254, 254, 51),
-                       description="You can buy a pet from the `lem pet shop` and look and care for your equipped pet with `lem pet info`. You can have a maximum of 4 pets. You can buy them as adults and babys, an adult is the maximum level but has not that good stats as the same pet leveled up from a baby to the maximum level!")
+                       description="You can buy a pet from the `/pet shop` and look and care for your equipped pet with `/pet info`. You can have a maximum of 4 pets. You can buy them as adults and babys, an adult is the maximum level but has not that good stats as the same pet leveled up from a baby to the maximum level!")
     em.add_field(name="pet shop", value="Look which pets are currently available!", inline=False)
     em.add_field(name="pet adopt | pet buy", value="Adopt a pet from the shop", inline=False)
     em.add_field(name="pet sell", value="Sadge", inline=False)
     em.add_field(name="pet info", value="Have a look at your equipped pet's stats!", inline=False)
     em.add_field(name="pet feed | pet care | pet play",
-                 value="You can also use them with `lem pet info` and then react to the emojis!", inline=False)
+                 value="You can also use them with `/pet info` and then react to the emojis!", inline=False)
     em.add_field(name="pet pat", value="Gladge", inline=False)
     em.add_field(name="pet walk", value="Walk your pet, it needs to go to the toilet as well", inline=False)
     em.add_field(name="pet equip | pet unequip",
@@ -119,15 +120,15 @@ async def game_help_msg():
         colour=discord.Color.from_rgb(254, 254, 51))
     em.add_field(
         name="tictactoe",
-        value="`lem tictactoe @friend 10` (10 is the amount of lemons you play against)",
+        value="`/tictactoe @friend 10` (10 is the amount of lemons you play against)",
         inline=False)
     em.add_field(
         name="lottery",
-        value="Set a bet and play the lottery! `lem lottery 10`",
+        value="Set a bet and play the lottery! `/lottery 10`",
         inline=False)
     em.add_field(
         name="roulette",
-        value="More Gamba! `lem roulette 10`",
+        value="More Gamba! `/roulette 10`",
         inline=False)
     em.add_field(
         name="wouldyourather",
@@ -162,11 +163,11 @@ async def misc_help_msg():
         inline=False)
     em.add_field(
         name="rank",
-        value="Get the rank stats for a summoner in EUW or NA `lem rank <summonername>` or `lem rankNA <summonername>`",
+        value="Get the rank stats for a summoner `/rank <summonername>`",
         inline=False)
     em.add_field(
         name="hug",
-        value="<:nemeHug:834605591846584391> `lem hug @ingrioo`",
+        value="<:nemeHug:834605591846584391> `/hug @ingrioo`",
         inline=False)
     return em
 
@@ -193,20 +194,20 @@ async def golden_lemon_help_msg():
         colour=discord.Color.from_rgb(254, 254, 51),
         description="You can earn Golden Lemons <:GoldenLemon:882634893039923290> through events. You can trade them for prizes, read on for more.")
     em.add_field(
-        name="`lem balance`",
+        name="`/balance`",
         value="First you can look up how many Golden Lemons you have with this command.",
         inline=False)
     em.add_field(
-        name="`lem shop`",
+        name="`/shop`",
         value="Now you look up what prizes there are and how much they cost in the shop. **Just react with the Golden Lemon Emoji to switch to the prize shop**\nThe normal shop consist just out of ingame-items!",
         inline=False)
     em.add_field(
-        name="`lem buy prizename`",
-        value="If you have enough Golden Lemons, you can now buy a prize from the shop. To check your items try `lem bag`",
+        name="`/buy prizename`",
+        value="If you have enough Golden Lemons, you can now buy a prize from the shop. To check your items try `/bag`",
         inline=False)
     em.add_field(
-        name="Message Rocsie",
-        value="**To redeem your prize please make sure to message Rocsie!**",
+        name="Open a ticket",
+        value=f"**To redeem your prize please open a ticket in <#{support_channel_id}>",
         inline=False)
     em.set_footer(text="Don't be afraid to @ a Mod if you need help to redeem your prize.")
 
@@ -220,7 +221,7 @@ async def help_msg(client):
         colour=discord.Color.from_rgb(254, 254, 51))
     em.add_field(
         name="IMPORTANT NOTE!!!",
-        value="The bot is currently transferring to slash commands, all commands that have something to do with money are normal commands and you can access them via `lem ` and then the command name. This is because I am currently not able to use features like cooldowns yet, but I hope it will be added soon to the library.",
+        value="The bot is currently transferring to slash commands, all commands that have something to do with money are normal commands and you can access them via `/` and then the command name. This is because I am currently not able to use features like cooldowns yet, but I hope it will be added soon to the library.",
         inline=False)
     em.add_field(
         name="What is the bot about",

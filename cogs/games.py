@@ -84,7 +84,7 @@ class games(commands.Cog):
         user = interaction.user
 
         if not await es.interaction_check_account(interaction):
-            await interaction.response.send_message(f"{user.mention}\nYou need to use `lem startup` first")
+            await interaction.response.send_message(f"{user.mention}\nYou need to use `/startup` first")
             return
         if bet == 0:
             await interaction.response.send_message(f"{user.mention}\n<:FeelsDankMan:810802803739983903>")
@@ -703,10 +703,10 @@ class games(commands.Cog):
     @commands.command()
     async def blackjack(self, ctx, bet=0):
         if await self.check_account(ctx.author) == False:
-            await ctx.send(f"{ctx.author.mention}\nYou need to use `lem startup` first")
+            await ctx.send(f"{ctx.author.mention}\nYou need to use `/startup` first")
             return
         if bet==0:
-            await ctx.send(f"{ctx.author.mention}\nYou didn't set a bet, try again `lem roulette 10` for example")
+            await ctx.send(f"{ctx.author.mention}\nYou didn't set a bet, try again `/roulette 10` for example")
             return
         if bet<0:
             await ctx.send(f"{ctx.author.mention}\nYou think I wouldnt see that coming? :)")

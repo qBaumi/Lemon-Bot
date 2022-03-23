@@ -113,7 +113,7 @@ class other(commands.Cog):
         em.add_field(name="Creator / Developer", value="qBaumi#1247", inline=False)
         em.add_field(name="Artist", value="https://twitter.com/lilRoundabout/", inline=False)
         em.add_field(name="Description",
-                     value=f"Hello, I am the Lemon Bot. \n Let me introduce real quick.\nI am an economy bot for the Nemesis discord server. I can get you precious lemons, if you get some work done for me...of course\nYou can find out more about me when you type **lem help** for example. But only in bot-commands, otherwise my boss will get angry...\nIf you have ANY ideas for items or commands, please share them with my Boss, you will find him at the beginning of this message.\n Thank you to all who helped creating me!",
+                     value=f"Hello, I am the Lemon Bot. \n Let me introduce real quick.\nI am an economy bot for the Nemesis discord server. I can get you precious lemons, if you get some work done for me...of course\nYou can find out more about me when you type **/help** for example. But only in bot-commands, otherwise my boss will get angry...\nIf you have ANY ideas for items or commands, please share them with my Boss, you will find him at the beginning of this message.\n Thank you to all who helped creating me!",
                      inline=False)
         await interaction.response.send_message(embed=em)
 
