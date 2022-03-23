@@ -131,7 +131,7 @@ class other(commands.Cog):
                 "<:wideHug1:834605591393206323><:widehug2:835116553812967444><:wideHug3:834605592022220860>",
                 "<:dankHug:832245187614212106>"]
         hug = random.choice(hugs)
-        await interaction.response.send_message(f"{interaction.user.mention} gave {user} a hug")
+        await interaction.response.send_message(f"{interaction.user.mention} gave {user.mention} a hug")
         await interaction.channel.send(hug)
 
 

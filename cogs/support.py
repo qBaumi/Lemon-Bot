@@ -186,6 +186,8 @@ class CloseButtons(discord.ui.View):
 
     @discord.ui.button(label='Close', style=discord.ButtonStyle.red, custom_id="close")
     async def close(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.send_message("Ticket closed", ephemeral=True)
+
         resultschannel = await self.client.fetch_channel(channel_id)
 
         print(self.ticketchannel)
@@ -196,7 +198,6 @@ class CloseButtons(discord.ui.View):
 
         await archive(self.ticketchannel, resultschannel, self.client, self.opener, interaction.user.mention)
 
-        await interaction.response.send_message("Ticket closed", ephemeral=True)
         time.sleep(5)
         await removeid(self.ticketchannel.id)
         await self.ticketchannel.delete()

@@ -45,7 +45,7 @@ globalmainshop = [{"name": "Lemonade", "price": 5, "desc": "Everyone likes lemon
                 {"name": "Safe", "price": 1500, "desc": "Store 5000 precious lemons in it!", "money": "lemons", "emoji": "<:safe:885811224418332692>"},
                 {"name": "Candy", "price": 10, "desc": "f", "money": "lemons","emoji": "🍬"}]
                 #{"name": "Adventcalendar", "price": 10000, "desc": "Open a door and get a price everyday", "money": "lemons", "emoji": "🎅"}
-
+notlisted = ["Candy", "Adventcalendar"]
 
 
 class economy(commands.Cog):
@@ -260,7 +260,6 @@ class economy(commands.Cog):
             return
         page = 1
         shop = "normal"
-        notlisted = ["Candy", "Adventcalendar"]
         switch_emoji = "<:GoldenLemon:882634893039923290>"
         switch_emoji_normal = "<:lemon2:881595266757713920>"
         itemsperpage = 5
@@ -282,7 +281,8 @@ class economy(commands.Cog):
 
     itemlist = []
     for item in globalmainshop:
-        itemlist.append(Choice(name=item["name"], value=item["name"].lower()))
+        if item["name"] not in notlisted:
+            itemlist.append(Choice(name=item["name"], value=item["name"].lower()))
     for item in specialitems:
         itemlist.append(Choice(name=item["name"], value=item["name"].lower()))
 
