@@ -58,11 +58,14 @@ class other(commands.Cog):
         if message.author.id == 881476780765093939:
             return
         message.content = message.content.lower()
-        if " fair enough" in message.content or message.content.startswith("fair enough"):
-            await message.reply("*fer enough")
+        if " fer enough" in message.content or message.content.startswith("fer enough"):
+            await message.reply("*fair enough")
             return
-        if " fair" in message.content or message.content.startswith("fair"):
-            await message.reply("~~fair~~\n*fer")
+        if " fer" in message.content or message.content.startswith("fer"):
+            await message.reply("~~fer~~\n*fair")
+            return
+        if " fer " in message.content:
+            await message.reply("~~fer~~\n*fair")
             return
 
 
