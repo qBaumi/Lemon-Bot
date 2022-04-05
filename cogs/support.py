@@ -185,7 +185,7 @@ class CloseButtons(discord.ui.View):
 
 
     @discord.ui.button(label='Close', style=discord.ButtonStyle.red, custom_id="close")
-    async def close(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def close(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("Ticket closed", ephemeral=True)
 
         resultschannel = await self.client.fetch_channel(channel_id)
@@ -202,7 +202,7 @@ class CloseButtons(discord.ui.View):
         await removeid(self.ticketchannel.id)
         await self.ticketchannel.delete()
     @discord.ui.button(label='Close with Reason', style=discord.ButtonStyle.red, custom_id="closewithreason")
-    async def closewithreason(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def closewithreason(self, interaction: discord.Interaction, button: discord.ui.Button):
 
         modal = CloseWithReason(client=self.client, ticketchannel=self.ticketchannel, opener=self.opener)
         await interaction.response.send_modal(modal)

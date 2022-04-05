@@ -200,7 +200,7 @@ class economy(commands.Cog):
             self.switch = self.switch_emoji
             self.page = 1
         @discord.ui.button(label='◀', style=discord.ButtonStyle.blurple)
-        async def left(self, button: discord.ui.Button, interaction: discord.Interaction):
+        async def left(self, interaction: discord.Interaction, button: discord.ui.Button):
             if await self.ecoclass.getshopembed(self.page - 1, self.itemsperpage, self.switch, self.notlisted, self.shop):
                 self.page -= 1
                 em = await self.ecoclass.getshopembed(self.page, self.itemsperpage, self.switch, self.notlisted, self.shop)
@@ -210,7 +210,7 @@ class economy(commands.Cog):
             await interaction.response.edit_message(view=self, embed=em)
 
         @discord.ui.button(label="▶", style=discord.ButtonStyle.blurple)
-        async def right(self, button: discord.ui.Button, interaction: discord.Interaction):
+        async def right(self, interaction: discord.Interaction, button: discord.ui.Button):
 
             if await self.ecoclass.getshopembed(self.page + 1, self.itemsperpage, self.switch, self.notlisted, self.shop):
                 self.page += 1
@@ -220,7 +220,7 @@ class economy(commands.Cog):
                 return
             await interaction.response.edit_message(view=self, embed=em)
         @discord.ui.button(label='Golden Lemons', style=discord.ButtonStyle.green)
-        async def golden(self, button: discord.ui.Button, interaction: discord.Interaction):
+        async def golden(self, interaction: discord.Interaction, button: discord.ui.Button):
             if self.shop == "normal":
                 em = await self.ecoclass.getshopembed(1, self.itemsperpage, self.switch, self.notlisted, shop="special")
                 self.shop = "special"

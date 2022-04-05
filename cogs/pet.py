@@ -66,20 +66,20 @@ class pet(commands.Cog, app_commands.Group):
             self.petsclass = petsclass
 
         @discord.ui.button(label='🥫', style=discord.ButtonStyle.blurple)
-        async def feed(self, button: discord.ui.Button, interaction: discord.Interaction):
+        async def feed(self, interaction: discord.Interaction, button: discord.ui.Button):
             await self.petsclass.feed_helper(interaction)
 
 
         @discord.ui.button(label='🛀🏻', style=discord.ButtonStyle.blurple)
-        async def care(self, button: discord.ui.Button, interaction: discord.Interaction):
+        async def care(self, interaction: discord.Interaction, button: discord.ui.Button):
             await self.petsclass.care_helper(interaction)
 
         @discord.ui.button(label='⚾', style=discord.ButtonStyle.blurple)
-        async def play(self, button: discord.ui.Button, interaction: discord.Interaction):
+        async def play(self, interaction: discord.Interaction, button: discord.ui.Button):
             await self.petsclass.play_helper(interaction)
 
         @discord.ui.button(label='🦮', style=discord.ButtonStyle.blurple)
-        async def walk(self, button: discord.ui.Button, interaction: discord.Interaction):
+        async def walk(self, interaction: discord.Interaction, button: discord.ui.Button):
             await self.petsclass.walk_helper(interaction)
 
     @app_commands.command(name='feed', description="Feed your equiped pet, if you don't you get sent to hell")
