@@ -13,25 +13,10 @@ from discord.ext import commands
 import mysql.connector
 
 from cogs.support import support_channel_id
-from config import dbargs
 from discord import app_commands
 from config import guilds
 
 
-"""
-    W3SCHOOLS MYSQL CONNECTOR FOR MOR INFO
-"""
-
-mydb = mysql.connector.connect(
-  host=dbargs["host"],
-  user=dbargs["user"],
-  password=dbargs["password"],
-  port=dbargs["port"],
-  database = dbargs["database"],
-  auth_plugin=dbargs["auth_plugin"]
-
-)
-mycursor = mydb.cursor()
 
 globalmainshop = [{"name": "Lemonade", "price": 5, "desc": "Everyone likes lemonade", "money": "lemons", "emoji" : "<:lemonade:882239415601213480>"},
                 {"name": "Treat", "price": 5, "desc": "Give your sweet pet at treat <:Gladge:792430592636616714>", "money": "lemons", "emoji" : "🍖"},
@@ -53,7 +38,6 @@ class economy(commands.Cog):
         self.client = client
 
 
-    petcursor = mycursor
 
     """---------------------------------------------------------------------------------------------"""
     """---------------------------------------COMMANDS----------------------------------------------"""
@@ -535,7 +519,7 @@ class economy(commands.Cog):
                         return [False, 2]
 
                     sql = f"UPDATE items SET amount = {new_amt} WHERE id = {user.id} AND name = '{item_name}'"
-                    mycursor.execute(sql)
+                    es.sql_exec(sql)
                     mydb.commit()
 
                     t = 1

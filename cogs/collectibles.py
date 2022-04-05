@@ -6,7 +6,6 @@ from typing import Optional
 import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
-from .economy import mycursor, mydb
 from discord import app_commands
 from config import guilds
 
@@ -76,8 +75,8 @@ class collectibles(commands.Cog):
     [{"name": name, "amount": amount}, {"name": name, "amount": amount}, {"name": name, "amount": amount}] etc
     """
     async def getcollection(self, id):
-        mycursor.execute(f"SELECT * FROM collectibles WHERE id = {id}")
-        data = mycursor.fetchall()
+        sql = f"SELECT * FROM collectibles WHERE id = {id}"
+        data = es.sql_select(sql)
         bag = []
         for item in data:
             name = item[1]

@@ -19,9 +19,7 @@ from discord.app_commands import Choice
 from config import allowedAdminRoles, guilds
 
 
-"""Globals"""
-mycursor = es.mycursor
-mydb = es.mydb
+
 
 class items(commands.Cog):
     def __init__(self, client):
@@ -162,14 +160,12 @@ class items(commands.Cog):
             users = await es.get_bank_data(user.id)
             try:
                 mysql = f"SELECT money FROM safe WHERE id = {user.id}"
-                mycursor.execute(mysql)
-                data = mycursor.fetchall()
+                data = es.sql_select(mysql)
                 print(data[0][0])
                 money = data[0][0]
             except:
                 mysql = f"INSERT INTO safe (id, money) VALUES ({user.id}, 0)"
-                mycursor.execute(mysql)
-                mydb.commit()
+                es.sql_exec(mysql)
                 money = 0
             em = discord.Embed(colour=discord.Color.dark_gray(), title="Your safe <:safe:885811224418332692>",
                                description=f"`{money}` lemons")
@@ -211,8 +207,7 @@ class items(commands.Cog):
 
                 newamt = money + amountmoney
                 sql = f"UPDATE safe SET money = {newamt} WHERE id = {user.id}"
-                mycursor.execute(sql)
-                mydb.commit()
+                es.sql_exec(sql)
                 await es.update_balance(user, -1 * amountmoney)
                 await interaction.channel.send(f"{user.mention}\nYou now have `{newamt}` lemons stored in your safe")
                 return
@@ -243,8 +238,7 @@ class items(commands.Cog):
 
                 newamt = money - amountmoney
                 sql = f"UPDATE safe SET money = {newamt} WHERE id = {user.id}"
-                mycursor.execute(sql)
-                mydb.commit()
+                es.sql_exec(sql)
 
                 await es.update_balance(user, amountmoney)
                 await interaction.channel.send(f"{user.mention}\nYou now have `{newamt}` lemons stored in your safe")
@@ -487,8 +481,7 @@ class items(commands.Cog):
                 return
             if str(reaction.emoji) == "<:minecra:883287114270261268>":
                 sql = "SELECT id FROM users"
-                mycursor.execute(sql)
-                data = mycursor.fetchall()
+                data = es.sql_select(sql)
                 print(data)
                 users = data
 

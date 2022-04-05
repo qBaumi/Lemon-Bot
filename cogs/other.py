@@ -53,6 +53,8 @@ class other(commands.Cog):
     # Fer enough FalseFacePalmLaugh
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.channel.id == 909520369327673374: # return if it is in the mod-channel
+            return
         if message.author == message.author.bot:
             return
         if message.author.id == 881476780765093939:

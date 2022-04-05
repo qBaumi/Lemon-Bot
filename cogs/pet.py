@@ -2,7 +2,6 @@ import datetime
 import discord
 from discord.ext import commands
 import random, asyncio, json
-from .economy import mycursor, mydb
 import cogs.essentialfunctions as es
 from discord import app_commands
 from config import guilds
@@ -165,15 +164,11 @@ class pet(commands.Cog, app_commands.Group):
 
         def savepet(self, id, slot):
             try:
-                mysql = f"UPDATE {slot} SET name = %s, hp = %s, attach = %s, speed = %s, xp = %s, lvl = %s, item = %s, attack1 = %s, attack2 = %s, food = %s, stamina = %s, care = %s, fun = %s, img = %s WHERE id = {user.id}"
-                val = (name, hp, attack, speed, xp, lvl, "None", attack1, attack2, 50, 100, 50, 50, pet["img"])
-                mycursor.execute(mysql, val)
-                mydb.commit()
+                mysql = f"UPDATE {slot} SET name = '{name}', hp = {hp}, attack = {attack}, speed = {speed}, xp = {xp}, lvl = {lvl}, item = 'None', attack1 = '{attack1}', attack2 = '{attack2}', food = {50}, stamina = {100}, care = {50}, fun = {50}, img = '{pet['img']}' WHERE id = '{user.id}'"
+                es.sql_exec(mysql)
             except:
-                mysql = f"INSERT INTO {slot} (id, name, hp, attack, speed, xp, lvl, item, attack1, attack2, food, stamina, care, fun, img) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                val = (user.id, name, hp, attack, speed, xp, lvl, "None", attack1, attack2, 50, 100, 50, 50, pet["img"])
-                mycursor.execute(mysql, val)
-                mydb.commit()
+                mysql = f"INSERT INTO {slot} (id, name, hp, attack, speed, xp, lvl, item, attack1, attack2, food, stamina, care, fun, img) VALUES ('{user.id}', '{name}', {hp}, {attack}, {speed}, {xp}, {lvl}, 'None', '{attack1}', '{attack2}', 50, 100, 50, 50, '{pet['img']}')"
+                es.sql_exec(mysql)
 
         savepet(self, user.id, "equippedpet")
 
@@ -221,7 +216,7 @@ class pet(commands.Cog, app_commands.Group):
         except asyncio.TimeoutError:
             await interaction.followup.send(f"{user.mention} did not answer in time")
             return
-        mycursor.execute(f"DELETE FROM equippedpet WHERE id = {user.id}")
+        es.sql_exec(f"DELETE FROM equippedpet WHERE id = {user.id}")
         pet["stock"] = pet["stock"] + 1
         with open("./json/allpets.json", "w") as f:
             json.dump(pets, f, indent=4)
@@ -258,8 +253,7 @@ class pet(commands.Cog, app_commands.Group):
         slotfull = False
         if bool(await self.userpet(user.id, "equippedpet")):
             mysql = f"SELECT * FROM equippedpet WHERE id = {user.id}"
-            mycursor.execute(mysql)
-            data = mycursor.fetchall()
+            data = es.sql_select(mysql)
             print(data)
             name = data[0][1]
             hp = data[0][2]
@@ -278,15 +272,13 @@ class pet(commands.Cog, app_commands.Group):
             val = (user.id, name, hp, attack, speed, xp, lvl, item, attack1, attack2, food, stamina, care, fun, img)
             slotfull = True
 
-        mysql = f"INSERT INTO {slot} (id, name, hp, attack, speed, xp, lvl, item, attack1, attack2, food, stamina, care, fun, img) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        mycursor.execute(f"DELETE FROM equippedpet WHERE id = '{user.id}'")
-        mycursor.execute(f"INSERT INTO equippedpet SELECT * FROM {slot} WHERE id = '{user.id}'")
-        mycursor.execute(f"DELETE FROM {slot} WHERE id = '{user.id}'")
+        mysql = f"INSERT INTO {slot} (id, name, hp, attack, speed, xp, lvl, item, attack1, attack2, food, stamina, care, fun, img) VALUES ('{user.id}', '{name}', {hp}, {attack}, {speed}, {xp}, {lvl}, 'None', '{attack1}', '{attack2}', 50, 100, 50, 50, '{pet['img']}')"
+        es.sql_exec(f"DELETE FROM equippedpet WHERE id = '{user.id}'")
+        es.sql_exec(f"INSERT INTO equippedpet SELECT * FROM {slot} WHERE id = '{user.id}'")
+        es.sql_exec(f"DELETE FROM {slot} WHERE id = '{user.id}'")
         if slotfull == True:
-            mycursor.execute(mysql, val)
-        mydb.commit()
-        mycursor.execute(f"SELECT name FROM equippedpet WHERE id = '{user.id}'")
-        data = mycursor.fetchall()
+            es.sql_exec(mysql)
+        data = es.sql_select(f"SELECT name FROM equippedpet WHERE id = '{user.id}'")
 
         if bool(await self.userpet(user.id, slot)) == True:
             await interaction.channel.send(
@@ -323,9 +315,8 @@ class pet(commands.Cog, app_commands.Group):
             await interaction.channel.send(
                 f'{user.mention}\nThere is already a pet in this slot, if you want it equipped do so with `/pet equip`')
             return
-        mycursor.execute(f"INSERT INTO {slot} SELECT * FROM equippedpet WHERE id = '{user.id}'")
-        mycursor.execute(f"DELETE FROM equippedpet WHERE id = '{user.id}';")
-        mydb.commit()
+        es.sql_exec(f"INSERT INTO {slot} SELECT * FROM equippedpet WHERE id = '{user.id}'")
+        es.sql_exec(f"DELETE FROM equippedpet WHERE id = '{user.id}';")
         await interaction.channel.send(f'{user.mention}\nYour pet was moved to slot {msg.content}')
 
 
@@ -361,8 +352,7 @@ class pet(commands.Cog, app_commands.Group):
         em.add_field(name="pet fight", value="COMING SOON!!!", inline=False)
         await interaction.response.send_message(embed=em)
     async def userpet(self, id, slot):
-        mycursor.execute(f"SELECT * FROM {slot} WHERE id = {id}")
-        data = mycursor.fetchall()
+        data = es.sql_select(f"SELECT * FROM {slot} WHERE id = {id}")
         pet = {}
         try:
             data = data[0]
@@ -551,8 +541,7 @@ class pet(commands.Cog, app_commands.Group):
         stats = {"food":pet["food"], "stamina":pet["stamina"], "care":pet["care"], "fun":pet["fun"], "xp":pet["xp"], "lvl":pet["lvl"]}
         return stats
     def updatestat(self, id, stat, value, slot="equippedpet"):
-        mycursor.execute(f"UPDATE {slot} SET {stat} = {value} WHERE id = {id}")
-        mydb.commit()
+        es.sql_exec(f"UPDATE {slot} SET {stat} = {value} WHERE id = {id}")
         return
     async def addxp(self, id, xp):
         pets = await self.allpets()
@@ -627,8 +616,7 @@ class pet(commands.Cog, app_commands.Group):
             json.dump(pets, f, indent=4)
         return
     async def getminustats(self, slot):
-        mycursor.execute(f"SELECT * FROM {slot}")
-        pets = mycursor.fetchall()
+        pets = es.sql_select(f"SELECT * FROM {slot}")
         for pet in pets:
             stats = await self.getstats(pet[0], slot)
             if stats["food"] > 0:
@@ -650,8 +638,7 @@ class pet(commands.Cog, app_commands.Group):
     async def stayconnected(self):
         await self.client.wait_until_ready()
         while not self.client.is_closed():
-            mycursor.execute(f"INSERT INTO connect(counter) VALUES(1);")
-            mydb.commit()
+            es.sql_exec(f"INSERT INTO connect(counter) VALUES(1);")
             await asyncio.sleep(3600)
     @commands.Cog.listener()
     async def on_ready(self):

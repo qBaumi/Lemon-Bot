@@ -850,15 +850,13 @@ You can try **6 times**
         def win():
             try:
                 print("update")
-                es.mycursor.execute(f"SELECT wins FROM wordle WHERE id = '{interaction.user.id}'")
-                data = es.mycursor.fetchall()
+                data = es.sql_select(f"SELECT wins FROM wordle WHERE id = '{interaction.user.id}'")
                 prevpoints = int(data[0][0])
                 sql = f"UPDATE wordle SET wins = {prevpoints + 1} WHERE id = '{interaction.user.id}'"
             except:
                 sql = f"INSERT INTO wordle (id, wins) VALUES ('{interaction.user.id}', 1)"
                 print("insert")
-            es.mycursor.execute(sql)
-            es.mydb.commit()
+            es.sql_exec(sql)
             return prevpoints + 1
 
 

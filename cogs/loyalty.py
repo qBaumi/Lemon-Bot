@@ -14,8 +14,7 @@ class loyalty(commands.Cog):
 
     # Check if the user exists in the loyalty table
     def check_loyalty(self, user):
-        es.mycursor.execute(f"SELECT id FROM loyalty WHERE id = '{user.id}'")
-        id = es.mycursor.fetchall()
+        id = es.sql_select(f"SELECT id FROM loyalty WHERE id = '{user.id}'")
         print(id)
         if id:
             return True
@@ -40,8 +39,7 @@ class loyalty(commands.Cog):
                 f"{user.mention} got {points} loyalty points, they now have {points} loyalty points in total!")
 
             # Now check if user already startupped
-            es.mycursor.execute("SELECT id FROM users")
-            ids = es.mycursor.fetchall()
+            ids = es.sql_select("SELECT id FROM users")
             for id in ids:
                 if str(interaction.user.id) == id[0]:
                     return
@@ -56,8 +54,7 @@ class loyalty(commands.Cog):
             await es.update_balance(user, 50)
             return
         # If the user already received loyalty points they get fetched and added
-        es.mycursor.execute(f"SELECT points FROM loyalty WHERE id = '{user.id}'")
-        data = es.mycursor.fetchall()
+        data = es.sql_select(f"SELECT points FROM loyalty WHERE id = '{user.id}'")
         prevpoints = int(data[0][0])
         print(prevpoints)
         es.sql_exec(f"UPDATE loyalty SET points = {points + prevpoints} WHERE id = '{user.id}'")
@@ -70,8 +67,7 @@ class loyalty(commands.Cog):
         user = interaction.user
 
         # Get the loyalty points
-        es.mycursor.execute(f"SELECT points FROM loyalty WHERE id = '{user.id}'")
-        points = es.mycursor.fetchall()
+        points = es.sql_select(f"SELECT points FROM loyalty WHERE id = '{user.id}'")
 
         # try to fetch them if an error throws they are just 0
         try:
@@ -108,8 +104,7 @@ class loyalty(commands.Cog):
         user = (user.id, points)
         loyaltylist = [(user.id, points), (user.id, points), (user.id, points)...]
         """
-        es.mycursor.execute(f"SELECT * FROM loyalty ORDER BY points DESC LIMIT 10")
-        data = es.mycursor.fetchall()
+        data = es.sql_select(f"SELECT * FROM loyalty ORDER BY points DESC LIMIT 10")
 
         em = discord.Embed(colour=discord.Color.teal(), title="Loyalty Leaderboard",
                            description="You can obtain loyalty points from participating at events")

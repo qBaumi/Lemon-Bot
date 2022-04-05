@@ -1,13 +1,8 @@
 import math
 import time
-
-import mysql.connector, discord, json
-from discord.app_commands import Choice
-
-from .economy import mycursor, mydb, globalmainshop
-from config import allowedRoles
+import mysql.connector, json
+from config import allowedRoles, dbargs
 import discord
-from discord.ext import commands
 
 # returns True if user has Perms
 # returns False if not
@@ -33,16 +28,43 @@ async def checkPerms(interaction, roleList):
     return False
 
 def sql_exec(sql):
+    """
+        W3SCHOOLS MYSQL CONNECTOR FOR MOR INFO
+    """
+    mydb = mysql.connector.connect(
+        host=dbargs["host"],
+        user=dbargs["user"],
+        password=dbargs["password"],
+        port=dbargs["port"],
+        database=dbargs["database"],
+        auth_plugin=dbargs["auth_plugin"]
+
+    )
+    mycursor = mydb.cursor()
     mycursor.execute(sql)
     mydb.commit()
+    mycursor.close()
+    mydb.close()
 def sql_select(sql):
+    mydb = mysql.connector.connect(
+        host=dbargs["host"],
+        user=dbargs["user"],
+        password=dbargs["password"],
+        port=dbargs["port"],
+        database=dbargs["database"],
+        auth_plugin=dbargs["auth_plugin"]
+
+    )
+    mycursor = mydb.cursor()
     mycursor.execute(sql)
     data = mycursor.fetchall()
+    mycursor.close()
+    mydb.close()
     return data
 #OPENS AN ACCOUNT AND PUTS USER IN DATABASE FOR THE FIRST TIME
 async def open_account(user):
-    mycursor.execute("SELECT id FROM users")
-    ids = mycursor.fetchall()
+
+    ids = sql_select("SELECT id FROM users")
     for id in ids:
         ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
         if str(user.id) == id[0]:
@@ -55,22 +77,8 @@ async def open_account(user):
 RETURNS TRUE IF USER USED /STARTUP
 OR RETURNS FALSE IF NOT AND GIVES MESSAGE
 """
-async def check_account(ctx):
-    mycursor.execute("SELECT id FROM users")
-
-    ids = mycursor.fetchall()
-
-    for id in ids:
-        ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
-        if str(ctx.author.id) == id[0]:
-            return True
-    await ctx.send(f"{ctx.author.mention}\nUse the `/startup` command first!")
-    return False
-
 async def interaction_check_account(interaction : discord.Interaction):
-    mycursor.execute("SELECT id FROM users")
-
-    ids = mycursor.fetchall()
+    ids = sql_select("SELECT id FROM users")
 
     for id in ids:
         ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
@@ -84,9 +92,7 @@ GETS USER BANK DATA
 returns dict with pocket and safe money
 """
 async def get_bank_data(id):
-    mycursor.execute(f"SELECT * FROM users WHERE id = {id}")
-    data = mycursor.fetchall()
-
+    data = sql_select(f"SELECT * FROM users WHERE id = {id}")
     users = {data[0][0] : {"pocket" : data[0][1], "safe" : data[0][2]}}
     return users
 
@@ -103,8 +109,7 @@ async def get_item_data():
 returns list with all user items
 """
 async def getbag(id):
-    mycursor.execute(f"SELECT * FROM items WHERE id = {id}")
-    data = mycursor.fetchall()
+    data = sql_select(f"SELECT * FROM items WHERE id = {id}")
     bag = []
     for item in data:
         name = item[1]
@@ -120,8 +125,7 @@ async def update_balance(user, change=0, mode="pocket"):
     # Get the bank file data
     users = await get_bank_data(id=user.id)
     sql = f"UPDATE users SET {mode} = {users[str(user.id)][mode] + change} WHERE id = {user.id}"
-    mycursor.execute(sql)
-    mydb.commit()
+    sql_exec(sql)
     bal = users[str(user.id)]["pocket"] + change
     return bal
 
@@ -154,8 +158,7 @@ async def del_item(id, item, amount=1):
             if new_amt < 0:
                 return [False, 2]
             sql = f"UPDATE items SET amount = {new_amt} WHERE id = {id} AND name = '{item}'"
-            mycursor.execute(sql)
-            mydb.commit()
+            sql_exec(sql)
             t = 1
             break
         index += 1
@@ -179,20 +182,17 @@ async def add_item(item_name, userid, amount):
                 new_amt = old_amt + amount
                 # SINGLE QUOTE MAFMEDLSAKFJÃ–S
                 sql = f"UPDATE items SET amount = {new_amt} WHERE id = {userid} AND name = '{item_name}'"
-                mycursor.execute(sql)
-                mydb.commit()
+                sql_exec(sql)
                 t = 1
                 break
             index += 1
 
         if t == None:
             sql = f"INSERT INTO items (id, name, amount) VALUES ({userid}, '{item_name}', {amount})"
-            mycursor.execute(sql)
-            mydb.commit()
+            sql_exec(sql)
     except:
         sql = f"INSERT INTO items (id, name, amount) VALUES ({userid}, '{item_name}', {amount})"
-        mycursor.execute(sql)
-        mydb.commit()
+        sql_exec(sql)
 
 # get choice for each normal item you have in your bag
 # returns a choice list

@@ -7,7 +7,6 @@ import time
 import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
-from cogs.essentialfunctions import mycursor, mydb
 from discord import app_commands
 from config import guilds
 from .job import joblist, job_helper, getxp, add_xp
@@ -34,8 +33,7 @@ class work(commands.Cog):
         await interaction.response.defer()
 
         try:
-            mycursor.execute(f"SELECT * FROM jobs WHERE id = {user.id}")
-            data = mycursor.fetchall()
+            data = es.sql_select(f"SELECT * FROM jobs WHERE id = {user.id}")
             userjob = [{"Name": data[0][1], "Verdienst": data[0][2]}]
         except:
             embed = discord.Embed(title='You cant work without a job!')
@@ -56,8 +54,7 @@ class work(commands.Cog):
         lvl_end = int(xp ** (1 / 4))
         if lvl_start < lvl_end:
             sql = f"UPDATE users SET lvl = {lvl_end} WHERE id = {user.id}"
-            mycursor.execute(sql)
-            mydb.commit()
+            es.sql_exec(sql)
             if lvl != 1:
                 embed = discord.Embed(title=f'{user.name} leveled up and can now access better job',
                                       description=f'You are now level {lvl}')

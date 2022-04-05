@@ -128,8 +128,7 @@ class admincommands(commands.Cog):
             await ctx.send("You didn't specify which item you want to list `lem listItem itemname`")
             return
         mysql = f'SELECT id, amount FROM items WHERE name = "{item.lower()}"'
-        es.mycursor.execute(mysql)
-        data = es.mycursor.fetchall()
+        data = es.sql_select(mysql)
         print(data)
 
         em = discord.Embed(colour=discord.Color.red(), title=f"List of users with {item}")

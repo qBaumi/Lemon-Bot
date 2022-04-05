@@ -30,7 +30,6 @@ async def on_ready():
 
 
 #client.load_extension("cogs.googlesheets")
-
 @client.event
 async def setup_hook():
     await client.load_extension("cogs.admincommands")

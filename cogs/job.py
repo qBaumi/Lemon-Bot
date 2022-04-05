@@ -7,7 +7,6 @@ from typing import List
 import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
-from cogs.essentialfunctions import mycursor, mydb
 from discord import app_commands
 from config import guilds
 
@@ -33,8 +32,7 @@ async def job_helper():
 
 
 async def getxp(id):
-    mycursor.execute(f"SELECT * FROM users WHERE id = {id}")
-    data = mycursor.fetchall()
+    data = es.sql_select(f"SELECT * FROM users WHERE id = {id}")
     xp = data[0][3]
     lvl = data[0][4]
     print(xp)
@@ -45,8 +43,7 @@ async def add_xp(id, amount):
     xp, lvl = await getxp(id)
 
     sql = f"UPDATE users SET xp = {xp + amount} WHERE id = {id}"
-    mycursor.execute(sql)
-    mydb.commit()
+    es.sql_exec(sql)
 
 class job(commands.Cog, app_commands.Group):
     def __init__(self, client):
@@ -162,7 +159,6 @@ class job(commands.Cog, app_commands.Group):
                 else:
                     es.sql_exec(f"UPDATE jobs SET Name = '{name}' WHERE id = {user.id}")
                     es.sql_exec(f"UPDATE jobs SET Verdienst = {verdienst} WHERE id = {user.id}")
-                mydb.commit()
                 ausgabe = 'You wrote an application for the job and not even 2 hours later you received a phone call and got the job'
                 tf = 1
                 break
