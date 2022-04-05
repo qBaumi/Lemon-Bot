@@ -168,6 +168,7 @@ class other(commands.Cog):
         modal = self.Prediction(client=self.client)
         await interaction.response.send_modal(modal)
 
+
 class SheetLink(discord.ui.View):
     def __init__(self):
         super().__init__()
