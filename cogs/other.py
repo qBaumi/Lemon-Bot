@@ -184,7 +184,7 @@ class other(commands.Cog):
         await channel.send(embed=em)
 
         # respond
-        await interaction.followup.send("Thanks for signing up for our easter event <:Gladgers:941655843873636372>")
+        await interaction.followup.send("Thanks for signing up for our easter event <:Gladgers:941655843873636372>", ephemeral=True)
 
 
 class SheetLink(discord.ui.View):
