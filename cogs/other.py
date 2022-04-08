@@ -169,6 +169,23 @@ class other(commands.Cog):
         modal = self.Prediction(client=self.client)
         await interaction.response.send_modal(modal)
 
+    @app_commands.command(name="easter", description="Sign up for our easter event!")
+    async def easter(self, interaction : discord.Interaction):
+
+
+        # 961922148061044767 easter
+        channel_id = 961922148061044767  # the id of the channel the results get sent to
+        channel = await self.client.fetch_channel(channel_id)
+
+        # Make an embed with the results
+        em = discord.Embed(title="Easter", description=f"by {interaction.user.mention}")
+        em.add_field(name="Username", value=f"{interaction.user}")
+        # send results
+        await channel.send(embed=em)
+
+        # respond
+        await interaction.response.send_message("Thanks for signing up for our easter event <:easter:961946306643918899>", ephemeral=True)
+
 
 class SheetLink(discord.ui.View):
     def __init__(self):
