@@ -170,6 +170,9 @@ class other(commands.Cog):
 
     @app_commands.command(name="easter", description="Sign up for our easter event!")
     async def easter(self, interaction : discord.Interaction):
+
+        await interaction.response.defer()
+
         # 961922148061044767 easter
         channel_id = 961922148061044767  # the id of the channel the results get sent to
         channel = await self.client.fetch_channel(channel_id)
@@ -177,8 +180,11 @@ class other(commands.Cog):
         # Make an embed with the results
         em = discord.Embed(title="Easter", description=f"by {interaction.user.mention}")
         em.add_field(name="Username", value=f"{interaction.user}")
-
+        # send results
         await channel.send(embed=em)
+
+        # respond
+        await interaction.followup.send("Thanks for signing up for our easter event <:Gladgers:941655843873636372>")
 
 
 class SheetLink(discord.ui.View):
