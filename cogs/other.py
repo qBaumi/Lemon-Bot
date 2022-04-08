@@ -171,7 +171,6 @@ class other(commands.Cog):
     @app_commands.command(name="easter", description="Sign up for our easter event!")
     async def easter(self, interaction : discord.Interaction):
 
-        await interaction.response.defer()
 
         # 961922148061044767 easter
         channel_id = 961922148061044767  # the id of the channel the results get sent to
@@ -184,7 +183,7 @@ class other(commands.Cog):
         await channel.send(embed=em)
 
         # respond
-        await interaction.followup.send("Thanks for signing up for our easter event <:Gladgers:941655843873636372>", ephemeral=True)
+        await interaction.response.send_message("Thanks for signing up for our easter event <:easter:961946306643918899>", ephemeral=True)
 
 
 class SheetLink(discord.ui.View):
