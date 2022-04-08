@@ -50,6 +50,7 @@ class other(commands.Cog):
         em = discord.Embed(title="Merry Christmas", description="You claimed your 100 golden lemons!")
         await ctx.send(f"{ctx.author.mention}\n", embed=em)
     """
+    """ ARCHIVED
     # Fer enough FalseFacePalmLaugh
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -66,7 +67,7 @@ class other(commands.Cog):
         if " fair" in message.content or message.content.startswith("fair"):
             await message.reply("~~fair~~\n*fer")
             return
-
+    """
 
 
     @app_commands.command(name="suggest", description="Suggest an emote or something else!")
