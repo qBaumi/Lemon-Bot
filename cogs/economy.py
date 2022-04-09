@@ -349,9 +349,10 @@ class economy(commands.Cog):
 
                 supportchannel = await self.client.fetch_channel(support_channel_id)
                 await interaction.channel.send(f"{user.mention}\n**To redeem your prize please open a ticket in {supportchannel.mention}")
-                channel = await self.client.fetch_channel(845281850230308864) # Send message to an admin channel or idk
-                rocsie = await self.client.fetch_user(148086360425758720) # fetch rocsie
-                await channel.send(f"{rocsie.mention}\n{user.mention} claimed {item}!")
+                channel = await self.client.fetch_channel(598608660125581362) # Send message to an admin channel or idk
+                guild = await self.client.fetch_guild(598303095352459305) # fetch admin role and mention it
+                adminrole = guild.get_role(598307015181467650)
+                await channel.send(f"{adminrole}\n{user.mention} claimed {item}!")
                 break
             index+=1
 
