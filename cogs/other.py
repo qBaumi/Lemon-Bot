@@ -192,19 +192,31 @@ class other(commands.Cog):
             return
         if message.author.id == 881476780765093939:
             return
-        message.content = message.content.lower()
-        if self.sara.mentioned_in(message) or message.content.startswith("sa") and message.content.endswith("a") and "ara" in message.content:
+
+        def add_sara_count():
             print("sara mentioned")
             date = datetime.datetime.now().strftime("%Y-%m-%d")
             try:
                 print("update")
-                data = es.sql_select(f"SELECT count FROM saraboard WHERE id = '{message.author.id}' AND date = '{date}'")
+                data = es.sql_select(
+                    f"SELECT count FROM saraboard WHERE id = '{message.author.id}' AND date = '{date}'")
                 prevpoints = int(data[0][0])
                 sql = f"UPDATE saraboard SET count = {prevpoints + 1} WHERE id = '{message.author.id}' AND date = '{date}'"
             except:
                 sql = f"INSERT INTO saraboard (id, count, date) VALUES ('{message.author.id}', 1, '{date}')"
                 print("insert")
             es.sql_exec(sql)
+
+        message.content = message.content.lower()
+        wordlist = message.content.split(" ")
+        for word in wordlist:
+            if word.startswith("sa") and word.endswith("a") and "ara" in word:
+                add_sara_count()
+                return
+        if self.sara.mentioned_in(message):
+            add_sara_count()
+            return
+
 
     @app_commands.command(name="saraboard", description="Daily sara board, was NOTI's idea not mine")
     async def saraboard(self, interaction: discord.Interaction):
