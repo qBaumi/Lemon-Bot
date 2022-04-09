@@ -193,7 +193,7 @@ class other(commands.Cog):
         if message.author.id == 881476780765093939:
             return
         message.content = message.content.lower()
-        if self.sara.mentioned_in(message) or message.content.startswith("s") and message.content.endswith("a") and "ara" in message.content:
+        if self.sara.mentioned_in(message) or message.content.startswith("sa") and message.content.endswith("a") and "ara" in message.content:
             print("sara mentioned")
             date = datetime.datetime.now().strftime("%Y-%m-%d")
             try:
