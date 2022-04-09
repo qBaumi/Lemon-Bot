@@ -80,7 +80,8 @@ class other(commands.Cog):
         Choice(name='SpellCast', value="852509694341283871"),
         Choice(name='Checkers In The Park', value="832013003968348200"),
         Choice(name='Blazing 8s', value="832025144389533716"),
-        Choice(name='Putt Party', value="945737671223947305")
+        Choice(name='Putt Party', value="945737671223947305"),
+        Choice(name='Land-io', value="903769130790969345")
     ])
     @app_commands.command(name="game", description="Start a discord voice channel activity!")
     async def game(self, interaction: discord.Interaction, game: Choice[str]):
