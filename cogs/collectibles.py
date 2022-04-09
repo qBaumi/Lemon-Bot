@@ -192,5 +192,19 @@ class collectibles(commands.Cog):
 
         return collectibles_amount, all_collectibles
 
+    # Hall of Fame for all people who collect all collectibles
+    @app_commands.command(description="Have a look at legends", name="halloffame")
+    async def halloffame(self, interaction: discord.Interaction):
+        with open("./json/halloffame.json", "r") as f:
+            users = json.load(f)
+        em = discord.Embed(colour=discord.Color.dark_purple(), title="Hall of Fame",
+                           description="only true and loyal legends get there...")
+        # Fetch every user that is in the halloffame and add them to the embed
+        for userid in users:
+            user = await self.client.fetch_user(userid)
+            em.add_field(name=user.name, value="\u200b", inline=False)
+        await interaction.response.send_message(embed=em)
+
+
 async def setup(client):
     await client.add_cog(collectibles(client), guilds=guilds)

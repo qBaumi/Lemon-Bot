@@ -520,7 +520,7 @@ class economy(commands.Cog):
 
                     sql = f"UPDATE items SET amount = {new_amt} WHERE id = {user.id} AND name = '{item_name}'"
                     es.sql_exec(sql)
-                    mydb.commit()
+
 
                     t = 1
                     break

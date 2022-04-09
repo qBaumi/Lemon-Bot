@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import random
 import discord, json
@@ -6,25 +7,13 @@ from discord import app_commands
 from discord import ui
 from config import guilds
 from discord.app_commands import Choice
-
+import cogs.essentialfunctions as es
 
 class other(commands.Cog):
     def __init__(self, client):
         self.client = client
 
 
-    # Hall of Fame for all people who collect all collectibles
-    @app_commands.command(description="Have a look at legends", name="halloffame")
-    async def halloffame(self, interaction: discord.Interaction):
-        with open("./json/halloffame.json", "r") as f:
-            users = json.load(f)
-        em = discord.Embed(colour=discord.Color.dark_purple(), title="Hall of Fame",
-                           description="only true and loyal legends get there...")
-        # Fetch every user that is in the halloffame and add them to the embed
-        for userid in users:
-            user = await self.client.fetch_user(userid)
-            em.add_field(name=user.name, value="\u200b", inline=False)
-        await interaction.response.send_message(embed=em)
 
     """
     Present 100 golden lemons for christmas
@@ -186,6 +175,52 @@ class other(commands.Cog):
         # respond
         await interaction.response.send_message("Thanks for signing up for our easter event <:easter:961946306643918899>", ephemeral=True)
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.sara = await self.client.fetch_user(441024523370889216)
+        print(self.sara)
+
+    # sara counter PepeLa
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        try:
+            self.sara
+        except:
+            return
+        if message.author == message.author.bot:
+            return
+        if message.author.id == 881476780765093939:
+            return
+        message.content = message.content.lower()
+        if self.sara.mentioned_in(message) or message.content.startswith("s") and message.content.endswith("a") and "ara" in message.content:
+            print("sara mentioned")
+            date = datetime.datetime.now().strftime("%Y-%m-%d")
+            try:
+                print("update")
+                data = es.sql_select(f"SELECT count FROM saraboard WHERE id = '{message.author.id}' AND date = '{date}'")
+                prevpoints = int(data[0][0])
+                sql = f"UPDATE saraboard SET count = {prevpoints + 1} WHERE id = '{message.author.id}' AND date = '{date}'"
+            except:
+                sql = f"INSERT INTO saraboard (id, count, date) VALUES ('{message.author.id}', 1, '{date}')"
+                print("insert")
+            es.sql_exec(sql)
+
+    @app_commands.command(name="saraboard", description="Daily sara board, was NOTI's idea not mine")
+    async def saraboard(self, interaction: discord.Interaction):
+
+        """
+        list of tuples
+        user = (user.id, count, date)
+        data = [(user.id, count, date), (user.id, count, date), (user.id, count, date)...]
+        """
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        data = es.sql_select(f"SELECT * FROM saraboard WHERE date = '{date}' ORDER BY count DESC LIMIT 5")
+
+        em = discord.Embed(colour=discord.Color.teal(), title="Daily Saraboard", description="This was NOTI's idea, so go complain there")
+        for user in data:
+            member = await self.client.fetch_user(user[0])
+            em.add_field(name=str(member), value=f"{user[1]}", inline=False)
+        await interaction.response.send_message(embed=em, ephemeral=True)
 
 class SheetLink(discord.ui.View):
     def __init__(self):
@@ -194,7 +229,6 @@ class SheetLink(discord.ui.View):
         url = "https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing"
 
         self.add_item(discord.ui.Button(label='Prediction Sheet', url=url))
-
 class Suggestion(ui.Modal, title='Suggestion'):
 
     def __init__(self, client):
