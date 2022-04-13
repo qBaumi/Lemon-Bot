@@ -352,8 +352,7 @@ class economy(commands.Cog):
                 channel = await self.client.fetch_channel(598608660125581362) # Send message to an admin channel or idk
                 noti = await self.client.fetch_user(198218633955115008) # fetch noti, ing and vain
                 ing = await self.client.fetch_user(497508029923852299) # fetch noti, ing and vain
-                vain = await self.client.fetch_user(253538064519921664) # fetch noti, ing and vain
-                await channel.send(f"{noti.mention}{ing.mention}{vain.mention}\n{user.mention} | {user} claimed {item}!")
+                await channel.send(f"{noti.mention}{ing.mention}\n{user.mention} | {user} claimed {item}!")
                 break
             index+=1
 
