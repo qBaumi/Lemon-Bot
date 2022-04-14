@@ -239,10 +239,14 @@ class other(commands.Cog):
     @app_commands.choices(champ=[
         Choice(name='Riven', value="Riven"),
         Choice(name='Fiora', value="Fiora"),
+        Choice(name='Aurelion Sol', value="Aurelion Sol"),
+        Choice(name='Goredrinker', value="Goredrinker"),
+        Choice(name='Maw', value="Maw"),
+        Choice(name='Deaths Dance', value="Deaths Dance"),
     ])
     @app_commands.command(name="nerf", description="Nerf a champion")
     async def nerf(self, interaction: discord.Interaction, champ: Choice[str]):
-        await interaction.response.send_message(f"Successfully nerfed {champ.value} <:Clueless:927990726581694565>")
+        await interaction.response.send_message(f"Successfully nerfed {champ.name} <:Clueless:927990726581694565>")
 
 
 class SheetLink(discord.ui.View):
