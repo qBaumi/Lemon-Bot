@@ -235,6 +235,16 @@ class other(commands.Cog):
             em.add_field(name=str(member), value=f"{user[1]}", inline=False)
         await interaction.response.send_message(embed=em, ephemeral=True)
 
+    @app_commands.describe(champ='The activity you want to start')
+    @app_commands.choices(champ=[
+        Choice(name='Riven', value="Riven"),
+        Choice(name='Fiora', value="Fiora"),
+    ])
+    @app_commands.command(name="nerf", description="Nerf a champion")
+    async def nerf(self, interaction: discord.Interaction, champ: Choice[str]):
+        await interaction.response.send_message(f"Successfully nerfed {champ} <:Clueless:927990726581694565>")
+
+
 class SheetLink(discord.ui.View):
     def __init__(self):
         super().__init__()
