@@ -242,7 +242,7 @@ class other(commands.Cog):
     ])
     @app_commands.command(name="nerf", description="Nerf a champion")
     async def nerf(self, interaction: discord.Interaction, champ: Choice[str]):
-        await interaction.response.send_message(f"Successfully nerfed {champ} <:Clueless:927990726581694565>")
+        await interaction.response.send_message(f"Successfully nerfed {champ.value} <:Clueless:927990726581694565>")
 
 
 class SheetLink(discord.ui.View):
