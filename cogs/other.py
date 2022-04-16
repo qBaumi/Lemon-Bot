@@ -86,6 +86,16 @@ class other(commands.Cog):
         await interaction.channel.send(hug)
 
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.content == "🤨":
+            print("here")
+            await message.add_reaction('🇼')
+            await message.add_reaction('🇭')
+            await message.add_reaction('🇴')
+            await message.add_reaction('❔')
+
+
     class Prediction(ui.Modal, title='LEC Spring Split Playoffs 2022'):
 
         def __init__(self, client):
