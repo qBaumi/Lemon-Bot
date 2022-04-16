@@ -15,48 +15,6 @@ class other(commands.Cog):
 
 
 
-    """
-    Present 100 golden lemons for christmas
-    ARCHIVED
-    
-    @commands.command()
-    async def present(self, ctx):
-        with open("./json/present.json", "r") as f:
-            users = json.load(f)
-        if ctx.author.id in users:
-            await ctx.send("You already claimed your present!")
-            return
-        date = datetime.date.today()
-        date = str(date)
-        print(date)
-        if (date != "2021-12-25"):
-            await ctx.send("No gift to claim <:Sadge:720250426892615745>\nSanta Veigar arrives at the **25. December** 2021 in the early morning!")
-            return
-        await es.update_balance(ctx.author, 100, "safe")
-        users.append(ctx.author.id)
-        with open("./json/present.json", "w") as f:
-            json.dump(users, f)
-        em = discord.Embed(title="Merry Christmas", description="You claimed your 100 golden lemons!")
-        await ctx.send(f"{ctx.author.mention}\n", embed=em)
-    """
-    """ ARCHIVED
-    # Fer enough FalseFacePalmLaugh
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.channel.id == 909520369327673374: # return if it is in the mod-channel
-            return
-        if message.author == message.author.bot:
-            return
-        if message.author.id == 881476780765093939:
-            return
-        message.content = message.content.lower()
-        if " fair enough" in message.content or message.content.startswith("fair enough"):
-            await message.reply("*fer enough")
-            return
-        if " fair" in message.content or message.content.startswith("fair"):
-            await message.reply("~~fair~~\n*fer")
-            return
-    """
 
 
     @app_commands.command(name="suggest", description="Suggest an emote or something else!")
@@ -176,77 +134,6 @@ class other(commands.Cog):
         # respond
         await interaction.response.send_message("Thanks for signing up for our easter event <:easter:961946306643918899>", ephemeral=True)
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        self.sara = await self.client.fetch_user(441024523370889216)
-        print(self.sara)
-
-    # sara counter PepeLa
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        try:
-            self.sara
-        except:
-            return
-        if message.author == message.author.bot:
-            return
-        if message.author.id == 881476780765093939:
-            return
-
-        def add_sara_count():
-            print("sara mentioned")
-            date = datetime.datetime.now().strftime("%Y-%m-%d")
-            try:
-                print("update")
-                data = es.sql_select(
-                    f"SELECT count FROM saraboard WHERE id = '{message.author.id}' AND date = '{date}'")
-                prevpoints = int(data[0][0])
-                sql = f"UPDATE saraboard SET count = {prevpoints + 1} WHERE id = '{message.author.id}' AND date = '{date}'"
-            except:
-                sql = f"INSERT INTO saraboard (id, count, date) VALUES ('{message.author.id}', 1, '{date}')"
-                print("insert")
-            es.sql_exec(sql)
-
-        message.content = message.content.lower()
-        wordlist = message.content.split(" ")
-        for word in wordlist:
-            if word.startswith("sa") and word.endswith("a") and "ara" in word:
-                add_sara_count()
-                return
-        if self.sara.mentioned_in(message):
-            add_sara_count()
-            return
-
-
-    @app_commands.command(name="saraboard", description="Daily sara board, was NOTI's idea not mine")
-    async def saraboard(self, interaction: discord.Interaction):
-
-        """
-        list of tuples
-        user = (user.id, count, date)
-        data = [(user.id, count, date), (user.id, count, date), (user.id, count, date)...]
-        """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        data = es.sql_select(f"SELECT * FROM saraboard WHERE date = '{date}' ORDER BY count DESC LIMIT 5")
-
-        em = discord.Embed(colour=discord.Color.teal(), title="Daily Saraboard", description="This was NOTI's idea, so go complain there")
-        for user in data:
-            member = await self.client.fetch_user(user[0])
-            em.add_field(name=str(member), value=f"{user[1]}", inline=False)
-        await interaction.response.send_message(embed=em, ephemeral=True)
-
-    @app_commands.describe(champ='The activity you want to start')
-    @app_commands.choices(champ=[
-        Choice(name='Riven', value="Riven"),
-        Choice(name='Fiora', value="Fiora"),
-        Choice(name='Aurelion Sol', value="Aurelion Sol"),
-        Choice(name='Goredrinker', value="Goredrinker"),
-        Choice(name='Maw', value="Maw"),
-        Choice(name='Deaths Dance', value="Deaths Dance"),
-    ])
-    @app_commands.command(name="nerf", description="Nerf a champion")
-    async def nerf(self, interaction: discord.Interaction, champ: Choice[str]):
-        await interaction.response.send_message(f"Successfully nerfed {champ.name} <:Clueless:927990726581694565>")
 
 
 class SheetLink(discord.ui.View):
