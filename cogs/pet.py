@@ -635,16 +635,11 @@ class pet(commands.Cog, app_commands.Group):
             await self.getminustats("petslot2")
             await self.getminustats("petslot3")
             await asyncio.sleep(60)
-    async def stayconnected(self):
-        await self.client.wait_until_ready()
-        while not self.client.is_closed():
-            es.sql_exec(f"INSERT INTO connect(counter) VALUES(1);")
-            await asyncio.sleep(3600)
+
     @commands.Cog.listener()
     async def on_ready(self):
         await self.client.loop.create_task(self.ch_stats())
         await self.client.loop.create_task(self.ch_shop())
-        await self.client.loop.create_task(self.stayconnected())
     async def allpets(self):
         # open the json file in read mode to load users and return them
         with open("./json/allpets.json", "r") as f:

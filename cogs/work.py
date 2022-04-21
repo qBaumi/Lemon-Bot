@@ -37,7 +37,7 @@ class work(commands.Cog):
             userjob = [{"Name": data[0][1], "Verdienst": data[0][2]}]
         except:
             embed = discord.Embed(title='You cant work without a job!')
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
             time.sleep(3)
             await interaction.channel.send(embed=job_helper())
             return
