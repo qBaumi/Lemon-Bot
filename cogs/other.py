@@ -96,6 +96,14 @@ class other(commands.Cog):
             em.add_field(name=message.channel.name, value=message.content)
             await self.logchannel.send(embed=em)
 
+            badwords = ["fag", "farggot", "nigger", "nazi", "cancer", "autist", "retard", "jew", "mentally challenged", "suicide", "kill myself", "kill yourself", "autistic", "kys", "kms", "dick", "cock", "porn", "slut", "niglet", "negro", "dyke", "whore", "chink", "nibba", "braindead", "autism", "nigglet", "beaner", "child-fucker", "motherfucker", "twat", "bellend", "arschgesicht", "rape", "cocknose", "anal", "nonce", "depression", "rape", "rapist", "aids", "nigga", "pedo", "subhuman", "kike", "kyke", "nignog", "cao ni ma", "ape"]
+            if any(word in message.content.lower() for word in badwords):
+                modchannel = await self.client.fetch_channel(963720915575779358)
+                em = discord.Embed(title="Warning", description=f"<#967113937634078771> for more information")
+                em.add_field(name=message.author.name, value=message.content)
+                await modchannel.send(embed=em)
+
+
 
     class Prediction(ui.Modal, title='LEC Spring Split Playoffs 2022'):
 
