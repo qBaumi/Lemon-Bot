@@ -12,10 +12,12 @@ import cogs.essentialfunctions as es
 class other(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.logchannel = None
 
 
-
-
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.logchannel = await self.client.fetch_channel(967113937634078771)
 
     @app_commands.command(name="suggest", description="Suggest an emote or something else!")
     async def suggest(self, interaction: discord.Interaction):
@@ -88,12 +90,11 @@ class other(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.content == "🤨":
-            print("here")
-            await message.add_reaction('🇼')
-            await message.add_reaction('🇭')
-            await message.add_reaction('🇴')
-            await message.add_reaction('❔')
+        if str(message.channel.type) == "voice" and self.logchannel:
+            em = discord.Embed()
+            em.set_author(name=message.author.name, icon_url=message.author.avatar)
+            em.add_field(name=message.channel.name, value=message.content)
+            await self.logchannel.send(embed=em)
 
 
     class Prediction(ui.Modal, title='LEC Spring Split Playoffs 2022'):
