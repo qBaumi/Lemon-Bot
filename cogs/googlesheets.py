@@ -1,109 +1,129 @@
 from __future__ import print_function
 
-with open("./googlesheets/spreatsheetid.txt") as f:
-    SPREADSHEET_ID = f.read()
-import os.path
+import asyncio
+import datetime
+import json
 
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
+from config import guilds
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 import cogs.essentialfunctions as es
 from discord.ext import commands
-import discord, asyncio
 from google.oauth2 import service_account
 
+with open("./googlesheets/spreatsheetid.txt") as f:
+    SPREADSHEET_ID = f.read()
+with open("./json/lockedranges.json", "r", encoding="utf-8") as f:
+    LockRanges = json.load(f)
+# Logging creds idk I copied it
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SERVICE_ACCOUNT_FILE = './googlesheets/keys.json'
-
-creds = None
 creds = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-
-# The ID and range of a spreadsheet.
-
-
-
+    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service = build('sheets', 'v4', credentials=creds)
 
 # Call the Sheets API
 sheet = service.spreadsheets()
 
-
-#value=[["hello world!"]]
+#value = [["hello world!"]]
 # SET majorDimension FOR COLUMNS OR ROWS!!!
-#result = sheet.values().update(spreadsheetId=SPREADSHEET_ID, valueInputOption="RAW", range="test!A1", body={"values":value}, insertDataOption="INSERT_COLUMNS").execute()
-#values = result.get('values', [])
-#print(result)
+#result = sheet.values().update(spreadsheetId=SPREADSHEET_ID, valueInputOption="RAW", range="Sheet5!A1", body={"values": value}).execute()
+
+
+
+def getColumnNumber(columnName):
+    # columnName as A, AA, ABC
+    columnLetters = list(columnName)
+    print(columnLetters)
+
+    columnValue = 0
+    lettersCount = len(columnLetters)
+    for i in range(lettersCount):
+        columnValue = columnValue + 26 ** (lettersCount - i - 1) * (ord(columnLetters[i]) - 64)
+
+    return columnValue
+
+
+
+
+
+
 
 class googlesheets(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command()
-    @commands.has_any_role("Admins", "HM", "Developer")
-    async def initsheet(self, ctx):
-        mysql = f'SELECT id, safe FROM users'
-        es.mycursor.execute(mysql)
-        data = es.mycursor.fetchall()
-        print(data)
-        useridcol = []
-        balcol = []
-        """
-        for user in data:
-            if user[1] != 0:
-                userid = user[0]
-                #bal = user[1]
-                name = await self.client.fetch_user(userid)
-                useridcol.append([str(name)])
-                balcol.append([user[1]])
-
-        useridres = sheet.values().update(spreadsheetId=SPREADSHEET_ID, valueInputOption="RAW", range="test!A2", body={"values":useridcol}).execute()
-        balres = sheet.values().update(spreadsheetId=SPREADSHEET_ID, valueInputOption="RAW", range="test!B2", body={"values":balcol}).execute()
-        #print(useridres)
-        print(balres)
-        """
 
     @commands.command()
     @commands.has_any_role("Admins", "HM", "Developer")
     async def lock(self, ctx):
-        print(sheet.get(spreadsheetId=SPREADSHEET_ID))
+        self.lock_sheet(LockRanges[0])
+
+    async def lock_sheet_timer(self, lockrangelist):
+        await self.client.wait_until_ready()
+        while not self.client.is_closed():
+            await self.client.wait_until_ready()
+            while not self.client.is_closed():
+                hour = datetime.datetime.now().hour
+                min = datetime.datetime.now().minute
+
+                for range in lockrangelist:
+                    #print(datetime.datetime.now().strftime("%d-%m-%Y"))
+                    #print(range["date"])
+                    #print(datetime.datetime.now().strftime("%H:%M"))
+                    print(range["time"])
+                    if datetime.datetime.now().strftime("%d-%m-%Y") == range["date"] and range["time"] == datetime.datetime.now().strftime("%H:%M"):
+                        self.lock_sheet(range)
+                        await asyncio.sleep(1)
+                await asyncio.sleep(59)
+    def lock_sheet(self, range):
+        Editors = {
+            "users": [
+                "lemonbot@lemon-bot-341122.iam.gserviceaccount.com", "max05posch@gmail.com", "cedric.nottebaum@hotmail.com", "BetaSchleim@gmail.com", "imrosseland@gmail.com", "sjuan458@gmail.com", "plspickneeko@gmail.com", "pimiko101@gmail.com", "jesperhermansson94@gmail.com", "mariamemadiscute@gmail.com", "micha.dippell@gmail.com", "jana02.schnieder@googlemail.com"
+            ],
+            "groups": [],
+            "domainUsersCanEdit": False
+        }
+
+        GridRange = {
+            "sheetId": range["sheetId"],
+            "startRowIndex": range["range"]["startRow"],
+            "endRowIndex": range["range"]["endRow"],
+            "startColumnIndex": getColumnNumber(range["range"]["startCol"]),
+            "endColumnIndex": getColumnNumber("EZ")
+        }
+
+        ProtectedRange = {
+            "range":
+                GridRange
+            ,
+            "description": f"{range['date']} - LOCKED",  # title of the locked thingy
+            "warningOnly": False,
+            "requestingUserCanEdit": False,
+            "unprotectedRanges": [],
+            "editors":
+                Editors
+
+        }
+
 
         requests = []
-        # Change the spreadsheet's title.
-        title = "LCS Spring Split 2022"
-
-
         requests.append({
-            'updateSpreadsheetProperties': {
-                'properties': {
-                    'title': title
-                },
-                'fields': 'title'
+            "addProtectedRange": {
+                "protectedRange": ProtectedRange
             }
         })
-        # Find and replace text
-        requests.append({
-            'findReplace': {
-                'find': find,
-                'replacement': replacement,
-                'allSheets': True
-            }
-        })
-        # Add additional requests (operations) ...
 
         body = {
             'requests': requests
         }
+        print(body)
         response = service.spreadsheets().batchUpdate(
             spreadsheetId=SPREADSHEET_ID,
             body=body).execute()
-        find_replace_response = response.get('replies')[1].get('findReplace')
-        print('{0} replacements made.'.format(
-            find_replace_response.get('occurrencesChanged')))
+        print(response)
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.client.loop.create_task(self.lock_sheet_timer(LockRanges))
 
-
-
-def setup(client):
-    client.add_cog(googlesheets(client))
+async def setup(client):
+    await client.add_cog(googlesheets(client), guilds=guilds)
