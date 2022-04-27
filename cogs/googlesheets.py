@@ -73,6 +73,8 @@ class googlesheets(commands.Cog):
                     print(range["time"])
                     if datetime.datetime.now().strftime("%d-%m-%Y") == range["date"] and range["time"] == datetime.datetime.now().strftime("%H:%M"):
                         self.lock_sheet(range)
+                        channel = await self.client.fetch_channel(963720915575779358)
+                        await channel.send("Sheet was succesfully locked!")
                         await asyncio.sleep(1)
                 await asyncio.sleep(59)
     def lock_sheet(self, range):
