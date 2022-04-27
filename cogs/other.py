@@ -131,7 +131,7 @@ class other(commands.Cog):
 
 
 
-    @app_commands.command(name="lec", description="Sign up for the Prediction Sheet!")
+    @app_commands.command(name="msi", description="Sign up for the Prediction Sheet!")
     async def msi(self, interaction: discord.Interaction):
         modal = self.Prediction(client=self.client)
         await interaction.response.send_modal(modal)
