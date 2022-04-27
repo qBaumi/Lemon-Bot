@@ -124,7 +124,7 @@ class other(commands.Cog):
             channel = await self.client.fetch_channel(channel_id)
 
             # Make an embed with the results
-            em = discord.Embed(title="LEC Spring Split Playoffs 2022", description=f"by {interaction.user.mention}")
+            em = discord.Embed(title="MSI Pick'ems 2022", description=f"by {interaction.user.mention}")
             em.add_field(name="Email", value=self.email)
 
             await channel.send(embed=em)
