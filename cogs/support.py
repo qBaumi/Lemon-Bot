@@ -13,7 +13,7 @@ from .other import Suggestion
 import chat_exporter
 import io
 
-channel_id = 801121140612661268  # this is the channel where results get sent in archive, aka #actions
+channel_id = 970083491586900068  # this is the channel where results get sent in archive, aka #actions
 support_category_id = 955151615252385854
 support_channel_id = 955476670352093204 # #support for the claim message in cogs.economy
 support_message_id = 955847447052185630 # message in #support
