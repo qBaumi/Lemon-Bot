@@ -87,6 +87,17 @@ class other(commands.Cog):
         await interaction.response.send_message(f"{interaction.user.mention} gave {user.mention} a hug")
         await interaction.channel.send(hug)
 
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.command(name="createvc", description="Permanent message for createvc channel")
+    async def createvc(self, ctx):
+        em = discord.Embed(colour=discord.Color.from_rgb(243, 155, 0), title="Create your own voice channel", description="To create your own voice-channel, join <#860099749307088916>. The bot will then automatically move you to your own channel. All temporary channels will disappear once everyone leaves.")
+        em.set_author(name="\u200b", icon_url="https://cdn.discordapp.com/attachments/955170155569250415/971459568020381716/Nemesis-Gif-3.gif")
+        em.set_thumbnail(url="https://cdn.discordapp.com/attachments/955170155569250415/971459548915331092/side_3.png")
+        em.add_field(name="Commands", value="`/rename` - renames the channel to something of your choosing (Inappropriate name channels will be deleted)\n\nPlease use the commands in __this channel only__. They will automatically be deleted by the bot.")
+        em.set_footer(text="/admins")
+        await ctx.send(embed=em)
+
+
 
     @commands.Cog.listener()
     async def on_message(self, message):

@@ -71,14 +71,6 @@ class support(commands.Cog):
         self.client = client
 
     @commands.has_any_role("Admins", "Head Mods", "Developer")
-    @commands.command(name="supportembed", description="Embed for the support channel")
-    async def supportembed(self, ctx):
-        em = discord.Embed(colour=discord.Color.from_rgb(229, 196, 89))
-        em.set_image(
-            url="https://media.discordapp.net/attachments/651364619402739713/881551197608218644/Support.png?width=1440&height=458")
-        await ctx.send(embed=em)
-
-    @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="permsupport", description="Permanent message for support channel, admincommand")
     async def permsupport(self, ctx):
         em = discord.Embed(colour=discord.Color.from_rgb(229, 196, 89))
