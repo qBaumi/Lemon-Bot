@@ -13,10 +13,11 @@ from .other import Suggestion
 import chat_exporter
 import io
 
-channel_id = 970083491586900068  # this is the channel where results get sent in archive, aka #actions
+channel_id = 970083491586900068  # this is the channel where results get sent in archive, aka #actions ITS #tickets NOW
+twitchmod_channel_id = 841020368323870761 # this is the channel for the twitch tickets
 support_category_id = 955151615252385854
 support_channel_id = 955476670352093204 # #support for the claim message in cogs.economy
-support_message_id = 955847447052185630 # message in #support
+support_message_id = 971321595803082802 # message in #support
 TESTMODE = False
 
 def getmsgids():
@@ -57,7 +58,13 @@ async def setverifiedperms(user, channel, client, enabled):
     await channel.set_permissions(guild.default_role, view_channel=False)
     await channel.set_permissions(role, view_channel=enabled)
     await channel.set_permissions(user, view_channel=True)
+async def settwitchmodperms(user, channel, client, enabled):
+    guild = await client.fetch_guild(598303095352459305)
 
+    role = discord.utils.get(guild.roles, id=841020059945009193)
+    await channel.set_permissions(guild.default_role, view_channel=False)
+    await channel.set_permissions(role, view_channel=enabled)
+    await channel.set_permissions(user, view_channel=True)
 
 class support(commands.Cog):
     def __init__(self, client):
@@ -83,6 +90,8 @@ class support(commands.Cog):
         em.add_field(name="\u200b", value="""🪙 **- Verification** If you have read the Verification tab under <#945162520275079199> and you need further support, feel free to open a ticket that will allow our staff members to offer you further assistance.
 
 🎁 **- Claim a reward** If you claimed a reward through <@881476780765093939>, please open a ticket to claim it.
+
+📺 **- Twitch Support** Get help from twitch mods or ask questions about Nemesis stream
 
 ❗ **- Make a report** If you notice someone breaking the rules or you're negatively affected by someone's behavior, open a ticket to discuss it with our staff members.
 
@@ -122,10 +131,10 @@ class Dropdown(discord.ui.Select):
         options = [
             discord.SelectOption(label='Verification', description='Get support for the Verification', emoji='🪙'),
             discord.SelectOption(label='Claim a reward', description='Claim a reward you won', emoji='🎁'),
+            discord.SelectOption(label='Twitch Support', description='Get help from twitch mods', emoji='📺'),
             discord.SelectOption(label='Make a Report', description='Report one or multiple users', emoji='❗'),
             discord.SelectOption(label='Other', description='Open a ticket with staff members', emoji='📔'),
-            discord.SelectOption(label='Suggestion', description='Suggest and emote or something else', emoji='📥'),
-
+            discord.SelectOption(label='Suggestion', description='Suggest and emote or something else', emoji='📥')
         ]
 
         super().__init__(placeholder='Open a Ticket', min_values=1, max_values=1,
@@ -149,6 +158,8 @@ class Dropdown(discord.ui.Select):
             modal = Verification(self.client)
         elif category == "Claim a reward":
             modal = Claim(self.client)
+        elif category == "Twitch Support":
+            modal = Twitch(self.client)
         elif category == "Make a Report":
             modal = Report(self.client)
         elif category == "Suggestion":
@@ -176,19 +187,22 @@ class ticketlinkbutton(discord.ui.View):
 """
 class CloseButtons(discord.ui.View):
 
-    def __init__(self, client, ticketchannel, opener):
+    def __init__(self, client, ticketchannel, opener, type=""):
         super().__init__(timeout=None)
         self.client = client
         self.ticketchannel = ticketchannel
         self.opener = opener
-
+        self.type = type
 
 
     @discord.ui.button(label='Close', style=discord.ButtonStyle.red, custom_id="close")
     async def close(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("Ticket closed", ephemeral=True)
 
-        resultschannel = await self.client.fetch_channel(channel_id)
+        if self.type == "twitch":
+            resultschannel = await self.client.fetch_channel(twitchmod_channel_id)
+        else:
+            resultschannel = await self.client.fetch_channel(channel_id)
 
         print(self.ticketchannel)
         print(resultschannel)
@@ -204,7 +218,7 @@ class CloseButtons(discord.ui.View):
     @discord.ui.button(label='Close with Reason', style=discord.ButtonStyle.red, custom_id="closewithreason")
     async def closewithreason(self, interaction: discord.Interaction, button: discord.ui.Button):
 
-        modal = CloseWithReason(client=self.client, ticketchannel=self.ticketchannel, opener=self.opener)
+        modal = CloseWithReason(client=self.client, ticketchannel=self.ticketchannel, opener=self.opener, type=self.type)
         await interaction.response.send_modal(modal)
 
 async def openTicketResponse(interaction, ticketchannel):
@@ -240,17 +254,21 @@ async def archive(channel, archive_channel, client, opener, closer, reason=""):
         await archive_channel.send(embed=em) # , view=ticketlinkbutton(url=message.attachments[0].url)
 class CloseWithReason(ui.Modal, title='Close Ticket with Reason'):
 
-    def __init__(self, client, ticketchannel, opener):
+    def __init__(self, client, ticketchannel, opener, type=""):
         super().__init__()
         self.client = client
         self.ticketchannel = ticketchannel
         self.opener = opener
+        self.type = type
     reason = ui.TextInput(label='Reason', placeholder="Sara, hello, didnt ask + ratio")
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.send_message(f'Closed Ticket with reason {self.reason}', ephemeral=True)
+        if self.type == "twitch":
+            resultschannel = await self.client.fetch_channel(twitchmod_channel_id)
+        else:
+            resultschannel = await self.client.fetch_channel(channel_id)
 
-        resultschannel = await self.client.fetch_channel(channel_id)
         await archive(self.ticketchannel, resultschannel, self.client, self.opener,interaction.user.mention,str(self.reason))
         time.sleep(5)
         await removeid(self.ticketchannel.id)
@@ -275,7 +293,7 @@ class Verification(ui.Modal, title='Verification'):
         self.client = client
 
 
-    description = ui.TextInput(label='Description', placeholder="Describe your problem and we will try to help you :)")
+    description = ui.TextInput(label='Description', placeholder="Describe your problem and we will try to help you :)", style=discord.TextStyle.paragraph)
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -312,7 +330,7 @@ class Claim(ui.Modal, title='Claim a reward'):
 
 
     name = ui.TextInput(label='Name of the reward', placeholder="Put the prize you want to claim here")
-    description = ui.TextInput(label='Description', placeholder="If you have something else to say", required=False)
+    description = ui.TextInput(label='Description', placeholder="If you have something else to say", required=False, style=discord.TextStyle.paragraph)
 
     async def on_submit(self, interaction: discord.Interaction):
 
@@ -348,7 +366,7 @@ class Report(ui.Modal, title='Report'):
         self.client = client
 
     name = ui.TextInput(label='Title', placeholder="Title of your Report")
-    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)")
+    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)", style=discord.TextStyle.paragraph)
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -387,7 +405,7 @@ class Other(ui.Modal, title='Other'):
         self.client = client
 
     name = ui.TextInput(label='Title', placeholder="I like trains")
-    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)")
+    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)", style=discord.TextStyle.paragraph)
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -418,6 +436,41 @@ class Other(ui.Modal, title='Other'):
         addid(msg.id, ticketchannel.id, interaction.user.id)
         await openTicketResponse(interaction, ticketchannel)
 
+class Twitch(ui.Modal, title='Twitch Support'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+    name = ui.TextInput(label='Twitch username', placeholder="Put your twitch username here")
+    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)", style=discord.TextStyle.paragraph)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        ticketchannel = await openticket(self.client, interaction)
+        if ticketchannel == None:
+            await interaction.followup.send(f"{interaction.user.mention}\nYou can only open one ticket at a time!", ephemeral=True)
+            return
+
+        # Make an embed with the results
+        em = discord.Embed(title="Other", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
+        em.add_field(name="Twitch Username", value=self.name, inline=False)
+        em.add_field(name="Description", value=self.description, inline=False)
+        guild = await self.client.fetch_guild(598303095352459305)
+        twitchmodrole = guild.get_role(841020059945009193)
+
+        mention = twitchmodrole
+        if TESTMODE == False:
+            mention = twitchmodrole.mention
+
+
+        await setmodperms(interaction.user, ticketchannel, self.client, False)
+        await setheadmodperms(interaction.user, ticketchannel, self.client, False)
+        await settwitchmodperms(interaction.user, ticketchannel, self.client, True)
+
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention, "twitch"))
+        addid(msg.id, ticketchannel.id, interaction.user.id)
+        await openTicketResponse(interaction, ticketchannel)
 
 async def setup(client):
     await client.add_cog(support(client), guilds=guilds)
