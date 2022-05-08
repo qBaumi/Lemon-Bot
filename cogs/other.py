@@ -135,8 +135,32 @@ class other(commands.Cog):
             channel = await self.client.fetch_channel(channel_id)
 
             # Make an embed with the results
-            em = discord.Embed(title="MSI Pick'ems 2022", description=f"by {interaction.user.mention}")
+            em = discord.Embed(title="MSI Pick'ems 2022", description=f"by {interaction.user.mention} | {str(interaction.user)}")
             em.add_field(name="Email", value=self.email)
+
+            await channel.send(embed=em)
+
+    class Rat(ui.Modal, title="Lolesport rats vs General OOOO"):
+
+        def __init__(self, client):
+            super().__init__()
+            self.client = client
+
+        team = ui.TextInput(label='Team', placeholder="Team General or Lolesports rat")
+        opgg = ui.TextInput(label='OPGG', placeholder="Put your OPGG link here")
+
+        async def on_submit(self, interaction: discord.Interaction):
+            await interaction.response.send_message(f'Thanks for signing up :)', ephemeral=True)
+
+            # 656636484937449518 this is the suggestion-log channel
+            # 651364619402739713 this is the test channel
+            channel_id = 651364619402739713  # the id of the channel the results get sent to
+            channel = await self.client.fetch_channel(channel_id)
+
+            # Make an embed with the results
+            em = discord.Embed(title="Lolesport rats vs General", description=f"by {interaction.user.mention} | {str(interaction.user)}")
+            em.add_field(name="Team", value=self.team, inline=False)
+            em.add_field(name="OPGG", value=self.opgg, inline=False)
 
             await channel.send(embed=em)
 
@@ -145,6 +169,11 @@ class other(commands.Cog):
     @app_commands.command(name="msi", description="Sign up for the Prediction Sheet!")
     async def msi(self, interaction: discord.Interaction):
         modal = self.Prediction(client=self.client)
+        await interaction.response.send_modal(modal)
+
+    @app_commands.command(name="rat", description="Sign up for LOLESPORTS VS GENERAL OOOOOOOOOOOOOOO")
+    async def rat(self, interaction: discord.Interaction):
+        modal = self.Rat(client=self.client)
         await interaction.response.send_modal(modal)
 
 
