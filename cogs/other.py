@@ -154,7 +154,7 @@ class other(commands.Cog):
 
             # 656636484937449518 this is the suggestion-log channel
             # 651364619402739713 this is the test channel
-            channel_id = 651364619402739713  # the id of the channel the results get sent to
+            channel_id = 972894679655907449  # the id of the channel the results get sent to
             channel = await self.client.fetch_channel(channel_id)
 
             # Make an embed with the results
