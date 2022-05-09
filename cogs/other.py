@@ -176,6 +176,17 @@ class other(commands.Cog):
         modal = self.Rat(client=self.client)
         await interaction.response.send_modal(modal)
 
+    @app_commands.command(name="bingo", description="Sign up for our Bingo!")
+    async def bingo(self, interaction: discord.Interaction):
+
+        channel_id = 973305341095841822
+        channel = await self.client.fetch_channel(channel_id)
+
+        em = discord.Embed(title="Bingo", description=f"by {interaction.user.mention} | {str(interaction.user)}")
+        await channel.send(embed=em)
+
+        await interaction.response.send_message(f'Thanks for signing up, we will soon send you your sheet in your DMs. Please enable DMs of everyone so our Mods can send it to you', ephemeral=True)
+
 
 class SheetLink(discord.ui.View):
     def __init__(self):
