@@ -1,30 +1,8 @@
 [
                 {
                     "sheetId" : 967556987,
-                    "date" : "20-05-2022",
-                    "time" : "09:00",
-                    "range" :
-                       {
-                        "startRow": 95,
-                        "endRow": 107,
-                        "startCol" : "E"
-                       }
-                },
-                {
-                    "sheetId" : 967556987,
-                    "date" : "21-05-2022",
-                    "time" : "09:00",
-                    "range" :
-                       {
-                        "startRow": 109,
-                        "endRow": 121,
-                        "startCol" : "E"
-                       }
-                },
-                {
-                    "sheetId" : 967556987,
                     "date" : "22-05-2022",
-                    "time" : "09:00",
+                    "time" : "09:50",
                     "range" :
                        {
                         "startRow": 123,
@@ -35,7 +13,7 @@
                 {
                     "sheetId" : 967556987,
                     "date" : "23-05-2022",
-                    "time" : "09:00",
+                    "time" : "09:50",
                     "range" :
                        {
                         "startRow": 137,
@@ -46,7 +24,7 @@
                 {
                     "sheetId" : 967556987,
                     "date" : "24-05-2022",
-                    "time" : "07:00",
+                    "time" : "07:50",
                     "range" :
                        {
                         "startRow": 151,
@@ -57,7 +35,7 @@
                 {
                     "sheetId" : 967556987,
                     "date" : "27-05-2022",
-                    "time" : "09:00",
+                    "time" : "09:50",
                     "range" :
                        {
                         "startRow": 169,
@@ -68,7 +46,7 @@
                 {
                     "sheetId" : 967556987,
                     "date" : "28-05-2022",
-                    "time" : "09:00",
+                    "time" : "09:50",
                     "range" :
                        {
                         "startRow": 171,
@@ -79,7 +57,7 @@
                 {
                     "sheetId" : 967556987,
                     "date" : "29-05-2022",
-                    "time" : "09:00",
+                    "time" : "09:50",
                     "range" :
                        {
                         "startRow": 175,
