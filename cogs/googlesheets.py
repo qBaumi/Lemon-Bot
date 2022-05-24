@@ -3,7 +3,7 @@ from __future__ import print_function
 import asyncio
 import datetime
 import json
-
+from config import emails
 from config import guilds
 from googleapiclient.discovery import build
 import cogs.essentialfunctions as es
@@ -79,9 +79,7 @@ class googlesheets(commands.Cog):
                 await asyncio.sleep(59)
     def lock_sheet(self, range):
         Editors = {
-            "users": [
-                "lemonbot@lemon-bot-341122.iam.gserviceaccount.com", "max05posch@gmail.com", "cedric.nottebaum@hotmail.com", "BetaSchleim@gmail.com", "imrosseland@gmail.com", "sjuan458@gmail.com", "plspickneeko@gmail.com", "pimiko101@gmail.com", "jesperhermansson94@gmail.com", "mariamemadiscute@gmail.com", "micha.dippell@gmail.com", "jana02.schnieder@googlemail.com"
-            ],
+            "users": emails,
             "groups": [],
             "domainUsersCanEdit": False
         }
