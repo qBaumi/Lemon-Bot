@@ -257,7 +257,7 @@ class help(commands.Cog):
                     discord.SelectOption(label='Items', description='How to buy and use items', emoji='🎒'),
                     discord.SelectOption(label='Loyalty', description='Check out how the Loyalty Points work',
                                          emoji='🟠'),
-                    discord.SelectOption(label='Miscellaneous', description='Check out how the Loyalty Points work',
+                    discord.SelectOption(label='Miscellaneous', description='Things without a category',
                                          emoji='📜')
                 ]
                 # Default means it will be shown down in the select menu
