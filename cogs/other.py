@@ -148,8 +148,8 @@ class other(commands.Cog):
         await interaction.response.send_modal(modal)
 
     @app_commands.command(name="timestamp", description="Get a timestamp of CET")
-    async def timestamp(self, interaction: discord.Interaction, day : app_commands.Range[int, 0, 31], month : app_commands.Range[int, 0, 31], year : app_commands.Range[int, 0, 2030], hour : app_commands.Range[int, 0, 23], minutes : app_commands.Range[int, 0, 59]):
-        time = datetime.datetime.strptime(f"{day}/{month}/{year} {hour}:{minutes}", "%d/%m/%Y %H:%M").timestamp()
+    async def timestamp(self, interaction: discord.Interaction, day : app_commands.Range[int, 0, 31], month : app_commands.Range[int, 0, 12], year : app_commands.Range[int, 0, 2030], hour : app_commands.Range[int, 0, 23], minutes : app_commands.Range[int, 0, 59]):
+        time = datetime.datetime.strptime(f"{'{:02d}'.format(day)}/{'{:02d}'.format(month)}/{'{:02d}'.format(year)} {'{:02d}'.format(hour)}:{'{:02d}'.format(minutes)}", "%d/%m/%Y %H:%M").timestamp()
         time = int(time)
         await interaction.response.send_message(f"`{time}`\nUse `<t:{time}>` to get <t:{time}>")
 
