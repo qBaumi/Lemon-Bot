@@ -87,15 +87,6 @@ class other(commands.Cog):
         await interaction.response.send_message(f"{interaction.user.mention} gave {user.mention} a hug")
         await interaction.channel.send(hug)
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
-    @commands.command(name="createvc", description="Permanent message for createvc channel")
-    async def createvc(self, ctx):
-        em = discord.Embed(colour=discord.Color.from_rgb(243, 155, 0), title="Create your own voice channel", description="To create your own voice-channel, join <#860099749307088916>. The bot will then automatically move you to your own channel. All temporary channels will disappear once everyone leaves.")
-        em.set_author(name="\u200b", icon_url="https://cdn.discordapp.com/attachments/955170155569250415/971459568020381716/Nemesis-Gif-3.gif")
-        em.set_thumbnail(url="https://cdn.discordapp.com/attachments/955170155569250415/971459548915331092/side_3.png")
-        em.add_field(name="Commands", value="`/rename` - renames the channel to something of your choosing (Inappropriate name channels will be deleted)\n\nPlease use the commands in __this channel only__. They will automatically be deleted by the bot.")
-        em.set_footer(text="/admins")
-        await ctx.send(embed=em)
 
 
 
@@ -116,85 +107,50 @@ class other(commands.Cog):
 
 
 
-    class Prediction(ui.Modal, title="MSI Pick'ems 2022"):
+    class Prediction(ui.Modal):
 
-        def __init__(self, client):
+        def __init__(self, client, tournament, resultchannelid, sheetlink):
             super().__init__()
             self.client = client
+            self.title = tournament
+            self.resultchannelid = resultchannelid
+            self.sheetlink = sheetlink
 
 
         email = ui.TextInput(label='Email Adress', placeholder="Put your email adress here to access the Google Sheet later")
 
         async def on_submit(self, interaction: discord.Interaction):
-            await interaction.response.send_message(f'You can soon access the prediction sheet!', ephemeral=True, view=SheetLink())
+            await interaction.response.send_message(f'You can soon access the prediction sheet!', ephemeral=True, view=self.SheetLink(sheetlink=self.sheetlink))
 
             # 656636484937449518 this is the suggestion-log channel
             # 651364619402739713 this is the test channel
             # 820728066514354206 prediction sheet
-            channel_id = 820728066514354206  # the id of the channel the results get sent to
-            channel = await self.client.fetch_channel(channel_id)
+            # the id of the channel the results get sent to
+            channel = await self.client.fetch_channel(self.resultchannelid)
 
             # Make an embed with the results
-            em = discord.Embed(title="MSI Pick'ems 2022", description=f"by {interaction.user.mention} | {str(interaction.user)}")
+            em = discord.Embed(title=self.title, description=f"by {interaction.user.mention} | {str(interaction.user)}")
             em.add_field(name="Email", value=self.email)
 
             await channel.send(embed=em)
 
-    class Rat(ui.Modal, title="Lolesport rats vs General OOOO"):
+        class SheetLink(discord.ui.View):
+            def __init__(self, sheetlink):
+                super().__init__()
 
-        def __init__(self, client):
-            super().__init__()
-            self.client = client
-
-        team = ui.TextInput(label='Team', placeholder="Team General or Lolesports rat")
-        opgg = ui.TextInput(label='OPGG', placeholder="Put your OPGG link here")
-
-        async def on_submit(self, interaction: discord.Interaction):
-            await interaction.response.send_message(f'Thanks for signing up :)', ephemeral=True)
-
-            # 656636484937449518 this is the suggestion-log channel
-            # 651364619402739713 this is the test channel
-            channel_id = 972894679655907449  # the id of the channel the results get sent to
-            channel = await self.client.fetch_channel(channel_id)
-
-            # Make an embed with the results
-            em = discord.Embed(title="Lolesport rats vs General", description=f"by {interaction.user.mention} | {str(interaction.user)}")
-            em.add_field(name="Team", value=self.team, inline=False)
-            em.add_field(name="OPGG", value=self.opgg, inline=False)
-
-            await channel.send(embed=em)
+                self.add_item(discord.ui.Button(label='Prediction Sheet', url=sheetlink))
 
 
 
     @app_commands.command(name="msi", description="Sign up for the Prediction Sheet!")
     async def msi(self, interaction: discord.Interaction):
-        modal = self.Prediction(client=self.client)
+        modal = self.Prediction(client=self.client, tournament="MSI Pick'ems 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
         await interaction.response.send_modal(modal)
 
-    @app_commands.command(name="rat", description="Sign up for LOLESPORTS VS GENERAL OOOOOOOOOOOOOOO")
-    async def rat(self, interaction: discord.Interaction):
-        modal = self.Rat(client=self.client)
-        await interaction.response.send_modal(modal)
-
-    @app_commands.command(name="bingo", description="Sign up for our Bingo!")
-    async def bingo(self, interaction: discord.Interaction):
-
-        channel_id = 973305341095841822
-        channel = await self.client.fetch_channel(channel_id)
-
-        em = discord.Embed(title="Bingo", description=f"by {interaction.user.mention} | {str(interaction.user)}")
-        await channel.send(embed=em)
-
-        await interaction.response.send_message(f'Thanks for signing up, we will soon send you your sheet in your DMs. Please enable DMs of everyone so our Mods can send it to you', ephemeral=True)
 
 
-class SheetLink(discord.ui.View):
-    def __init__(self):
-        super().__init__()
 
-        url = "https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing"
 
-        self.add_item(discord.ui.Button(label='Prediction Sheet', url=url))
 class Suggestion(ui.Modal, title='Suggestion'):
 
     def __init__(self, client):
