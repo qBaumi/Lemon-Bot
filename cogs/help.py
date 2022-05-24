@@ -169,6 +169,10 @@ async def misc_help_msg():
         name="hug",
         value="<:nemeHug:834605591846584391> `/hug @ingrioo`",
         inline=False)
+    em.add_field(
+        name="timestamp",
+        value="Get a timestamp from a date",
+        inline=False)
     return em
 
 
