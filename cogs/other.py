@@ -107,12 +107,12 @@ class other(commands.Cog):
 
 
 
-    class Prediction(ui.Modal):
+    class Prediction(ui.Modal, title="MSI Pick'ems 2022"):
 
         def __init__(self, client, tournament, resultchannelid, sheetlink):
             super().__init__()
             self.client = client
-            self.title = tournament
+            self.tournament = tournament
             self.resultchannelid = resultchannelid
             self.sheetlink = sheetlink
 
@@ -129,7 +129,7 @@ class other(commands.Cog):
             channel = await self.client.fetch_channel(self.resultchannelid)
 
             # Make an embed with the results
-            em = discord.Embed(title=self.title, description=f"by {interaction.user.mention} | {str(interaction.user)}")
+            em = discord.Embed(title=self.tournament, description=f"by {interaction.user.mention} | {str(interaction.user)}")
             em.add_field(name="Email", value=self.email)
 
             await channel.send(embed=em)
@@ -150,7 +150,8 @@ class other(commands.Cog):
     @app_commands.command(name="timestamp", description="Get a timestamp of CET")
     async def timestamp(self, interaction: discord.Interaction, day : app_commands.Range[int, 0, 31], month : app_commands.Range[int, 0, 31], year : app_commands.Range[int, 0, 2030], hour : app_commands.Range[int, 0, 23], minutes : app_commands.Range[int, 0, 59]):
         time = datetime.datetime.strptime(f"{day}/{month}/{year} {hour}:{minutes}", "%d/%m/%Y %H:%M").timestamp()
-        await interaction.response.send_message(f"´{time}´\nUse <t:´{time}´> to get <t:{time}>")
+        time = int(time)
+        await interaction.response.send_message(f"`{time}`\nUse <t:`{time}`> to get <t:{time}>")
 
 
 
