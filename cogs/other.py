@@ -147,7 +147,10 @@ class other(commands.Cog):
         modal = self.Prediction(client=self.client, tournament="MSI Pick'ems 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
         await interaction.response.send_modal(modal)
 
-
+    @app_commands.command(name="timestamp", description="Get a timestamp of CET")
+    async def timestamp(self, interaction: discord.Interaction, day : app_commands.Range[int, 0, 31], month : app_commands.Range[int, 0, 31], year : app_commands.Range[int, 0, 2030], hour : app_commands.Range[int, 0, 23], minutes : app_commands.Range[int, 0, 59]):
+        time = datetime.datetime.strptime(f"{day}/{month}/{year} {hour}:{minutes}", "%d/%m/%Y %H:%M").timestamp()
+        await interaction.response.send_message(f"´{time}´\nUse <t:´{time}´> to get <t:{time}>")
 
 
 
