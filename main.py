@@ -6,7 +6,7 @@ from discord import Emoji
 from cogs.support import DropdownView, support_message_id, getmsgids, CloseButtons
 from config import token
 from discord import app_commands
-from config import guilds
+from config import guilds, guild
 
 intents = discord.Intents.all()
 
@@ -27,7 +27,14 @@ async def on_ready():
     #await channel.send("I am much better than this turtle <:Evilge:949646545832271934>")
     for g in guilds:
         await client.tree.sync(guild=g)
-
+    """
+    i = 0
+    print(client.tree.get_commands(guild=guild))
+    for command in client.tree.get_commands(guild=guild):
+        print(command)
+        i+=1
+    print(i)
+    """
 
 @client.event
 async def setup_hook():
@@ -46,6 +53,7 @@ async def setup_hook():
     await client.load_extension("cogs.work")
     await client.load_extension("cogs.support")
     await client.load_extension("cogs.googlesheets")
+    await client.load_extension("cogs.milestones")
     client.add_view(DropdownView(client), message_id=support_message_id)
     guild = await client.fetch_guild(598303095352459305)
     for msg in getmsgids():

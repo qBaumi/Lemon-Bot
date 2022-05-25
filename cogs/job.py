@@ -45,7 +45,7 @@ async def add_xp(id, amount):
     sql = f"UPDATE users SET xp = {xp + amount} WHERE id = {id}"
     es.sql_exec(sql)
 
-class job(commands.Cog, app_commands.Group):
+class job(commands.GroupCog):
     def __init__(self, client):
         self.client = client
         super().__init__()

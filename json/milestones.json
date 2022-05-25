@@ -1,0 +1,22 @@
+[
+    {
+        "id": 0,
+        "color": [
+            200,
+            100,
+            100
+        ],
+        "name": "This server was created (at 2am btw)",
+        "date": "07/10/2019"
+    },
+    {
+        "id": 1,
+        "color": [
+            20,
+            200,
+            100
+        ],
+        "name": "editeed milestone",
+        "date": "09/10/2019"
+    }
+]

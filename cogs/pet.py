@@ -9,7 +9,7 @@ from config import guilds
 
 
 
-class pet(commands.Cog, app_commands.Group):
+class pet(commands.GroupCog):
     def __init__(self, client):
         super().__init__()
         self.client = client
