@@ -13,7 +13,7 @@ import cogs.essentialfunctions as es
 
 milestone_channel_id = 651364619402739713 # 651364619402739713 testing
 
-@app_commands.default_permissions(manage_roles=True)
+
 class milestones(commands.GroupCog):
     def __init__(self, client):
         self.client = client
@@ -35,6 +35,7 @@ class milestones(commands.GroupCog):
 
         await channel.send(embed=em, file=file)
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command(name="send", description="Send all milestones in a channel")
     async def send(self, interaction : discord.Interaction, id : Optional[int]):
 
@@ -59,7 +60,7 @@ class milestones(commands.GroupCog):
 
             await channel.send(embed=em, file=file)
 
-
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command(name="list", description="List all milestones")
     async def list(self, interaction: discord.Interaction):
 
@@ -74,6 +75,7 @@ class milestones(commands.GroupCog):
 
         await interaction.response.send_message(embed=em)
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command(name="add", description="Add a milestones")
     @app_commands.describe(name="The name of the Milestone")
     @app_commands.describe(date="Date of the Milestone e.g. 06/09/2022")
@@ -105,6 +107,7 @@ class milestones(commands.GroupCog):
 
         await interaction.response.send_message(f"**Successfully added Milestone {name} with id {len(milestones)}**")
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command(name="remove", description="Remove a milestones")
     @app_commands.describe(id="The id of the Milestone")
     async def remove(self, interaction: discord.Interaction, id: int):
@@ -122,6 +125,7 @@ class milestones(commands.GroupCog):
 
         await interaction.response.send_message(f"**Successfully removed Milestone with id {id} BUT DONT FORGET TO DELETE THE MESSAGE IN THE MILESTONE CHANNEL**")
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command(name="edit", description="Edit a milestones")
     @app_commands.describe(id="The id of the Milestone you wish to edit")
     @app_commands.describe(name="The name of the Milestone")
