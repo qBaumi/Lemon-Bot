@@ -7,7 +7,7 @@ import discord, json
 from discord.ext import commands
 from discord import app_commands
 from discord import ui
-from config import guilds
+from config import guilds, allowedRoles
 from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 
@@ -39,6 +39,9 @@ class milestones(commands.GroupCog):
     @app_commands.command(name="send", description="Send all milestones in a channel")
     async def send(self, interaction : discord.Interaction, id : Optional[int]):
 
+        if not await es.checkPerms(interaction, allowedRoles):
+            return
+
         await interaction.response.send_message(f"Milestones summoned", ephemeral=True)
 
         if id:
@@ -64,6 +67,9 @@ class milestones(commands.GroupCog):
     @app_commands.command(name="list", description="List all milestones")
     async def list(self, interaction: discord.Interaction):
 
+        if not await es.checkPerms(interaction, allowedRoles):
+            return
+
         channel = await self.client.fetch_channel(interaction.channel.id)
 
         milestones = self.getMilestones()
@@ -84,6 +90,8 @@ class milestones(commands.GroupCog):
     @app_commands.describe(blue="Blue amount of RGB color")
     async def add(self, interaction: discord.Interaction, name : str, date: str, red : Optional[app_commands.Range[int, 0, 255]], green : Optional[app_commands.Range[int, 0, 255]], blue : Optional[app_commands.Range[int, 0, 255]]):
 
+        if not await es.checkPerms(interaction, allowedRoles):
+            return
         if len(date) != 10:
             await interaction.response.send_message(f"**The date needs to be in the format e.g. 06/09/2420**")
             return
@@ -111,7 +119,8 @@ class milestones(commands.GroupCog):
     @app_commands.command(name="remove", description="Remove a milestones")
     @app_commands.describe(id="The id of the Milestone")
     async def remove(self, interaction: discord.Interaction, id: int):
-
+        if not await es.checkPerms(interaction, allowedRoles):
+            return
 
         milestones = self.getMilestones()
         try:
@@ -135,7 +144,8 @@ class milestones(commands.GroupCog):
     @app_commands.describe(blue="Blue amount of RGB color")
     async def edit(self, interaction: discord.Interaction, id : int, name : Optional[str], date: Optional[str], red : Optional[app_commands.Range[int, 0, 255]], green : Optional[app_commands.Range[int, 0, 255]], blue : Optional[app_commands.Range[int, 0, 255]]):
 
-
+        if not await es.checkPerms(interaction, allowedRoles):
+            return
 
         milestones = self.getMilestones()
         if red:
