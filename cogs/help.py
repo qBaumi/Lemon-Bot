@@ -211,7 +211,7 @@ async def golden_lemon_help_msg():
         inline=False)
     em.add_field(
         name="Open a ticket",
-        value=f"**To redeem your prize please open a ticket in <#{support_channel_id}>",
+        value=f"To redeem your prize please open a ticket in <#{support_channel_id}>",
         inline=False)
     em.set_footer(text="Don't be afraid to @ a Mod if you need help to redeem your prize.")
 
