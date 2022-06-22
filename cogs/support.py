@@ -343,7 +343,7 @@ class Claim(ui.Modal, title='Claim a reward'):
         ing = await self.client.fetch_user(198218633955115008)
         mention = f"{naughty} {ing}"
         if TESTMODE == False:
-            mention = f"{naughty.mention} {ing.mention}"
+            mention = f"{naughty.mention}{ing.mention}"
 
         await setmodperms(interaction.user, ticketchannel, self.client, False)
         await setheadmodperms(interaction.user, ticketchannel, self.client, False)
