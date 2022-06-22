@@ -5,6 +5,7 @@ import discord, json
 from discord.ext import commands
 from discord import app_commands
 from discord import ui
+
 from config import guilds
 from discord.app_commands import Choice
 import cogs.essentialfunctions as es
@@ -87,6 +88,15 @@ class other(commands.Cog):
         await interaction.response.send_message(f"{interaction.user.mention} gave {user.mention} a hug")
         await interaction.channel.send(hug)
 
+    @commands.has_any_role("Admins", "Developer", "HM")
+    @commands.command()
+    async def forum(self, ctx):
+        category = await self.client.fetch_channel(955151615252385854)
+        guild = await self.client.fetch_guild(598303095352459305)
+        channel = await guild.create_forum(f'test', category=category)
+        role = discord.utils.get(guild.roles, id=598307062086107156)
+        await channel.set_permissions(guild.default_role, view_channel=False)
+        await channel.set_permissions(role, view_channel=True)
 
 
 

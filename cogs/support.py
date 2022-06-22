@@ -339,10 +339,11 @@ class Claim(ui.Modal, title='Claim a reward'):
             em.add_field(name="Description", value=self.description, inline=False)
 
         # Get Rocsie
-        rocsie = await self.client.fetch_user(148086360425758720)
-        mention = rocsie
+        naughty = await self.client.fetch_user(497508029923852299)
+        ing = await self.client.fetch_user(198218633955115008)
+        mention = naughty + " " + ing
         if TESTMODE == False:
-            mention = rocsie.mention
+            mention = f"{naughty.mention} {ing.mention}"
 
         await setmodperms(interaction.user, ticketchannel, self.client, False)
         await setheadmodperms(interaction.user, ticketchannel, self.client, False)
