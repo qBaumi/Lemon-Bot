@@ -84,7 +84,7 @@ async def interaction_check_account(interaction : discord.Interaction):
         ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
         if str(interaction.user.id) == id[0]:
             return True
-    await interaction.response.send_message(f"{interaction.user.author.mention}\nUse the `/startup` command first!")
+    await interaction.response.send_message(f"{interaction.user.mention}\nUse the `/startup` command first!")
     return False
 
 """
