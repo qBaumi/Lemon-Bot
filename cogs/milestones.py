@@ -11,7 +11,7 @@ from config import guilds, allowedRoles
 from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 
-milestone_channel_id = 651364619402739713 # 651364619402739713 testing
+milestone_channel_id = 989263463681523773 # 651364619402739713 testing
 
 
 class milestones(commands.GroupCog):
