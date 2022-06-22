@@ -341,7 +341,7 @@ class Claim(ui.Modal, title='Claim a reward'):
         # Get Rocsie
         naughty = await self.client.fetch_user(497508029923852299)
         ing = await self.client.fetch_user(198218633955115008)
-        mention = naughty + " " + ing
+        mention = f"{naughty} {ing}"
         if TESTMODE == False:
             mention = f"{naughty.mention} {ing.mention}"
 
