@@ -49,7 +49,7 @@ class milestones(commands.GroupCog):
             await interaction.response.send_message(f"Sent Milestone with id {id} to the milestone channel", ephemeral=True)
             return
 
-        channel = await self.client.fetch_channel(interaction.channel.id)
+        channel = await self.client.fetch_channel(milestone_channel_id)
 
         milestones = self.getMilestones()
         for milestone in milestones:
