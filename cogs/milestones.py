@@ -183,11 +183,11 @@ class milestones(commands.GroupCog):
         img = Image.open("./img/milestone.png")
         img = img.convert("RGBA")
 
-        w, h = 1000, 650
-        shape = [(40+100, 40), (w - 10, h - 10)]
+        w, h = 1000, 300
+        shape = [(40+100, 40), (w, h)]
 
         # creating new Image object
-        img = Image.new("RGBA", (w+200, h))
+        img = Image.new("RGBA", (w, h))
 
         # create rectangle image
         img1 = ImageDraw.Draw(img)
