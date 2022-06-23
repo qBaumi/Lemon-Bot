@@ -184,7 +184,7 @@ class milestones(commands.GroupCog):
         img = img.convert("RGBA")
 
         w, h = 1000, 300
-        shape = [(40+100, 40), (w, h)]
+        shape = [(0, 40), (w, h)]
 
         # creating new Image object
         img = Image.new("RGBA", (w, h))
