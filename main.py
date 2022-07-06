@@ -3,7 +3,8 @@ import discord
 from discord.ext import commands
 from discord import Emoji
 
-from cogs.support import DropdownView, support_message_id, getmsgids, CloseButtons
+from cogs.other import FeedbackButtons
+from cogs.support import DropdownView, support_message_id, getmsgids, CloseButtons, feedback_message_id
 from config import token
 from discord import app_commands
 from config import guilds, guild
@@ -55,6 +56,7 @@ async def setup_hook():
     await client.load_extension("cogs.googlesheets")
     await client.load_extension("cogs.milestones")
     client.add_view(DropdownView(client), message_id=support_message_id)
+    client.add_view(FeedbackButtons(), message_id=feedback_message_id)
     guild = await client.fetch_guild(598303095352459305)
     for msg in getmsgids():
         msgid = msg["msg_id"]

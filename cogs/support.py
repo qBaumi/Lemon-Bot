@@ -17,6 +17,7 @@ channel_id = 970083491586900068  # this is the channel where results get sent in
 twitchmod_channel_id = 841020368323870761 # this is the channel for the twitch tickets
 support_category_id = 955151615252385854
 support_channel_id = 955476670352093204 # #support for the claim message in cogs.economy
+feedback_message_id = 994311374438154390
 support_message_id = 971321595803082802 # message in #support
 TESTMODE = False
 
