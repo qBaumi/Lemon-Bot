@@ -157,7 +157,7 @@ class other(commands.Cog):
         modal = self.Prediction(client=self.client, tournament="MSI Pick'ems 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
         await interaction.response.send_modal(modal)
 
-    @app_commands.command(name="msi", description="Give us anonymous feedback!")
+    @app_commands.command(name="feedback", description="Give us anonymous feedback!")
     async def feedback(self, interaction: discord.Interaction):
         modal = Feedback(self.client)
         print(f"Feedback by: {interaction.user}")
