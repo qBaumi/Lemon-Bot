@@ -157,6 +157,14 @@ class other(commands.Cog):
         modal = self.Prediction(client=self.client, tournament="MSI Pick'ems 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
         await interaction.response.send_modal(modal)
 
+    @app_commands.command(name="msi", description="Give us anonymous feedback!")
+    async def feedback(self, interaction: discord.Interaction):
+        modal = Feedback(self.client)
+        print(f"Feedback by: {interaction.user}")
+        print(f"Feedback by: {interaction.user}")
+        print(f"Feedback by: {interaction.user}")
+        await interaction.response.send_modal(modal)
+
     @app_commands.command(name="timestamp", description="Get a timestamp of CET")
     async def timestamp(self, interaction: discord.Interaction, day : app_commands.Range[int, 0, 31], month : app_commands.Range[int, 0, 12], year : app_commands.Range[int, 0, 2030], hour : app_commands.Range[int, 0, 23], minutes : app_commands.Range[int, 0, 59]):
         time = datetime.datetime.strptime(f"{'{:02d}'.format(day)}/{'{:02d}'.format(month)}/{'{:04d}'.format(year)} {'{:02d}'.format(hour)}:{'{:02d}'.format(minutes)}", "%d/%m/%Y %H:%M").timestamp()
@@ -196,6 +204,23 @@ class Suggestion(ui.Modal, title='Suggestion'):
         em = discord.Embed(title="Suggestion", description=f"by {interaction.user}")
         em.add_field(name=self.name, value=self.desc)
 
+        await channel.send(embed=em)
+
+class Feedback(ui.Modal, title='Feedback'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+    feedback = ui.TextInput(label='Anonymous Feedback', style=discord.TextStyle.paragraph,
+                        placeholder="This Feedback form is completely anonymous!")
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'Thanks for your Feedback!', ephemeral=True)
+        channel_id = 656636484937449518
+        channel = await self.client.fetch_channel(channel_id)
+
+        em = discord.Embed(title="Feedback", description=self.feedback)
+        em.set_footer(text=f"by rion NA Diamond I")
         await channel.send(embed=em)
 
 async def setup(client):
