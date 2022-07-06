@@ -56,7 +56,7 @@ async def setup_hook():
     await client.load_extension("cogs.googlesheets")
     await client.load_extension("cogs.milestones")
     client.add_view(DropdownView(client), message_id=support_message_id)
-    client.add_view(FeedbackButtons(), message_id=feedback_message_id)
+    client.add_view(FeedbackButtons(client), message_id=feedback_message_id)
     guild = await client.fetch_guild(598303095352459305)
     for msg in getmsgids():
         msgid = msg["msg_id"]

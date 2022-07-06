@@ -180,10 +180,9 @@ class other(commands.Cog):
             url="https://cdn.discordapp.com/attachments/968210243144261632/994308636488765523/asdsadasdadsa.png")
         await ctx.send(embed=em)
 
-        em = discord.Embed(title="Feedback", colour=discord.Color.from_rgb(229, 196, 89))
-        em.add_field(name="\u200b", value="We are very greatful for any feedback we receive. This feedback form is completely anonymous. You can give us anything from event ideas to what we can improve etc. So click on the button and try it out!")
+        em = discord.Embed(title="Feedback", description="We are very greatful for any feedback we receive. This feedback form is completely anonymous. You can give us anything from event ideas to what we can improve etc. So click on the button and try it out!", colour=discord.Color.from_rgb(229, 196, 89))
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
-        await ctx.send(embed=em, view=FeedbackButtons())
+        await ctx.send(embed=em, view=FeedbackButtons(self.client))
 
 class Suggestion(ui.Modal, title='Suggestion'):
 
@@ -237,8 +236,9 @@ class Feedback(ui.Modal, title='Feedback'):
 
 class FeedbackButtons(discord.ui.View):
 
-    def __init__(self):
+    def __init__(self, client):
         super().__init__(timeout=None)
+        self.client = client
 
     @discord.ui.button(label='Feedback', style=discord.ButtonStyle.primary, custom_id="feedback")
     async def feedback(self, interaction: discord.Interaction, button: discord.ui.Button):
