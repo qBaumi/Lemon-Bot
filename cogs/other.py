@@ -1,7 +1,11 @@
 import asyncio
 import datetime
+import os
 import random
+from pathlib import Path
+
 import discord, json
+from PIL import Image
 from discord.ext import commands
 from discord import app_commands
 from discord import ui
@@ -184,6 +188,49 @@ class other(commands.Cog):
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await ctx.send(embed=em, view=FeedbackButtons(self.client))
 
+    @commands.command(name="santorin", description="Bomis vacation photos")
+    async def santorin(self, ctx):
+        directory = "./img/santorin"
+        embeds = []
+        links = [
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681512769368064/20220613_112858.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681513205563533/20220613_112927.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681513679540294/20220613_115613.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681514002485418/20220613_115632.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681514463854662/20220613_115637.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681514925236315/20220613_121500.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681515445325835/20220613_131112.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681516804276224/20220613_135035.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681517102092318/20220615_182353.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681517907390514/20220615_184131.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681604792389752/20220615_184148.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681605408964608/20220615_201615.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681605807411300/20220615_202536.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681606432378920/20220615_203238.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681606818246826/20220616_081250.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681607455789168/20220616_081255.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681607887790191/20220616_081259.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681608361746522/20220616_081319.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681609989144757/20220616_082834.jpg",
+            "https://cdn.discordapp.com/attachments/955170155569250415/994681610605690970/20220616_082914.jpg",
+            "https: // cdn.discordapp.com / attachments / 955170155569250415 / 994681701861175397 / 20220616_082917.jpg",
+        "https://cdn.discordapp.com/attachments/955170155569250415/994681702330945637/20220616_082927.jpg",
+        "https://cdn.discordapp.com/attachments/955170155569250415/994681702666477659/20220616_082953.jpg"
+        ]
+        for i, filename in enumerate(os.listdir(directory)):
+            print(filename)
+            path = os.path.join(directory, filename)
+
+            #testbomi = await self.client.fetch_user(783380754238406686)
+            #file = discord.File(path)
+            #msg = await testbomi.send(file=file)
+            #links.append(msg.jump_url)
+
+            embed = discord.Embed(colour=discord.Color.from_str("#009dff"), title="Santorin", description=str(Image.open(path)._getexif()[36867]))
+            embed.set_image(url=links[i])
+            embeds.append(embed)
+        await ctx.send(view=PagesView(ctx.author, embeds), embed=embeds[0].set_footer(text="1 / 23"))
+
 class Suggestion(ui.Modal, title='Suggestion'):
 
     def __init__(self, client):
@@ -247,6 +294,33 @@ class FeedbackButtons(discord.ui.View):
         print(f"Feedback by: {interaction.user}")
         print(f"Feedback by: {interaction.user}")
         await interaction.response.send_modal(modal)
+
+class PagesView(discord.ui.View):
+
+    def __init__(self, user, pages):
+        super().__init__()
+        self.user = user
+        self.pages = pages
+        self.current_page = 0
+        self.max_pages = len(pages)
+
+    @discord.ui.button(label="◀", style=discord.ButtonStyle.blurple)
+    async def left(self, interaction : discord.Interaction, button : discord.Button):
+        if self.current_page == 0:
+            self.current_page = self.max_pages-1
+        else:
+            self.current_page = self.current_page-1
+        self.pages[self.current_page].set_footer(text=f"{self.current_page+1} / {self.max_pages}")
+        await interaction.response.edit_message(view=self, embed=self.pages[self.current_page])
+
+    @discord.ui.button(label="▶", style=discord.ButtonStyle.blurple)
+    async def right(self, interaction : discord.Interaction, button : discord.Button):
+        if self.current_page == self.max_pages-1:
+            self.current_page = 0
+        else:
+            self.current_page = self.current_page+1
+        self.pages[self.current_page].set_footer(text=f"{self.current_page+1} / {self.max_pages}")
+        await interaction.response.edit_message(view=self, embed=self.pages[self.current_page])
 
 
 async def setup(client):
