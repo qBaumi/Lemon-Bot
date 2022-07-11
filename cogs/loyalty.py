@@ -26,7 +26,7 @@ class loyalty(commands.Cog):
     # @app_commands.has_any_role("Admins", "HM", "Developer", "Mods")
     @app_commands.describe(user="User that gets Loyalty Points")
     @app_commands.describe(points="10 Points for winner, 5 for second, 3 for third and 1 for participation")
-    async def reward(self, interaction: discord.Interaction, user: discord.User, points: app_commands.Range[int, 0, 10]):
+    async def reward(self, interaction: discord.Interaction, user: discord.User, points: int):
 
         if not await es.checkPerms(interaction, allowedRoles):
             return
