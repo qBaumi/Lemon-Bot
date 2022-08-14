@@ -156,9 +156,50 @@ class other(commands.Cog):
 
 
 
+    class Triathlon(ui.Modal, title="Triathlon Tournament"):
+
+        def __init__(self, client, tournament, resultchannelid, sheetlink):
+            super().__init__()
+            self.client = client
+            self.tournament = tournament
+            self.resultchannelid = resultchannelid
+            self.sheetlink = sheetlink
+
+
+        team = ui.TextInput(label='Team or Free Agent', placeholder="Put your teams discord names here", style=discord.TextStyle.paragraph)
+
+        async def on_submit(self, interaction: discord.Interaction):
+            await interaction.response.send_message(f'Thank you for signing up! You can see all teams in this sheet.', ephemeral=True, view=self.SheetLink(sheetlink=self.sheetlink))
+
+            # 656636484937449518 this is the suggestion-log channel
+            # 651364619402739713 this is the test channel
+            # 820728066514354206 prediction sheet
+            # the id of the channel the results get sent to
+            channel = await self.client.fetch_channel(self.resultchannelid)
+
+            # Make an embed with the results
+            em = discord.Embed(title=self.tournament, description=f"by {interaction.user.mention} | {str(interaction.user)}")
+            em.add_field(name="Team or Free Agent", value=self.team)
+
+            await channel.send(embed=em)
+
+        class SheetLink(discord.ui.View):
+            def __init__(self, sheetlink):
+                super().__init__()
+
+                self.add_item(discord.ui.Button(label='Teams', url=sheetlink))
+
+
+
     @app_commands.command(name="msi", description="Sign up for the Prediction Sheet!")
     async def msi(self, interaction: discord.Interaction):
         modal = self.Prediction(client=self.client, tournament="MSI Pick'ems 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
+        await interaction.response.send_modal(modal)
+
+
+    @app_commands.command(name="signup", description="Sign up for our tournament!")
+    async def signup(self, interaction: discord.Interaction):
+        modal = self.Prediction(client=self.client, tournament="Triathlon Tournament", resultchannelid=1008476210029936721, sheetlink="https://docs.google.com/spreadsheets/d/1Urn2FiA0vrs6bmLX0itbLQnxBd_CL8CRHLuNAakt0jI/edit?usp=sharing")
         await interaction.response.send_modal(modal)
 
     @app_commands.command(name="feedback", description="Give us anonymous feedback!")
