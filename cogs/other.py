@@ -199,7 +199,7 @@ class other(commands.Cog):
 
     @app_commands.command(name="signup", description="Sign up for our tournament!")
     async def signup(self, interaction: discord.Interaction):
-        modal = self.Prediction(client=self.client, tournament="Triathlon Tournament", resultchannelid=1008476210029936721, sheetlink="https://docs.google.com/spreadsheets/d/1Urn2FiA0vrs6bmLX0itbLQnxBd_CL8CRHLuNAakt0jI/edit?usp=sharing")
+        modal = self.Triathlon(client=self.client, tournament="Triathlon Tournament", resultchannelid=1008476210029936721, sheetlink="https://docs.google.com/spreadsheets/d/1Urn2FiA0vrs6bmLX0itbLQnxBd_CL8CRHLuNAakt0jI/edit?usp=sharing")
         await interaction.response.send_modal(modal)
 
     @app_commands.command(name="feedback", description="Give us anonymous feedback!")
