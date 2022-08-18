@@ -5,6 +5,7 @@ import random
 from pathlib import Path
 
 import discord, json
+import pytz
 from PIL import Image
 from discord.ext import commands
 from discord import app_commands
@@ -18,7 +19,6 @@ class other(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.logchannel = None
-
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -103,6 +103,26 @@ class other(commands.Cog):
         await channel.set_permissions(role, view_channel=True)
 
 
+    @commands.Cog.listener()
+    async def on_member_update(self, beforemember, aftermember):
+        if beforemember.timed_out_until is None and aftermember.timed_out_until is None:
+            return
+        try:
+            if beforemember.timed_out_until.replace(tzinfo=pytz.UTC) < datetime.datetime.now().replace(tzinfo=pytz.UTC) and aftermember.timed_out_until is not None and beforemember.timed_out_until != aftermember.timed_out_until:
+                em = discord.Embed(title="timeout")
+                em.add_field(name="Offender:", value=f"{str(aftermember)}<@{aftermember.id}>", inline=False)
+                em.set_footer(text=f"ID: {aftermember.id} • {datetime.datetime.now().strftime('%d/%m/%Y')}")
+                channel = await self.client.fetch_channel(662829172888174611)
+                await channel.send(embed=em)
+                return
+        except:
+            if beforemember.timed_out_until is None and aftermember.timed_out_until is not None:
+                em = discord.Embed(title="timeout")
+                em.add_field(name="Offender:", value=f"{str(aftermember)}<@{aftermember.id}>", inline=False)
+                em.set_footer(text=f"ID: {aftermember.id} • {datetime.datetime.now().strftime('%d/%m/%Y')}")
+                channel = await self.client.fetch_channel(662829172888174611)
+                await channel.send(embed=em)
+                return
 
     @commands.Cog.listener()
     async def on_message(self, message):
