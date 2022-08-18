@@ -111,6 +111,7 @@ class other(commands.Cog):
             if beforemember.timed_out_until.replace(tzinfo=pytz.UTC) < datetime.datetime.now().replace(tzinfo=pytz.UTC) and aftermember.timed_out_until is not None and beforemember.timed_out_until != aftermember.timed_out_until:
                 em = discord.Embed(title="timeout")
                 em.add_field(name="Offender:", value=f"{str(aftermember)}<@{aftermember.id}>", inline=False)
+                em.add_field(name="Timed out until:", value=f"{(aftermember.timed_out_until  + datetime.timedelta(hours=2)).strftime('%d/%m/%Y %H:%M')}")
                 em.set_footer(text=f"ID: {aftermember.id} • {datetime.datetime.now().strftime('%d/%m/%Y')}")
                 channel = await self.client.fetch_channel(662829172888174611)
                 await channel.send(embed=em)
@@ -119,6 +120,7 @@ class other(commands.Cog):
             if beforemember.timed_out_until is None and aftermember.timed_out_until is not None:
                 em = discord.Embed(title="timeout")
                 em.add_field(name="Offender:", value=f"{str(aftermember)}<@{aftermember.id}>", inline=False)
+                em.add_field(name="Timed out until:", value=f"{(aftermember.timed_out_until  + datetime.timedelta(hours=2)).strftime('%d/%m/%Y %H:%M')}")
                 em.set_footer(text=f"ID: {aftermember.id} • {datetime.datetime.now().strftime('%d/%m/%Y')}")
                 channel = await self.client.fetch_channel(662829172888174611)
                 await channel.send(embed=em)
