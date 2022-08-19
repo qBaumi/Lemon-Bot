@@ -143,7 +143,7 @@ class other(commands.Cog):
 
 
 
-    class Prediction(ui.Modal, title="MSI Pick'ems 2022"):
+    class Prediction(ui.Modal, title="LEC Summer Playoffs 2022"):
 
         def __init__(self, client, tournament, resultchannelid, sheetlink):
             super().__init__()
@@ -175,9 +175,6 @@ class other(commands.Cog):
                 super().__init__()
 
                 self.add_item(discord.ui.Button(label='Prediction Sheet', url=sheetlink))
-
-
-
     class Triathlon(ui.Modal, title="Triathlon Tournament"):
 
         def __init__(self, client, tournament, resultchannelid, sheetlink):
@@ -216,6 +213,12 @@ class other(commands.Cog):
     @app_commands.command(name="msi", description="Sign up for the Prediction Sheet!")
     async def msi(self, interaction: discord.Interaction):
         modal = self.Prediction(client=self.client, tournament="MSI Pick'ems 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
+        await interaction.response.send_modal(modal)
+
+
+    @app_commands.command(name="lec", description="Sign up for the Prediction Sheet!")
+    async def lec(self, interaction: discord.Interaction):
+        modal = self.Prediction(client=self.client, tournament="LEC Summer Playoffs 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit#gid=715753226")
         await interaction.response.send_modal(modal)
 
 
