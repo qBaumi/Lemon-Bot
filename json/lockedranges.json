@@ -25,8 +25,8 @@
                     "time" : "16:50",
                     "range" :
                        {
-                        "startRow": 9,
-                        "endRow": 11,
+                        "startRow": 7,
+                        "endRow": 9,
                         "startCol" : "F"
                        }
                 }
