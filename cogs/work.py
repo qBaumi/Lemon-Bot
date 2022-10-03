@@ -16,6 +16,9 @@ class work(commands.Cog):
         self.client = client
         super().__init__()
 
+
+
+    @app_commands.checks.cooldown(1, 300, key=lambda i: (i.guild_id, i.user.id))
     @app_commands.command(name="work", description="Time to work Voidge")
     async def work(self, interaction : discord.Interaction):
 
@@ -310,6 +313,10 @@ class work(commands.Cog):
                 await interaction.followup.send(f"{user.mention}\nI think the creator didnt finish this job yet...")
             es.setCooldown(user, "work")
 
+    @work.error
+    async def on_work_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+        if isinstance(error, app_commands.CommandOnCooldown):
+            await interaction.response.send_message(str(error), ephemeral=True)
 
 async def setup(client):
     await client.add_cog(work(client), guilds=guilds)
