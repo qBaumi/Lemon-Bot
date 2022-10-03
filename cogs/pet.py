@@ -119,6 +119,7 @@ class pet(commands.GroupCog):
     @app_commands.command(name='buy', description="Buy a pet from the pet shop")
     @app_commands.describe(pet="The pet that you want to buy")
     async def buy(self, interaction: discord.Interaction, pet : str):
+        pet = pet.lower()
         arg2 = pet
         pets = await self.allpets()
         user = interaction.user
@@ -162,15 +163,12 @@ class pet(commands.GroupCog):
         attack1 = pet["attack1"]
         attack2 = pet["attack2"]
 
-        def savepet(self, id, slot):
-            try:
-                mysql = f"UPDATE {slot} SET name = '{name}', hp = {hp}, attack = {attack}, speed = {speed}, xp = {xp}, lvl = {lvl}, item = 'None', attack1 = '{attack1}', attack2 = '{attack2}', food = {50}, stamina = {100}, care = {50}, fun = {50}, img = '{pet['img']}' WHERE id = '{user.id}'"
-                es.sql_exec(mysql)
-            except:
-                mysql = f"INSERT INTO {slot} (id, name, hp, attack, speed, xp, lvl, item, attack1, attack2, food, stamina, care, fun, img) VALUES ('{user.id}', '{name}', {hp}, {attack}, {speed}, {xp}, {lvl}, 'None', '{attack1}', '{attack2}', 50, 100, 50, 50, '{pet['img']}')"
-                es.sql_exec(mysql)
+        def savepet(id, slot):
+            mysql = f"INSERT INTO {slot} (id, name, hp, attack, speed, xp, lvl, item, attack1, attack2, food, stamina, care, fun, img) VALUES ('{user.id}', '{name}', {hp}, {attack}, {speed}, {xp}, {lvl}, 'None', '{attack1}', '{attack2}', 50, 100, 50, 50, '{pet['img']}')"
+            print(mysql)
+            es.sql_exec(mysql)
 
-        savepet(self, user.id, "equippedpet")
+        savepet(user.id, "equippedpet")
 
         await es.update_balance(user, -price)
         await interaction.response.send_message(
