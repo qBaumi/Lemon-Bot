@@ -143,7 +143,7 @@ class other(commands.Cog):
 
 
 
-    class Prediction(ui.Modal, title="LEC Summer Playoffs 2022"):
+    class Prediction(ui.Modal, title="Worlds 2022"):
 
         def __init__(self, client, tournament, resultchannelid, sheetlink):
             super().__init__()
@@ -210,22 +210,23 @@ class other(commands.Cog):
 
 
 
-    @app_commands.command(name="msi", description="Sign up for the Prediction Sheet!")
-    async def msi(self, interaction: discord.Interaction):
-        modal = self.Prediction(client=self.client, tournament="MSI Pick'ems 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
+
+    @app_commands.command(name="worlds", description="Sign up for the Prediction Sheet!")
+    async def worlds(self, interaction: discord.Interaction):
+        modal = self.Prediction(client=self.client, tournament="Worlds 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
         await interaction.response.send_modal(modal)
 
 
-    @app_commands.command(name="lec", description="Sign up for the Prediction Sheet!")
-    async def lec(self, interaction: discord.Interaction):
-        modal = self.Prediction(client=self.client, tournament="LEC Summer Playoffs 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit#gid=715753226")
-        await interaction.response.send_modal(modal)
+    #@app_commands.command(name="lec", description="Sign up for the Prediction Sheet!")
+    #async def lec(self, interaction: discord.Interaction):
+    #    modal = self.Prediction(client=self.client, tournament="LEC Summer Playoffs 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit#gid=715753226")
+    #    await interaction.response.send_modal(modal)
 
 
-    @app_commands.command(name="signup", description="Sign up for our tournament!")
-    async def signup(self, interaction: discord.Interaction):
-        modal = self.Triathlon(client=self.client, tournament="Triathlon Tournament", resultchannelid=1008476210029936721, sheetlink="https://docs.google.com/spreadsheets/d/1Urn2FiA0vrs6bmLX0itbLQnxBd_CL8CRHLuNAakt0jI/edit?usp=sharing")
-        await interaction.response.send_modal(modal)
+    #@app_commands.command(name="signup", description="Sign up for our tournament!")
+    #async def signup(self, interaction: discord.Interaction):
+    #    modal = self.Triathlon(client=self.client, tournament="Triathlon Tournament", resultchannelid=1008476210029936721, sheetlink="https://docs.google.com/spreadsheets/d/1Urn2FiA0vrs6bmLX0itbLQnxBd_CL8CRHLuNAakt0jI/edit?usp=sharing")
+    #    await interaction.response.send_modal(modal)
 
     @app_commands.command(name="feedback", description="Give us anonymous feedback!")
     async def feedback(self, interaction: discord.Interaction):
