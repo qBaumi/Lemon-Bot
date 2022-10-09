@@ -104,12 +104,12 @@ class other(commands.Cog):
         await channel.set_permissions(guild.default_role, view_channel=False)
         await channel.set_permissions(role, view_channel=True)
 
-    @commands.command()
-    async def badge(self, ctx):
-        guild = await self.client.fetch_guild(598303095352459305)
-        role = discord.utils.get(guild.roles, id=598307062086107156)
+    @app_commands.command(name="badge", description="Get the PNG file of a role badge")
+    async def badge(self, interaction, role : discord.Role):
+        #guild = await self.client.fetch_guild(598303095352459305)
+        #role = discord.utils.get(guild.roles, id=598307062086107156)
         print(role.icon)
-        await ctx.send(role.icon)
+        await interaction.response.send_message(role.icon)
 
 
     @commands.Cog.listener()
