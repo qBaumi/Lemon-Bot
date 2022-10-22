@@ -269,7 +269,7 @@ class other(commands.Cog):
 
     async def mariam(self):
         print("mariam")
-        member = await self.client.fetch_user(id=663607852933447700)
+        member = await self.client.fetch_user(663607852933447700)
         await member.edit(nick="GEN Mariam")
         await asyncio.sleep(15)
 
