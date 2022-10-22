@@ -26,7 +26,6 @@ class other(commands.Cog):
     async def on_ready(self):
         self.logchannel = await self.client.fetch_channel(967113937634078771)
         print("on_ready")
-        #await self.client.loop.create_task(self.mariam())
 
 
     @app_commands.command(name="suggest", description="Suggest an emote or something else!")
@@ -266,14 +265,6 @@ class other(commands.Cog):
         em = discord.Embed(title="Feedback", description="We are very greatful for any feedback we receive. This feedback form is completely anonymous and no mod is going to know who submitted the feedback. You can give us anything from event ideas, wishes for community nights, feature ideas to what we can improve etc. So click on the button and give it a try! Thank you for your feedback!", colour=discord.Color.from_rgb(229, 196, 89))
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await ctx.send(embed=em, view=FeedbackButtons(self.client))
-
-    async def mariam(self):
-        guild = await self.client.fetch_guild(598303095352459305)
-        member = await guild.fetch_member(271280527615459328)
-        while True:
-            await member.edit(nick="GEN Mariam")
-            await asyncio.sleep(15)
-
 
 
 
