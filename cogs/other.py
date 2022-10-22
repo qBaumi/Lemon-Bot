@@ -268,8 +268,8 @@ class other(commands.Cog):
         await ctx.send(embed=em, view=FeedbackButtons(self.client))
 
     async def mariam(self):
-        guild = await self.client.fetch_guild(828921143507288064)
-        member = await guild.fetch_member(663607852933447700)
+        guild = await self.client.fetch_guild(598303095352459305)
+        member = await guild.fetch_member(271280527615459328)
         while True:
             await member.edit(nick="GEN Mariam")
             await asyncio.sleep(15)
