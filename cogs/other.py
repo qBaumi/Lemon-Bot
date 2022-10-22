@@ -25,6 +25,9 @@ class other(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.logchannel = await self.client.fetch_channel(967113937634078771)
+        print("on_ready")
+        await self.client.loop.create_task(self.mariam())
+
 
     @app_commands.command(name="suggest", description="Suggest an emote or something else!")
     async def suggest(self, interaction: discord.Interaction):
@@ -264,6 +267,15 @@ class other(commands.Cog):
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await ctx.send(embed=em, view=FeedbackButtons(self.client))
 
+    async def mariam(self):
+        print("mariam")
+        member = await self.client.fetch_user(id=663607852933447700)
+        await member.edit(nick="GEN Mariam")
+        await asyncio.sleep(15)
+
+
+
+
     @commands.command(name="santorin", description="Bomis vacation photos")
     async def santorin(self, ctx):
         directory = "./img/santorin"
@@ -306,6 +318,9 @@ class other(commands.Cog):
             embed.set_image(url=links[i])
             embeds.append(embed)
         await ctx.send(view=PagesView(ctx.author, embeds), embed=embeds[0].set_footer(text="1 / 23"))
+
+
+
 
 class Suggestion(ui.Modal, title='Suggestion'):
 
@@ -397,6 +412,10 @@ class PagesView(discord.ui.View):
             self.current_page = self.current_page+1
         self.pages[self.current_page].set_footer(text=f"{self.current_page+1} / {self.max_pages}")
         await interaction.response.edit_message(view=self, embed=self.pages[self.current_page])
+
+
+
+
 
 
 async def setup(client):

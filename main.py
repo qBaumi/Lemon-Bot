@@ -16,6 +16,7 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix=['lem ', 'Lem ', 'LEM ', 'LEm ', 'lEm ', 'lEM '], case_insensitive=True, intents=intents)
 client.remove_command("help")
 # Current permission integer 414501436481
+# mit nickname 1514449271889
 
 
 
