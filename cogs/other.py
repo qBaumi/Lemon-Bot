@@ -270,7 +270,7 @@ class other(commands.Cog):
     async def mariam(self):
         print("mariam")
         guild = await self.client.fetch_guild(828921143507288064)
-        member = await guild.get_member(663607852933447700)
+        member = guild.get_member(663607852933447700)
         await member.edit(nick="GEN Mariam")
         await asyncio.sleep(15)
 
