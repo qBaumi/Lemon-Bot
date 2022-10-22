@@ -26,7 +26,7 @@ class other(commands.Cog):
     async def on_ready(self):
         self.logchannel = await self.client.fetch_channel(967113937634078771)
         print("on_ready")
-        await self.client.loop.create_task(self.mariam())
+        #await self.client.loop.create_task(self.mariam())
 
 
     @app_commands.command(name="suggest", description="Suggest an emote or something else!")
