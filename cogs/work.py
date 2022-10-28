@@ -27,11 +27,11 @@ class work(commands.Cog):
 
         user = interaction.user
 
-        isOnCooldown, sec = es.isOnCooldown(user, "work")
-        if isOnCooldown:
-            await interaction.response.send_message(
-                f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>", ephemeral=True)
-            return
+        #isOnCooldown, sec = es.isOnCooldown(user, "work")
+        #if isOnCooldown:
+        #    await interaction.response.send_message(
+        #        f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>", ephemeral=True)
+        #    return
 
         await interaction.response.defer()
 
