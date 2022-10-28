@@ -317,6 +317,7 @@ class work(commands.Cog):
     async def on_work_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
             await interaction.response.send_message(str(error), ephemeral=True)
+        work.cooldown.reset()
 
 async def setup(client):
     await client.add_cog(work(client), guilds=guilds)
