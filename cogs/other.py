@@ -33,6 +33,11 @@ class other(commands.Cog):
         modal = Suggestion(client=self.client)
         await interaction.response.send_modal(modal)
 
+    @app_commands.command(name="halloween", description="Send your answer for our riddle here!")
+    async def halloween(self, interaction: discord.Interaction):
+        modal = Answer(client=self.client)
+        await interaction.response.send_modal(modal)
+
     @app_commands.describe(game='The activity you want to start')
     @app_commands.choices(game=[
         Choice(name='Watch Together', value="880218394199220334"),
@@ -344,6 +349,30 @@ class Suggestion(ui.Modal, title='Suggestion'):
         # Make an embed with the results
         em = discord.Embed(title="Suggestion", description=f"by {interaction.user}")
         em.add_field(name=self.name, value=self.desc)
+
+        await channel.send(embed=em)
+
+
+class Answer(ui.Modal, title='Halloween Answer'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+    desc = ui.TextInput(label='Answer', style=discord.TextStyle.paragraph,
+                        placeholder="Put your answer to the riddle here")
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'Thanks for participating!', ephemeral=True)
+
+        # 656636484937449518 this is the suggestion-log channel
+        # 651364619402739713 this is the test channel
+        channel_id = 651364619402739713  # the id of the channel the results get sent to
+        channel = await self.client.fetch_channel(channel_id)
+
+        # Make an embed with the results
+        em = discord.Embed(title="Solution", description=f"by {interaction.user}")
+        em.add_field(name="Answer", value=self.desc)
 
         await channel.send(embed=em)
 
