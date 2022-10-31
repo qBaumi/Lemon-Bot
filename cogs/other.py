@@ -373,7 +373,7 @@ class Answer(ui.Modal, title='Halloween Answer'):
         # Make an embed with the results
         em = discord.Embed(title="Solution", description=f"by {interaction.user}")
         em.add_field(name="Answer", value=self.desc)
-
+        em.set_footer(text=f'{datetime.datetime.now().strftime("%H:%M:%S")}')
         await channel.send(embed=em)
 
 class Feedback(ui.Modal, title='Feedback'):
