@@ -367,7 +367,7 @@ class Answer(ui.Modal, title='Halloween Answer'):
 
         # 656636484937449518 this is the suggestion-log channel
         # 651364619402739713 this is the test channel
-        channel_id = 651364619402739713  # the id of the channel the results get sent to
+        channel_id = 1036628303685099622  # the id of the channel the results get sent to
         channel = await self.client.fetch_channel(channel_id)
 
         # Make an embed with the results
