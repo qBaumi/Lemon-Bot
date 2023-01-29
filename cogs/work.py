@@ -21,6 +21,8 @@ class work(commands.Cog):
         versions = watcher.data_dragon.versions_for_region("euw")
         champions_version = versions['n']['champion']
         self.champions = watcher.data_dragon.champions(champions_version)["data"]
+        self.champions = list(self.champions.keys())
+        print(self.champions)
 
 
     @app_commands.checks.cooldown(1, 300, key=lambda i: (i.guild_id, i.user.id))
@@ -129,9 +131,9 @@ class work(commands.Cog):
             elif name == 'aram proplayer':
 
                 champs = []
-                champs.append(random.choice(self.champions.keys()))
-                champs.append(random.choice(self.champions.keys()))
-                champs.append(random.choice(self.champions.keys()))
+                champs.append(random.choice(self.champions))
+                champs.append(random.choice(self.champions))
+                champs.append(random.choice(self.champions))
                 embed = discord.Embed(title=f"Aram, quick - which champion do you take?", description=f"1️⃣ {champs[0]}\n 2️⃣ {champs[1]}\n 3️⃣ {champs[2]}\n ")
 
                 message = await interaction.channel.send(f"{user.mention}\n", embed=embed)
