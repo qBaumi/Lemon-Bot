@@ -128,8 +128,11 @@ class work(commands.Cog):
                 await interaction.followup.send(f"{user.mention}\n", embed=embed)
             elif name == 'aram proplayer':
 
-                champs = [random.choice(self.champions), random.choice(self.champions), random.choice(self.champions)]
-
+                champs = []
+                champs.append(random.choice(self.champions))
+                champs.append(random.choice(self.champions))
+                champs.append(random.choice(self.champions))
+                print(champs)
                 embed = discord.Embed(title=f"Aram, quick - which champion do you take?", description=f"1️⃣ {champs[0]}\n 2️⃣ {champs[1]}\n 3️⃣ {champs[2]}\n ")
 
                 message = await interaction.channel.send(f"{user.mention}\n", embed=embed)
