@@ -22,7 +22,6 @@ class work(commands.Cog):
         champions_version = versions['n']['champion']
         self.champions = watcher.data_dragon.champions(champions_version)["data"]
         self.champions = list(self.champions.keys())
-        print(self.champions)
 
 
     @app_commands.checks.cooldown(1, 300, key=lambda i: (i.guild_id, i.user.id))
