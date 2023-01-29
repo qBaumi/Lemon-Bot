@@ -140,12 +140,20 @@ class work(commands.Cog):
                 await message.add_reaction('3️⃣')
 
                 try:
-                    useremoji = await self.client.wait_for('reaction_add', timeout=10, check=checkreaction)
+                    reaction, useremoji = await self.client.wait_for('reaction_add', timeout=10, check=checkreaction)
                 except asyncio.TimeoutError:
                     await interaction.followup.send(f"{user.mention}\nYou didnt answer fast enough!")
                     es.setCooldown(user, "work")
                     return
                 await es.update_balance(user, lohn, 'pocket')
+                if reaction.emoji == '1️⃣':
+                    champ = champs[0]
+                elif reaction.emoji == '2️⃣':
+                    champ = champs[1]
+                elif reaction.emoji == '3️⃣':
+                    champ = champs[2]
+                else:
+                    champ = "<:lolsinged:989931198501486682>"
                 win = random.choice([True, False])
                 if win:
                     embed = discord.Embed(title=f'You won the game as {champ} (feels nice playing your otp in aram) and you received {lohn} lemons!')
