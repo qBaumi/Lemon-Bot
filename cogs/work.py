@@ -350,13 +350,7 @@ class work(commands.Cog):
                 await interaction.followup.send(f"{user.mention}\nI think the creator didnt finish this job yet...")
             es.setCooldown(user, "work")
 
-    @work.error
-    async def on_work_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-        if isinstance(error, app_commands.CommandOnCooldown):
-            await interaction.response.send_message(str(error), ephemeral=True)
-        else:
-            print(error)
-        #work.work.cooldown.reset()
+
 
 async def setup(client):
     await client.add_cog(work(client), guilds=guilds)
