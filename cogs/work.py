@@ -130,7 +130,7 @@ class work(commands.Cog):
 
                 champs = [random.choice(self.champions), random.choice(self.champions), random.choice(self.champions)]
 
-                embed = discord.Embed(title=f"Aram, quick - which champion do you take?", description=f"1️⃣ \n 2️⃣ \n 3️⃣ \n ")
+                embed = discord.Embed(title=f"Aram, quick - which champion do you take?", description=f"1️⃣ {champs[0]}\n 2️⃣ {champs[1]}\n 3️⃣ {champs[2]}\n ")
 
                 message = await interaction.channel.send(f"{user.mention}\n", embed=embed)
                 await message.add_reaction('1️⃣')
@@ -354,6 +354,8 @@ class work(commands.Cog):
     async def on_work_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
             await interaction.response.send_message(str(error), ephemeral=True)
+        else:
+            print(error)
         #work.work.cooldown.reset()
 
 async def setup(client):
