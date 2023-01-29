@@ -129,7 +129,7 @@ class work(commands.Cog):
             elif name == 'aram proplayer':
 
                 champs = [random.choice(self.champions), random.choice(self.champions), random.choice(self.champions)]
-                while champs[0] != champs[1] and champs[0] != champs[2] and champs[1] != champs[2]:
+                while champs[0] == champs[1] and champs[0] == champs[2] and champs[1] == champs[2]:
                     champs = [random.choice(self.champions), random.choice(self.champions), random.choice(self.champions)]
 
                 embed = discord.Embed(title=f"Aram, quick - which champion do you take?", description=f"1️⃣ \n 2️⃣ \n 3️⃣ \n ")
