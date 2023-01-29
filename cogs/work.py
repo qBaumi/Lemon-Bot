@@ -4,18 +4,23 @@ import math
 import random
 import time
 
+from riotwatcher import LolWatcher
+
 import cogs.essentialfunctions as es
 import discord
 from discord.ext import commands
 from discord import app_commands
-from config import guilds
+from config import guilds, api_key
 from .job import joblist, job_helper, getxp, add_xp
 
 class work(commands.Cog):
     def __init__(self, client):
         self.client = client
         super().__init__()
-
+        watcher = LolWatcher(api_key)
+        versions = watcher.data_dragon.versions_for_region("euw")
+        champions_version = versions['n']['champion']
+        self.champions = watcher.data_dragon.champions(champions_version)["data"]
 
 
     @app_commands.checks.cooldown(1, 300, key=lambda i: (i.guild_id, i.user.id))
@@ -120,6 +125,31 @@ class work(commands.Cog):
                     return
                 await es.update_balance(user, lohn, 'pocket')
                 embed = discord.Embed(title=f'You received {lohn} lemons!')
+                await interaction.followup.send(f"{user.mention}\n", embed=embed)
+            elif name == 'aram proplayer':
+
+                for champ in self.champions:
+                    print(champ)
+
+                embed = discord.Embed(title=f"Aram, quick - which champion do you take?", description=f"1️⃣ \n 2️⃣ \n 3️⃣ \n ")
+
+                message = await interaction.channel.send(f"{user.mention}\n", embed=embed)
+                await message.add_reaction('1️⃣')
+                await message.add_reaction('2️⃣')
+                await message.add_reaction('3️⃣')
+
+                try:
+                    useremoji = await self.client.wait_for('reaction_add', timeout=10, check=checkreaction)
+                except asyncio.TimeoutError:
+                    await interaction.followup.send(f"{user.mention}\nYou didnt answer fast enough!")
+                    es.setCooldown(user, "work")
+                    return
+                await es.update_balance(user, lohn, 'pocket')
+                win = random.choice([True, False])
+                if win:
+                    embed = discord.Embed(title=f'You won the game and you received {lohn} lemons!')
+                else:
+                    embed = discord.Embed(title=f'You lost the game, but you still received {lohn} lemons!')
                 await interaction.followup.send(f"{user.mention}\n", embed=embed)
 
             elif name == 'lemonade salesman':
