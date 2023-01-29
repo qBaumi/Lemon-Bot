@@ -650,6 +650,7 @@ class economy(commands.Cog):
         em = discord.Embed(colour=discord.Color.red(), title=f"{user.name} stole {victim.name} {round(usersvictim[str(victim.id)]['pocket']*percent, 0):g} lemons", description=f"Less lemonade for {victim.name} I guess")
         await interaction.response.send_message(embed=em)
         es.setCooldown(user, "steal")
+        es.setCooldown(victim, "stealuser")
 
 
 

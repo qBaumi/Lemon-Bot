@@ -228,8 +228,8 @@ async def getChoices(user):
         return
     self.setCooldown(user, "daily")
 """
-def isOnCooldown(user, type):
-    data = sql_select(f"SELECT time FROM cooldowns WHERE id = '{user.id}' AND type = '{type}'")
+def isOnCooldown(user, cdtype):
+    data = sql_select(f"SELECT time FROM cooldowns WHERE id = '{user.id}' AND type = '{cdtype}'")
 
     current_time = time.time()
     if not data:
@@ -239,7 +239,7 @@ def isOnCooldown(user, type):
     print(f"Cooldown geht bis: {data}")
     if data > current_time:
         return True, math.floor(data - current_time)
-    sql_exec(f"DELETE FROM cooldowns WHERE id = '{user.id}' AND type = '{type}'")
+    sql_exec(f"DELETE FROM cooldowns WHERE id = '{user.id}' AND type = '{cdtype}'")
     return False, 0
 
 def setCooldown(user, type):
