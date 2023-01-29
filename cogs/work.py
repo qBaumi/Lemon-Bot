@@ -128,8 +128,9 @@ class work(commands.Cog):
                 await interaction.followup.send(f"{user.mention}\n", embed=embed)
             elif name == 'aram proplayer':
 
-                for champ in self.champions:
-                    print(champ)
+                champs = [random.choice(self.champions), random.choice(self.champions), random.choice(self.champions)]
+                while champs[0] != champs[1] and champs[0] != champs[2] and champs[1] != champs[2]:
+                    champs = [random.choice(self.champions), random.choice(self.champions), random.choice(self.champions)]
 
                 embed = discord.Embed(title=f"Aram, quick - which champion do you take?", description=f"1️⃣ \n 2️⃣ \n 3️⃣ \n ")
 
@@ -147,9 +148,9 @@ class work(commands.Cog):
                 await es.update_balance(user, lohn, 'pocket')
                 win = random.choice([True, False])
                 if win:
-                    embed = discord.Embed(title=f'You won the game and you received {lohn} lemons!')
+                    embed = discord.Embed(title=f'You won the game as {champ} (feels nice playing your otp in aram) and you received {lohn} lemons!')
                 else:
-                    embed = discord.Embed(title=f'You lost the game, but you still received {lohn} lemons!')
+                    embed = discord.Embed(title=f'You lost the game as first time {champ}, but you still received {lohn} lemons!')
                 await interaction.followup.send(f"{user.mention}\n", embed=embed)
 
             elif name == 'lemonade salesman':
