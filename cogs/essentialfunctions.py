@@ -249,6 +249,8 @@ def setCooldown(user, type):
         sec = 300
     elif type == "steal":
         sec = 369
+    elif type == "stealuser":
+        sec = 900
     else:
         sec = 0
     sql_exec(f"INSERT INTO cooldowns VALUES ('{user.id}', {time.time()+sec},'{type}')")

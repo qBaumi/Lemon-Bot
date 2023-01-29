@@ -594,10 +594,17 @@ class economy(commands.Cog):
             , f"Robbing in front of a cop...you should try to type that in youtube!",
                      f"When you opened {victim.name}'s bag, her little chihuahua (Yeah I googled that name before) jumped into your face and bit you"]
 
+        # Cooldown for each user which is 5 min
         isOnCooldown, sec = es.isOnCooldown(user, "steal")
         if isOnCooldown:
             await interaction.response.send_message(
                 f"You are still on cooldown until <t:{math.floor(time.time() + sec)}>", ephemeral=True)
+            return
+        # Cooldown for the person that gets stolen from, you can get lemons stolen only every 15 min
+        isOnCooldown, sec = es.isOnCooldown(victim, "stealperson")
+        if isOnCooldown:
+            await interaction.response.send_message(
+                f"{victim.name} can't get stolen from again. Try again later!", ephemeral=True)
             return
 
         """FALSE CHECKS"""

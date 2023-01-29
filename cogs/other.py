@@ -33,10 +33,6 @@ class other(commands.Cog):
         modal = Suggestion(client=self.client)
         await interaction.response.send_modal(modal)
 
-    @app_commands.command(name="halloween", description="Send your answer for our riddle here!")
-    async def halloween(self, interaction: discord.Interaction):
-        modal = Answer(client=self.client)
-        await interaction.response.send_modal(modal)
 
     @app_commands.describe(game='The activity you want to start')
     @app_commands.choices(game=[
@@ -191,39 +187,6 @@ class other(commands.Cog):
                 super().__init__()
 
                 self.add_item(discord.ui.Button(label='Prediction Sheet', url=sheetlink))
-    class Triathlon(ui.Modal, title="Triathlon Tournament"):
-
-        def __init__(self, client, tournament, resultchannelid, sheetlink):
-            super().__init__()
-            self.client = client
-            self.tournament = tournament
-            self.resultchannelid = resultchannelid
-            self.sheetlink = sheetlink
-
-
-        team = ui.TextInput(label='Team or Free Agent', placeholder="Put your teams discord names here", style=discord.TextStyle.paragraph)
-
-        async def on_submit(self, interaction: discord.Interaction):
-            await interaction.response.send_message(f'Thank you for signing up! You can see all teams in this sheet.', ephemeral=True, view=self.SheetLink(sheetlink=self.sheetlink))
-
-            # 656636484937449518 this is the suggestion-log channel
-            # 651364619402739713 this is the test channel
-            # 820728066514354206 prediction sheet
-            # the id of the channel the results get sent to
-            channel = await self.client.fetch_channel(self.resultchannelid)
-
-            # Make an embed with the results
-            em = discord.Embed(title=self.tournament, description=f"by {interaction.user.mention} | {str(interaction.user)}")
-            em.add_field(name="Team or Free Agent", value=self.team)
-
-            await channel.send(embed=em)
-
-        class SheetLink(discord.ui.View):
-            def __init__(self, sheetlink):
-                super().__init__()
-
-                self.add_item(discord.ui.Button(label='Teams', url=sheetlink))
-
 
 
 
@@ -238,11 +201,6 @@ class other(commands.Cog):
     #    modal = self.Prediction(client=self.client, tournament="LEC Summer Playoffs 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit#gid=715753226")
     #    await interaction.response.send_modal(modal)
 
-
-    #@app_commands.command(name="signup", description="Sign up for our tournament!")
-    #async def signup(self, interaction: discord.Interaction):
-    #    modal = self.Triathlon(client=self.client, tournament="Triathlon Tournament", resultchannelid=1008476210029936721, sheetlink="https://docs.google.com/spreadsheets/d/1Urn2FiA0vrs6bmLX0itbLQnxBd_CL8CRHLuNAakt0jI/edit?usp=sharing")
-    #    await interaction.response.send_modal(modal)
 
     @app_commands.command(name="feedback", description="Give us anonymous feedback!")
     async def feedback(self, interaction: discord.Interaction):
@@ -353,28 +311,6 @@ class Suggestion(ui.Modal, title='Suggestion'):
         await channel.send(embed=em)
 
 
-class Answer(ui.Modal, title='Halloween Answer'):
-
-    def __init__(self, client):
-        super().__init__()
-        self.client = client
-
-    desc = ui.TextInput(label='Answer', style=discord.TextStyle.paragraph,
-                        placeholder="Put your answer to the riddle here")
-
-    async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f'Thanks for participating!', ephemeral=True)
-
-        # 656636484937449518 this is the suggestion-log channel
-        # 651364619402739713 this is the test channel
-        channel_id = 1036628303685099622  # the id of the channel the results get sent to
-        channel = await self.client.fetch_channel(channel_id)
-
-        # Make an embed with the results
-        em = discord.Embed(title="Solution", description=f"by {interaction.user}")
-        em.add_field(name="Answer", value=self.desc)
-        em.set_footer(text=f'{datetime.datetime.now().strftime("%H:%M:%S")}')
-        await channel.send(embed=em)
 
 class Feedback(ui.Modal, title='Feedback'):
 
