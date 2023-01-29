@@ -129,10 +129,9 @@ class work(commands.Cog):
             elif name == 'aram proplayer':
 
                 champs = []
-                champs.append(random.choice(self.champions))
-                champs.append(random.choice(self.champions))
-                champs.append(random.choice(self.champions))
-                print(champs)
+                champs.append(random.choice(self.champions.keys()))
+                champs.append(random.choice(self.champions.keys()))
+                champs.append(random.choice(self.champions.keys()))
                 embed = discord.Embed(title=f"Aram, quick - which champion do you take?", description=f"1️⃣ {champs[0]}\n 2️⃣ {champs[1]}\n 3️⃣ {champs[2]}\n ")
 
                 message = await interaction.channel.send(f"{user.mention}\n", embed=embed)
