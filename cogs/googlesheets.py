@@ -54,7 +54,7 @@ def getColumnNumber(columnName):
 class googlesheets(commands.Cog):
     def __init__(self, client):
         self.client = client
-        await self.lock_sheet_timer.start()
+        self.lock_sheet_timer.start()
 
 
     @commands.command()
