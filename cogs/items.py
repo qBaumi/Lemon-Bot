@@ -52,7 +52,7 @@ class items(commands.Cog):
 
 
 
-
+    @app_commands.checks.cooldown(1, 10, key=lambda i: (i.guild_id, i.user.id))
     @app_commands.command(name="use", description="Use an item from your bag")
     @app_commands.describe(item="The item you use")
     async def use(self, interaction : discord.Interaction, item : str):
@@ -531,8 +531,6 @@ class items(commands.Cog):
                     except asyncio.TimeoutError:
                         await interaction.channel.send(f"{interaction.user.mention}\nYou didnt answer fast enough!")
                         return
-                    print("streamer")
-                    print(reaction2.emoji)
                     if str(reaction2.emoji) == '✅':
                         try:
                             data = es.sql_select(f"SELECT * FROM jobs WHERE id = {ctx.author.id}")
@@ -769,6 +767,13 @@ class items(commands.Cog):
             stupidpetsclass = None
         else:
             await interaction.response.send_message.send(f"{ctx.author.mention}\nThat item does not exist or has no usage yet")
+
+    @use.error
+    async def on_work_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+        if isinstance(error, app_commands.CommandOnCooldown):
+            await interaction.response.send_message(str(error), ephemeral=True)
+            return
+        print(error)
 
     @use.autocomplete('item')
     async def use_autocomplete(
