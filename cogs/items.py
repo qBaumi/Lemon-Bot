@@ -527,7 +527,7 @@ class items(commands.Cog):
                     msg = await interaction.channel.send(f"Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator?")
                     await msg.add_reaction('✅')
                     try:
-                        useremoji = await self.client.wait_for('reaction_add', timeout=180, check=checkreaction)
+                        reaction, useremoji = await self.client.wait_for('reaction_add', timeout=180, check=checkreaction)
                     except asyncio.TimeoutError:
                         await interaction.channel.send(f"{user.mention}\nYou didnt answer fast enough!")
                         return
