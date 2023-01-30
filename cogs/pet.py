@@ -10,7 +10,7 @@ from discord import app_commands
 from config import guilds
 
 # If no tzinfo is given then UTC is assumed.
-time = datetime.time(hour=22, minute=2)
+time = datetime.time(hour=12, minute=0)
 time.replace(tzinfo=timezone('CET'))
 
 class pet(commands.GroupCog):
@@ -18,6 +18,7 @@ class pet(commands.GroupCog):
         super().__init__()
         self.client = client
         self.ch_shop.start()
+        self.ch_stats.start()
 
 
     @app_commands.command(name="info", description="View your pet, its stats and interact with it")
@@ -594,7 +595,7 @@ class pet(commands.GroupCog):
             await ctx.send("You are not my Master!")
             await ctx.send("<:Madge:786069469020815391>")
             return
-        await self.rotateshop(7)
+        await self.rotateshop(5)
         await ctx.send("Shop rotated, Sir!")
     async def rotateshop(self, shopsize):
         pets = await self.allpets()
@@ -629,18 +630,15 @@ class pet(commands.GroupCog):
                 self.updatestat(pet[0], "care", pet[12]-1, slot)
             if stats["fun"] > 0:
                 self.updatestat(pet[0], "fun", pet[13]-1, slot)
-    async def ch_stats(self):
-        await self.client.wait_until_ready()
-        while not self.client.is_closed():
-            await self.getminustats("equippedpet")
-            await self.getminustats("petslot1")
-            await self.getminustats("petslot2")
-            await self.getminustats("petslot3")
-            await asyncio.sleep(60)
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        await self.client.loop.create_task(self.ch_shop())
+    @tasks.loop(seconds=60)
+    async def ch_stats(self):
+        await self.getminustats("equippedpet")
+        await self.getminustats("petslot1")
+        await self.getminustats("petslot2")
+        await self.getminustats("petslot3")
+
+
     async def allpets(self):
         # open the json file in read mode to load users and return them
         with open("./json/allpets.json", "r") as f:
