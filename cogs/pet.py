@@ -583,7 +583,6 @@ class pet(commands.GroupCog):
 
     @tasks.loop(time=time)
     async def ch_shop(self):
-        await self.client.wait_until_ready()
         print("CHANGE SHOP")
         await self.rotateshop(5)
 
