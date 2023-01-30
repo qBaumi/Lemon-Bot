@@ -499,14 +499,6 @@ class items(commands.Cog):
                 await interaction.channel.send(line)
                 return
             if str(reaction.emoji) == "💻":
-                sql = "SELECT id FROM users"
-                data = es.sql_select(sql)
-                users = data
-                userlist = []
-                for user in users:
-                    userlist.append(user)
-                user = random.choice(userlist)
-                user = user[0]
                 viewerlist = [0, 30, 100, 300, 500, 1000, 3000]
                 viewerlistindexes = [0, 1, 2, 3, 4, 5, 6]
                 minviewersindex = random.choices(viewerlistindexes, weights=(70, 50, 30, 20, 10, 5, 2), k=1)[0]

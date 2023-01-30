@@ -127,6 +127,38 @@ class work(commands.Cog):
                 await es.update_balance(user, lohn, 'pocket')
                 embed = discord.Embed(title=f'You received {lohn} lemons!')
                 await interaction.followup.send(f"{user.mention}\n", embed=embed)
+            elif name == 'content creator':
+                rndmuser = es.getRandomUser()
+                games = ["TFT", "League of Legends", "Aram", "Valorant", "in Hot Tub"]
+                game = random.choice(games)
+                hours = random.randrange(1, 15)
+                embed = discord.Embed(title=f"What do you want to do today?", description=f"1️⃣ stream {game}\n 2️⃣ sorry, no stream today\n 3️⃣ steal other content and react to it\n 4️⃣ collab with <@!{rndmuser}>")
+                message = await interaction.channel.send(f"{user.mention}\n", embed=embed)
+                await message.add_reaction('1️⃣')
+                await message.add_reaction('2️⃣')
+                await message.add_reaction('3️⃣')
+                await message.add_reaction('4️⃣')
+                try:
+                    reaction, useremoji = await self.client.wait_for('reaction_add', timeout=10, check=checkreaction)
+                except asyncio.TimeoutError:
+                    await interaction.followup.send(f"{user.mention}\nYou didnt answer fast enough!")
+                    es.setCooldown(user, "work")
+                    return
+                await es.update_balance(user, lohn, 'pocket')
+                if reaction.emoji == '1️⃣':
+                    line = f"You streamed {game} for {hours} hours"
+                elif reaction.emoji == '2️⃣':
+                    line = f"You announced in <@598311673945653258> that you won't stream today and later posted it in <@944417237954093066>"
+                elif reaction.emoji == '3️⃣':
+                    line = f"You reacted to a MrBeast video"
+                elif reaction.emoji == '4️⃣':
+                    if game == "in Hot Tub":
+                        line = f"You successfully collabed with <@{rndmuser}> in the Hot Tub for {hours} hours"
+                    else:
+                        line = f"You successfully collabed with <@{rndmuser}> \nYou played {game} for {hours} hours"
+                else:
+                    line = f"You had an accident."
+                await interaction.followup.send(f"{user.mention}\n{line}", embed=embed)
             elif name == 'aram proplayer':
 
                 champs = []

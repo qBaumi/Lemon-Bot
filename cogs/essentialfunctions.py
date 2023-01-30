@@ -1,4 +1,5 @@
 import math
+import random
 import time
 import mysql.connector, json
 from config import allowedRoles, dbargs
@@ -254,3 +255,14 @@ def setCooldown(user, type):
     else:
         sec = 0
     sql_exec(f"INSERT INTO cooldowns VALUES ('{user.id}', {time.time()+sec},'{type}')")
+
+def getRandomUser():
+    sql = "SELECT id FROM users"
+    data = sql_select(sql)
+    users = data
+    userlist = []
+    for user in users:
+        userlist.append(user)
+    user = random.choice(userlist)
+    user = user[0]
+    return user
