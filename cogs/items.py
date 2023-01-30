@@ -524,15 +524,16 @@ class items(commands.Cog):
                 line = f"You streamed `{random.choice(games)}` for `{hours}` hours with on average `{viewers}` viewers"
                 await interaction.channel.send(line)
                 if viewers >= 1000:
-                    msg = await interaction.channel.send(f"Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator?")
+                    msg = await interaction.channel.send(f"🎉 🎉 🎉 Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator? 🎉 🎉 🎉")
                     await msg.add_reaction('✅')
                     try:
-                        reaction, useremoji = await self.client.wait_for('reaction_add', timeout=180, check=checkreaction)
+                        reaction2, useremoji2 = await self.client.wait_for('reaction_add', timeout=180, check=checkreaction)
                     except asyncio.TimeoutError:
                         await interaction.channel.send(f"{user.mention}\nYou didnt answer fast enough!")
                         return
-                    print(reaction.emoji)
-                    if str(reaction.emoji) == '✅':
+                    print("streamer")
+                    print(reaction2.emoji)
+                    if str(reaction2.emoji) == '✅':
                         try:
                             data = es.sql_select(f"SELECT * FROM jobs WHERE id = {user.id}")
                             userjob = [{"Name": data[0][1], "Verdienst": data[0][2]}]
