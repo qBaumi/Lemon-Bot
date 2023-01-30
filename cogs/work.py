@@ -153,12 +153,12 @@ class work(commands.Cog):
                     line = f"You reacted to a MrBeast video"
                 elif reaction.emoji == '4️⃣':
                     if game == "in Hot Tub":
-                        line = f"You successfully collabed with <@{rndmuser}> in the Hot Tub for {hours} hours"
+                        line = f"You successfully collabed with <@!{rndmuser}> in the Hot Tub for {hours} hours"
                     else:
-                        line = f"You successfully collabed with <@{rndmuser}> \nYou played {game} for {hours} hours"
+                        line = f"You successfully collabed with <@!{rndmuser}> \nYou played {game} for {hours} hours"
                 else:
                     line = f"You had an accident."
-                await interaction.followup.send(f"{user.mention}\n{line}", embed=embed)
+                await interaction.followup.send(f"{user.mention}\n{line}")
             elif name == 'aram proplayer':
 
                 champs = []
