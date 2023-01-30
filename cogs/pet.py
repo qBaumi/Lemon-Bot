@@ -1,13 +1,17 @@
 import datetime
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import random, asyncio, json
+
+from pytz import timezone
+
 import cogs.essentialfunctions as es
 from discord import app_commands
 from config import guilds
 
-
-
+cet = datetime.timezone.tzname(timezone('CET'))
+# If no tzinfo is given then UTC is assumed.
+time = datetime.time(hour=21, minute=56, tzinfo=cet)
 
 class pet(commands.GroupCog):
     def __init__(self, client):
@@ -575,14 +579,13 @@ class pet(commands.GroupCog):
 
 
         return
+
+
+    @tasks.loop(time=time)
     async def ch_shop(self):
         await self.client.wait_until_ready()
-        while not self.client.is_closed():
-            now = datetime.datetime.now().hour
-            min = datetime.datetime.now().minute
-            if now == 12 and min == 0:
-                await self.rotateshop(5)
-            await asyncio.sleep(60)
+        await self.rotateshop(5)
+
     @commands.command()
     async def changeshop(self, ctx):
         id = 442913791215140875
@@ -636,7 +639,7 @@ class pet(commands.GroupCog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        await self.client.loop.create_task(self.ch_stats())
+        await self.ch_shop.start()
         await self.client.loop.create_task(self.ch_shop())
     async def allpets(self):
         # open the json file in read mode to load users and return them
