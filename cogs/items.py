@@ -419,10 +419,11 @@ class items(commands.Cog):
             def checkreaction(reaction, user):
                 return reaction.message.id == message.id and user == ctx.author
             await interaction.response.send_message("💻")
-            message = await interaction.channel.send("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`Make memes`")
+            message = await interaction.channel.send("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`Make memes`\n`Stream`")
             await message.add_reaction('<:GoogleChrome:883281638270844958>')
             await message.add_reaction('<:minecra:883287114270261268>')
             await message.add_reaction('<:FeelsDankMan:810802803739983903>')
+            await message.add_reaction('💻')
             # YOU NEED TO AWAIT LMAO
             try:
                 reaction, useremoji = await self.client.wait_for('reaction_add', timeout=10, check=checkreaction)
@@ -499,6 +500,51 @@ class items(commands.Cog):
                          f"<@!{user}> and you built a giant mob farm"]
                 line = random.choice(lines)
                 await interaction.channel.send(line)
+                return
+            if str(reaction.emoji) == "💻":
+                sql = "SELECT id FROM users"
+                data = es.sql_select(sql)
+                users = data
+                userlist = []
+                for user in users:
+                    userlist.append(user)
+                user = random.choice(userlist)
+                user = user[0]
+                viewerlist = [0, 30, 100, 300, 500, 1000, 3000]
+                viewerlistindexes = [0, 1, 2, 3, 4, 5, 6]
+                minviewersindex = random.choices(viewerlistindexes, weights=(70, 50, 30, 20, 10, 5, 2), k=1)[0]
+                minviewers = viewerlist[minviewersindex]
+                if minviewersindex != 6:
+                    maxviewers = viewerlist[minviewersindex+1]
+                else:
+                    maxviewers = 5000
+                viewers = random.randrange(minviewers, maxviewers)
+                games = ["TFT", "League of Legends", "Aram", "Valorant", "Hot Tub Stream"]
+                hours = random.randrange(1, 15)
+                line = f"You streamed `{random.choice(games)}` for `{hours}` hours with on average `{viewers}` viewers"
+                await interaction.channel.send(line)
+                if viewers >= 1000:
+                    msg = await interaction.channel.send(f"Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator?")
+                    await msg.add_reaction('✅')
+                    try:
+                        useremoji = await self.client.wait_for('reaction_add', timeout=180, check=checkreaction)
+                    except asyncio.TimeoutError:
+                        await interaction.channel.send(f"{user.mention}\nYou didnt answer fast enough!")
+                        return
+                    if reaction.emoji == '✅':
+                        try:
+                            data = es.sql_select(f"SELECT * FROM jobs WHERE id = {user.id}")
+                            userjob = [{"Name": data[0][1], "Verdienst": data[0][2]}]
+                        except:
+                            userjob = []
+                        if bool(userjob) == False:
+                            es.sql_exec(
+                                f"INSERT INTO jobs (id, Name, Verdienst) VALUES ({user.id}, 'Content Creator', 50)")
+                        else:
+                            es.sql_exec(f"UPDATE jobs SET Name = 'Content Creator' WHERE id = {user.id}")
+                            es.sql_exec(f"UPDATE jobs SET Verdienst = 50 WHERE id = {user.id}")
+                        await interaction.channel.send(f"{user.mention}\nYou now work as Content Creator!")
+
                 return
             if str(reaction.emoji) == "<:FeelsDankMan:810802803739983903>":
                 def check(m):

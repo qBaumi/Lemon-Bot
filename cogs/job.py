@@ -17,7 +17,8 @@ joblist = [{'Name': 'Lemon Farmer', 'Verdienst': 10, 'Beschreibung': ' Start lit
            {'Name': 'Cat Enjoyer', 'Verdienst': 35,'Beschreibung': ' <a:catJAM:810785548678987776><a:catJAM:810785548678987776><a:catJAM:810785548678987776>','lvl': 6},
            {'Name': 'Lemon Researcher', 'Verdienst': 40, 'Beschreibung': ' research 🔎 lemons 🍋', 'lvl': 7},
            {'Name': 'Pizza guy', 'Verdienst': 45, 'Beschreibung': ' make some pizza 🍕', 'lvl': 8},
-           {'Name': 'Aram Proplayer', 'Verdienst': 45, 'Beschreibung': ' na team, thats why high salary', 'lvl': 8}]
+           {'Name': 'Aram Proplayer', 'Verdienst': 45, 'Beschreibung': ' na team, thats why high salary', 'lvl': 8},
+           {'Name': 'Content Creator', 'Verdienst': 45, 'Beschreibung': ' -', 'lvl': 1000}]
 
 
 async def job_helper():
@@ -107,6 +108,8 @@ class job(commands.GroupCog):
         await self.jobxphelp(interaction)
         embed = discord.Embed(title='Open Jobs:')
         for job in joblist:
+            if job['Name'] == "Content Creator":
+                continue
             name = job['Name']
             desc = job['Beschreibung']
             lvl = str(job['lvl'])
