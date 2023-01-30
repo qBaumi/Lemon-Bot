@@ -528,9 +528,9 @@ class items(commands.Cog):
                             userjob = []
                         if bool(userjob) == False:
                             es.sql_exec(
-                                f"INSERT INTO jobs (id, Name, Verdienst) VALUES ({ctx.author.id}, 'Content Creator', 50)")
+                                f"INSERT INTO jobs (id, Name, Verdienst) VALUES ({ctx.author.id}, 'content creator', 50)")
                         else:
-                            es.sql_exec(f"UPDATE jobs SET Name = 'Content Creator' WHERE id = {ctx.author.id}")
+                            es.sql_exec(f"UPDATE jobs SET Name = 'content creator' WHERE id = {ctx.author.id}")
                             es.sql_exec(f"UPDATE jobs SET Verdienst = 50 WHERE id = {ctx.author.id}")
                         await interaction.channel.send(f"{interaction.user.mention}\nYou now work as Content Creator!")
 
