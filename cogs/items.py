@@ -416,8 +416,8 @@ class items(commands.Cog):
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel
 
-            def checkreaction(reaction, user):
-                return reaction.message.id == message.id and user == ctx.author
+            def checkreaction(reaction_, reactionuser):
+                return reaction_.message.id == message.id and reactionuser == ctx.author
             await interaction.response.send_message("💻")
             message = await interaction.channel.send("What do you want to do on your computer?\n`Browse`\n`Minecraft`\n`Make memes`\n`Stream`")
             await message.add_reaction('<:GoogleChrome:883281638270844958>')
@@ -524,10 +524,10 @@ class items(commands.Cog):
                 line = f"You streamed `{random.choice(games)}` for `{hours}` hours with on average `{viewers}` viewers"
                 await interaction.channel.send(line)
                 if viewers >= 1000:
-                    msg = await interaction.channel.send(f"🎉 🎉 🎉 Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator? 🎉 🎉 🎉")
+                    msg = await interaction.channel.send(f"🎉 Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator?")
                     await msg.add_reaction('✅')
                     try:
-                        reaction2, useremoji2 = await self.client.wait_for('reaction_add', timeout=180, check=checkreaction)
+                        reaction2, useremoji2 = await self.client.wait_for('reaction_add', timeout=5, check=checkreaction)
                     except asyncio.TimeoutError:
                         await interaction.channel.send(f"{user.mention}\nYou didnt answer fast enough!")
                         return
