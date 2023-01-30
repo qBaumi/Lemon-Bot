@@ -63,20 +63,21 @@ class googlesheets(commands.Cog):
         self.lock_sheet(LockRanges[0])
 
     @tasks.loop(seconds=59)
-    async def lock_sheet_timer(self, lockrangelist):
-            hour = datetime.datetime.now().hour
-            min = datetime.datetime.now().minute
-            print(min)
-            for range in lockrangelist:
-                #print(datetime.datetime.now().strftime("%d-%m-%Y"))
-                #print(range["date"])
-                #print(datetime.datetime.now().strftime("%H:%M"))
-                #print(range["time"])
-                if datetime.datetime.now().strftime("%d-%m-%Y") == range["date"] and range["time"] == datetime.datetime.now().strftime("%H:%M"):
-                    self.lock_sheet(range)
-                    channel = await self.client.fetch_channel(963720915575779358)
-                    await channel.send("Sheet was succesfully locked!")
-                    await asyncio.sleep(1)
+    async def lock_sheet_timer(self):
+        lockrangelist = LockRanges
+        hour = datetime.datetime.now().hour
+        min = datetime.datetime.now().minute
+        print(min)
+        for range in lockrangelist:
+            #print(datetime.datetime.now().strftime("%d-%m-%Y"))
+            #print(range["date"])
+            #print(datetime.datetime.now().strftime("%H:%M"))
+            #print(range["time"])
+            if datetime.datetime.now().strftime("%d-%m-%Y") == range["date"] and range["time"] == datetime.datetime.now().strftime("%H:%M"):
+                self.lock_sheet(range)
+                channel = await self.client.fetch_channel(963720915575779358)
+                await channel.send("Sheet was succesfully locked!")
+                await asyncio.sleep(1)
 
     def lock_sheet(self, range):
         Editors = {
