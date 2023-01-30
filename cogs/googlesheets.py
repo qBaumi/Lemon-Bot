@@ -3,11 +3,14 @@ from __future__ import print_function
 import asyncio
 import datetime
 import json
+
+from pytz import timezone
+
 from config import emails
 from config import guilds
 from googleapiclient.discovery import build
 import cogs.essentialfunctions as es
-from discord.ext import commands
+from discord.ext import commands, tasks
 from google.oauth2 import service_account
 
 with open("./googlesheets/spreatsheetid.txt") as f:
@@ -51,6 +54,7 @@ def getColumnNumber(columnName):
 class googlesheets(commands.Cog):
     def __init__(self, client):
         self.client = client
+        await self.lock_sheet_timer.start()
 
 
     @commands.command()
@@ -58,25 +62,22 @@ class googlesheets(commands.Cog):
     async def lock(self, ctx):
         self.lock_sheet(LockRanges[0])
 
+    @tasks.loop(seconds=59)
     async def lock_sheet_timer(self, lockrangelist):
-        await self.client.wait_until_ready()
-        while not self.client.is_closed():
-            await self.client.wait_until_ready()
-            while not self.client.is_closed():
-                hour = datetime.datetime.now().hour
-                min = datetime.datetime.now().minute
+            hour = datetime.datetime.now().hour
+            min = datetime.datetime.now().minute
+            print(min)
+            for range in lockrangelist:
+                #print(datetime.datetime.now().strftime("%d-%m-%Y"))
+                #print(range["date"])
+                #print(datetime.datetime.now().strftime("%H:%M"))
+                #print(range["time"])
+                if datetime.datetime.now().strftime("%d-%m-%Y") == range["date"] and range["time"] == datetime.datetime.now().strftime("%H:%M"):
+                    self.lock_sheet(range)
+                    channel = await self.client.fetch_channel(963720915575779358)
+                    await channel.send("Sheet was succesfully locked!")
+                    await asyncio.sleep(1)
 
-                for range in lockrangelist:
-                    #print(datetime.datetime.now().strftime("%d-%m-%Y"))
-                    #print(range["date"])
-                    #print(datetime.datetime.now().strftime("%H:%M"))
-                    #print(range["time"])
-                    if datetime.datetime.now().strftime("%d-%m-%Y") == range["date"] and range["time"] == datetime.datetime.now().strftime("%H:%M"):
-                        self.lock_sheet(range)
-                        channel = await self.client.fetch_channel(963720915575779358)
-                        await channel.send("Sheet was succesfully locked!")
-                        await asyncio.sleep(1)
-                await asyncio.sleep(59)
     def lock_sheet(self, range):
         Editors = {
             "users": emails,
@@ -121,9 +122,6 @@ class googlesheets(commands.Cog):
             spreadsheetId=SPREADSHEET_ID,
             body=body).execute()
         print(response)
-    @commands.Cog.listener()
-    async def on_ready(self):
-        await self.client.loop.create_task(self.lock_sheet_timer(LockRanges))
 
 async def setup(client):
     await client.add_cog(googlesheets(client), guilds=guilds)
