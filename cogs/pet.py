@@ -9,9 +9,9 @@ import cogs.essentialfunctions as es
 from discord import app_commands
 from config import guilds
 
-cet = datetime.timezone.tzname(timezone('CET'))
 # If no tzinfo is given then UTC is assumed.
-time = datetime.time(hour=21, minute=56, tzinfo=cet)
+time = datetime.time(hour=21, minute=58)
+time.replace(timezone('CET'))
 
 class pet(commands.GroupCog):
     def __init__(self, client):
