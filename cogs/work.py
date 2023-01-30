@@ -132,7 +132,7 @@ class work(commands.Cog):
                 games = ["TFT", "League of Legends", "Aram", "Valorant", "in Hot Tub"]
                 game = random.choice(games)
                 hours = random.randrange(1, 15)
-                embed = discord.Embed(title=f"What do you want to do today?", description=f"1️⃣ stream {game}\n 2️⃣ sorry, no stream today\n 3️⃣ steal other content and react to it\n 4️⃣ collab with <@!{rndmuser}>")
+                embed = discord.Embed(title=f"What do you want to do today?", description=f"1️⃣ stream {game}\n 2️⃣ sorry, no stream today\n 3️⃣ steal other content and react to it\n 4️⃣ collab with someone")
                 message = await interaction.channel.send(f"{user.mention}\n", embed=embed)
                 await message.add_reaction('1️⃣')
                 await message.add_reaction('2️⃣')
@@ -148,7 +148,7 @@ class work(commands.Cog):
                 if reaction.emoji == '1️⃣':
                     line = f"You streamed {game} for {hours} hours"
                 elif reaction.emoji == '2️⃣':
-                    line = f"You announced in <@598311673945653258> that you won't stream today and later posted it in <@944417237954093066>"
+                    line = f"You announced in <#598311673945653258> that you won't stream today and later posted it in <#944417237954093066>"
                 elif reaction.emoji == '3️⃣':
                     line = f"You reacted to a MrBeast video"
                 elif reaction.emoji == '4️⃣':
