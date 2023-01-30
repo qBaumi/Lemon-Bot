@@ -531,7 +531,8 @@ class items(commands.Cog):
                     except asyncio.TimeoutError:
                         await interaction.channel.send(f"{user.mention}\nYou didnt answer fast enough!")
                         return
-                    if reaction.emoji == '✅':
+                    print(reaction.emoji)
+                    if str(reaction.emoji) == '✅':
                         try:
                             data = es.sql_select(f"SELECT * FROM jobs WHERE id = {user.id}")
                             userjob = [{"Name": data[0][1], "Verdienst": data[0][2]}]
