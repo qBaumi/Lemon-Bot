@@ -10,14 +10,14 @@ from discord import app_commands
 from config import guilds
 
 # If no tzinfo is given then UTC is assumed.
-time = datetime.time(hour=22, minute=1)
+time = datetime.time(hour=22, minute=2)
 time.replace(tzinfo=timezone('CET'))
 
 class pet(commands.GroupCog):
     def __init__(self, client):
         super().__init__()
         self.client = client
-        await self.ch_shop.start()
+        self.ch_shop.start()
 
 
     @app_commands.command(name="info", description="View your pet, its stats and interact with it")
