@@ -512,7 +512,7 @@ class items(commands.Cog):
                 user = user[0]
                 viewerlist = [0, 30, 100, 300, 500, 1000, 3000]
                 viewerlistindexes = [0, 1, 2, 3, 4, 5, 6]
-                minviewersindex = random.choices(viewerlistindexes, weights=(70, 50, 30, 20, 10, 5, 2), k=1)[0]
+                minviewersindex = 6#random.choices(viewerlistindexes, weights=(70, 50, 30, 20, 10, 5, 2), k=1)[0]
                 minviewers = viewerlist[minviewersindex]
                 if minviewersindex != 6:
                     maxviewers = viewerlist[minviewersindex+1]
