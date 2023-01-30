@@ -10,7 +10,7 @@ from discord import app_commands
 from config import guilds
 
 # If no tzinfo is given then UTC is assumed.
-time = datetime.time(hour=21, minute=59)
+time = datetime.time(hour=22, minute=0)
 time.replace(tzinfo=timezone('CET'))
 
 class pet(commands.GroupCog):
@@ -584,6 +584,7 @@ class pet(commands.GroupCog):
     @tasks.loop(time=time)
     async def ch_shop(self):
         await self.client.wait_until_ready()
+        print("CHANGE SHOP")
         await self.rotateshop(5)
 
     @commands.command()
