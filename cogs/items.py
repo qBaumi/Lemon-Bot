@@ -524,12 +524,12 @@ class items(commands.Cog):
                 line = f"You streamed `{random.choice(games)}` for `{hours}` hours with on average `{viewers}` viewers"
                 await interaction.channel.send(line)
                 if viewers >= 1000:
-                    msg = await interaction.channel.send(f"🎉 Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator?")
-                    await msg.add_reaction('✅')
+                    message = await interaction.channel.send(f"🎉 Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator?")
+                    await message.add_reaction('✅')
                     try:
-                        reaction2, useremoji2 = await self.client.wait_for('reaction_add', timeout=5, check=checkreaction)
+                        reaction2, useremoji2 = await self.client.wait_for('reaction_add', timeout=180, check=checkreaction)
                     except asyncio.TimeoutError:
-                        await interaction.channel.send(f"{user.mention}\nYou didnt answer fast enough!")
+                        await interaction.channel.send(f"{interaction.user.mention}\nYou didnt answer fast enough!")
                         return
                     print("streamer")
                     print(reaction2.emoji)
@@ -545,7 +545,7 @@ class items(commands.Cog):
                         else:
                             es.sql_exec(f"UPDATE jobs SET Name = 'Content Creator' WHERE id = {user.id}")
                             es.sql_exec(f"UPDATE jobs SET Verdienst = 50 WHERE id = {user.id}")
-                        await interaction.channel.send(f"{user.mention}\nYou now work as Content Creator!")
+                        await interaction.channel.send(f"{interaction.user.mention}\nYou now work as Content Creator!")
 
                 return
             if str(reaction.emoji) == "<:FeelsDankMan:810802803739983903>":
