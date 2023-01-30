@@ -17,6 +17,7 @@ class pet(commands.GroupCog):
     def __init__(self, client):
         super().__init__()
         self.client = client
+        await self.ch_shop.start()
 
 
     @app_commands.command(name="info", description="View your pet, its stats and interact with it")
@@ -639,7 +640,6 @@ class pet(commands.GroupCog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        await self.ch_shop.start()
         await self.client.loop.create_task(self.ch_shop())
     async def allpets(self):
         # open the json file in read mode to load users and return them
