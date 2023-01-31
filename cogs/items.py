@@ -214,7 +214,7 @@ class items(commands.Cog):
                 def checkmoney(m):
                     return m.author == ctx.author and m.channel == ctx.channel
 
-                await interaction.response.send_message(f"{user.mention}\nHow much lemons do you want to withdraw?")
+                await interaction.channel.send(f"{user.mention}\nHow much lemons do you want to withdraw?")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=checkmoney)
                 except:
