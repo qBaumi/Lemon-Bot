@@ -37,10 +37,10 @@ class Roles(commands.GroupCog):
     @app_commands.command(name="shop", description="Show all roles that you can buy")
     async def shop(self, interaction: discord.Interaction):
         embed = discord.Embed(title="Roles Tier 1",
-                              description="You can buy Tier 1 roles here which you can then further upgrade for more money.")
+                              description="You can buy permanent Tier 1 roles here which you can then further upgrade for more mone.")
         for category in roles:
             for role in category["roles"]:
-                embed.add_field(name=role["name"], value=f"Tier {role['tier']}")
+                embed.add_field(name=f'{role["name"]} [{category["category"]}]', value=f"Tier {role['tier']}", inline=False)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="buy", description="Buy a Tier 1 role")
@@ -55,6 +55,25 @@ class Roles(commands.GroupCog):
                 embed.add_field(name=role["name"], value=f"Tier {role['tier']}")
         await interaction.response.send_message(embed=embed)
 
+    @buy.autocomplete('role')
+    async def buy_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str
+    ) -> List[app_commands.Choice[str]]:
+        availableRoles = await self.getAvailableRoles(interaction.user.id)
+        return [
+            app_commands.Choice(name=role, value=role.lower())
+            for role in availableRoles if current.lower() in role.lower()
+        ]
+
+    async def getAvailableRoles(self, userid):
+        userCategories = es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'")
+        availableRoles = []
+        for category in roles:
+            if not category["category"] in userCategories:
+                availableRoles.append(category["roles"][0])
+        return availableRoles
 
 
 
