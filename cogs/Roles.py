@@ -48,7 +48,7 @@ class Roles(commands.GroupCog):
     async def buy(self, interaction: discord.Interaction, role: str):
         if not await es.interaction_check_account(interaction):
             return
-        balance, safe, total = es.currency(interaction.user)
+        balance, safe, total = await es.currency(interaction.user)
         price = 5000
         if balance < price:
             await interaction.response.send_message("You're too poor for such a premium feature")
