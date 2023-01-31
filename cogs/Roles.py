@@ -48,12 +48,16 @@ class Roles(commands.GroupCog):
     async def buy(self, interaction: discord.Interaction, role: str):
         if not await es.interaction_check_account(interaction):
             return
-        embed = discord.Embed(title="Roles Tier 1",
-                              description="You can buy Tier 1 roles here which you can then further upgrade for more money.")
-        for category in roles:
-            for role in category["roles"]:
-                embed.add_field(name=role["name"], value=f"Tier {role['tier']}")
-        await interaction.response.send_message(embed=embed)
+        balance, safe, total = es.currency(interaction.user)
+        price = 5000
+        if balance < price:
+            await interaction.response.send_message("You're too poor for such a premium feature")
+            return
+        await es.update_balance(interaction.user, -5000)
+        role = self.getRoleByName(role)
+        es.sql_exec(f"INSERT INTO roles(id, category, name, tier) VALUES({interaction.user.id}, {self.getCategoryByName(role['name'])}, {role['name']}, {role['tier']})")
+
+        await interaction.response.send_message(f"{interaction.user.mention}\nYou've successfully bought the Tier 1 - {role['name']}")
 
     @buy.autocomplete('role')
     async def buy_autocomplete(
@@ -73,11 +77,18 @@ class Roles(commands.GroupCog):
         for category in roles:
             if not category["category"] in userCategories:
                 availableRoles.append(category["roles"][0])
-        print(availableRoles)
         return availableRoles
 
-
-
+    def getRoleByName(self, rolename):
+        for category in roles:
+            for role in category["roles"]:
+                if role["name"].lower() == rolename:
+                    return role
+    def getCategoryByName(self, rolename):
+        for category in roles:
+            for role in category["roles"]:
+                if role["name"].lower() == rolename:
+                    return category["category"]
 
 async def setup(client):
     await client.add_cog(Roles(client), guilds=guilds)
