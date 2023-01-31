@@ -322,7 +322,7 @@ class items(commands.Cog):
             return
 
         if item == "conchshell":
-            await interaction.response.send_message.send(
+            await interaction.response.send_message(
                 f"{ctx.author.mention}\nAhhh I see, you need Trustpilot 10⭐ advice...what lies on your heart my friendo?")
 
             def check(m):
