@@ -83,12 +83,12 @@ class Roles(commands.GroupCog):
     def getRoleByName(self, rolename):
         for category in roles:
             for role in category["roles"]:
-                if role["name"].lower() == rolename:
+                if role["name"].lower() == rolename.lower():
                     return role
     def getCategoryByName(self, rolename):
         for category in roles:
             for role in category["roles"]:
-                if role["name"].lower() == rolename:
+                if role["name"].lower() == rolename.lower():
                     return category["category"]
 
 async def setup(client):
