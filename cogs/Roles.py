@@ -43,6 +43,18 @@ class Roles(commands.GroupCog):
                 embed.add_field(name=role["name"], value=f"Tier {role['tier']}")
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.command(name="buy", description="Buy a Tier 1 role")
+    @app_commands.describe(role="The Tier 1 role you want to buy")
+    async def buy(self, interaction: discord.Interaction, role: str):
+        if not await es.interaction_check_account(interaction):
+            return
+        embed = discord.Embed(title="Roles Tier 1",
+                              description="You can buy Tier 1 roles here which you can then further upgrade for more money.")
+        for category in roles:
+            for role in category["roles"]:
+                embed.add_field(name=role["name"], value=f"Tier {role['tier']}")
+        await interaction.response.send_message(embed=embed)
+
 
 
 
