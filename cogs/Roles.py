@@ -55,7 +55,7 @@ class Roles(commands.GroupCog):
             return
         await es.update_balance(interaction.user, -5000)
         role = self.getRoleByName(role)
-        es.sql_exec(f"INSERT INTO roles(id, category, name, tier) VALUES({interaction.user.id}, {self.getCategoryByName(role['name'])}, {role['name']}, {role['tier']})")
+        es.sql_exec(f"INSERT INTO roles(id, category, name, tier) VALUES('{interaction.user.id}', '{self.getCategoryByName(role['name'])}', '{role['name']}', {role['tier']})")
 
         await interaction.response.send_message(f"{interaction.user.mention}\nYou've successfully bought the Tier 1 - {role['name']}")
 
