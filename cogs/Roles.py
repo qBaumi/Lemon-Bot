@@ -72,7 +72,8 @@ class Roles(commands.GroupCog):
         ]
 
     async def getAvailableRoles(self, userid):
-        userCategories = es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'")
+        print(es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'"))
+        userCategories = es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'")[0]
         availableRoles = []
         for category in roles:
             if not category["category"] in userCategories:
