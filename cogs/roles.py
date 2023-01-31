@@ -21,7 +21,8 @@ roles = [
     ]}
 ]
 
-class roles(commands.GroupCog):
+
+class Roles(commands.GroupCog):
     def __init__(self, client):
         self.client = client
         super().__init__()
@@ -33,25 +34,25 @@ class roles(commands.GroupCog):
     # deactivate role
 
     @app_commands.command(name="shop", description="Show all roles that you can buy")
-    async def shop(self, interaction : discord.Interaction):
-        embed = discord.Embed(title="Roles Tier 1", description="You can buy Tier 1 roles here which you can then further upgrade for more money.")
+    async def shop(self, interaction: discord.Interaction):
+        embed = discord.Embed(title="Roles Tier 1",
+                              description="You can buy Tier 1 roles here which you can then further upgrade for more money.")
         for category in roles:
             for role in category["roles"]:
                 embed.add_field(name=role["name"], value=f"Tier {role['tier']}")
         await interaction.response.send_message(embed=embed)
-
 
     @app_commands.command(name="buy", description="Buy a Tier 1 role")
     @app_commands.describe(role="The Tier 1 role you want to buy")
-    async def buy(self, interaction : discord.Interaction, role: str):
+    async def buy(self, interaction: discord.Interaction, role: str):
         if not await es.interaction_check_account(interaction):
             return
-        embed = discord.Embed(title="Roles Tier 1", description="You can buy Tier 1 roles here which you can then further upgrade for more money.")
+        embed = discord.Embed(title="Roles Tier 1",
+                              description="You can buy Tier 1 roles here which you can then further upgrade for more money.")
         for category in roles:
             for role in category["roles"]:
                 embed.add_field(name=role["name"], value=f"Tier {role['tier']}")
         await interaction.response.send_message(embed=embed)
-
 
     @buy.autocomplete('roles')
     async def buy_autocomplete(
@@ -64,6 +65,7 @@ class roles(commands.GroupCog):
             app_commands.Choice(name=role, value=role.lower())
             for role in availableRoles if current.lower() in role.lower()
         ]
+
     async def getAvailableRoles(self, userid):
         userCategories = es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'")
         availableRoles = []
@@ -73,8 +75,5 @@ class roles(commands.GroupCog):
         return availableRoles
 
 
-
-
-
 async def setup(client):
-    await client.add_cog(roles(client), guilds=guilds)
+    await client.add_cog(Roles(client), guilds=guilds)
