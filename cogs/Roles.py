@@ -34,5 +34,18 @@ class Roles(commands.GroupCog):
     # deactivate role
 
 
+    @app_commands.command(name="shop", description="Show all roles that you can buy")
+    async def shop(self, interaction: discord.Interaction):
+        embed = discord.Embed(title="Roles Tier 1",
+                              description="You can buy Tier 1 roles here which you can then further upgrade for more money.")
+        for category in roles:
+            for role in category["roles"]:
+                embed.add_field(name=role["name"], value=f"Tier {role['tier']}")
+        await interaction.response.send_message(embed=embed)
+
+
+
+
+
 async def setup(client):
     await client.add_cog(Roles(client), guilds=guilds)
