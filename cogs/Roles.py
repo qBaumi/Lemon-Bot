@@ -73,6 +73,7 @@ class Roles(commands.GroupCog):
         for category in roles:
             if not category["category"] in userCategories:
                 availableRoles.append(category["roles"][0])
+        print(availableRoles)
         return availableRoles
 
 
