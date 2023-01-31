@@ -16,23 +16,23 @@ class Roles(commands.GroupCog):
     def __init__(self, client):
         self.client = client
         super().__init__()
-
+        self.roles = [
+            {"category": "lolesports", "roles": [
+                {"name": "Pseudo Lolesports Chatter", "tier": 1},
+                {"name": "Lolesports Chatter", "tier": 2}
+            ]},
+            {"category": "general", "roles": [
+                {"name": "General Chatter", "tier": 1},
+                {"name": "Silver Player", "tier": 2}
+            ]}
+        ]
     # shop
     # buy allroles you dont already have
     # upgrade role
     # activate role
     # deactivate role
 
-    roles = [
-        {"category": "lolesports", "roles": [
-            {"name": "Pseudo Lolesports Chatter", "tier": 1},
-            {"name": "Lolesports Chatter", "tier": 2}
-        ]},
-        {"category": "general", "roles": [
-            {"name": "General Chatter", "tier": 1},
-            {"name": "Silver Player", "tier": 2}
-        ]}
-    ]
+
 
     @app_commands.command(name="shop", description="Show all roles that you can buy")
     async def shop(self, interaction: discord.Interaction):
