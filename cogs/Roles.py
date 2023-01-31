@@ -64,7 +64,7 @@ class Roles(commands.GroupCog):
         availableRoles = await self.getAvailableRoles(interaction.user.id)
         return [
             app_commands.Choice(name=role["name"], value=role["name"].lower())
-            for role in availableRoles if current.lower() in role.lower()
+            for role in availableRoles if current.lower() in role["name"].lower()
         ]
 
     async def getAvailableRoles(self, userid):
