@@ -214,7 +214,7 @@ class items(commands.Cog):
                 def checkmoney(m):
                     return m.author == ctx.author and m.channel == ctx.channel
 
-                await interaction.response.send_message(f"{user.mention}\nHow much lemons do you want to withdraw?")
+                await interaction.channel.send(f"{user.mention}\nHow much lemons do you want to withdraw?")
                 try:
                     msg = await self.client.wait_for("message", timeout=60, check=checkmoney)
                 except:
@@ -322,7 +322,7 @@ class items(commands.Cog):
             return
 
         if item == "conchshell":
-            await interaction.response.send_message.send(
+            await interaction.response.send_message(
                 f"{ctx.author.mention}\nAhhh I see, you need Trustpilot 10⭐ advice...what lies on your heart my friendo?")
 
             def check(m):

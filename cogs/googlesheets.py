@@ -67,7 +67,6 @@ class googlesheets(commands.Cog):
         lockrangelist = LockRanges
         hour = datetime.datetime.now().hour
         min = datetime.datetime.now().minute
-        print(min)
         for range in lockrangelist:
             #print(datetime.datetime.now().strftime("%d-%m-%Y"))
             #print(range["date"])
