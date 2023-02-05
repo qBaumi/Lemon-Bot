@@ -267,7 +267,7 @@ def getRandomUser():
     user = user[0]
     return user
 
-async def getxp(id):
+def getxp(id):
     data = sql_select(f"SELECT * FROM users WHERE id = {id}")
     xp = data[0][3]
     lvl = data[0][4]
