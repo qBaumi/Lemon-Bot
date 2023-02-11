@@ -114,6 +114,38 @@ class other(commands.Cog):
         print(role.icon)
         await interaction.response.send_message(role.icon)
 
+    @app_commands.checks.has_role(598307062086107156)
+    @app_commands.command(name="updatetournamentroles", description="copy paste the tournament users")
+    async def updatetournamentroles(self, interaction, users : str):
+        await interaction.response.defer()
+        guild = await self.client.fetch_guild(598303095352459305)
+        members = {}
+        async for member in guild.fetch_members(limit=10000):
+            members[str(member).lower()] = member
+
+        lastindex = 0
+        userlist = []
+        for i, letter in enumerate(users):
+            try:
+                num = int(users[i])
+                if users[i+1] == " ":
+                    userlist.append(users[lastindex:i+1])
+                    lastindex = i+2
+
+            except IndexError as e:
+                userlist.append(users[lastindex:len(users)])
+            except:
+                pass
+        print(userlist)
+        role = discord.utils.get(guild.roles, id=1064211501839286412)
+        failed_members = []
+        for user in userlist:
+            try:
+                await members[user.lower()].add_roles(role)
+            except:
+                failed_members.append(user)
+        await interaction.followup.send(f"Added tournament roles except for {failed_members} because theyre brainded and have to write a space infront of the #")
+
 
     @commands.Cog.listener()
     async def on_member_update(self, beforemember, aftermember):
