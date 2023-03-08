@@ -29,7 +29,7 @@ class Roles(commands.GroupCog):
         super().__init__()
 
     @commands.Cog.listener()
-    async def setup_hook(self):
+    async def on_ready(self):
         self.guild = await self.client.fetch_guild(598303095352459305)
 
     # shop
