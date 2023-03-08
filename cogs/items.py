@@ -512,7 +512,11 @@ class items(commands.Cog):
                 hours = random.randrange(1, 15)
                 line = f"You streamed `{random.choice(games)}` for `{hours}` hours with on average `{viewers}` viewers"
                 await interaction.channel.send(line)
-                if viewers >= 1000:
+
+                # get lvl, need to be lvl 8 for the job
+                xp, lvl = es.getxp(interaction.user.id)
+                print(lvl)
+                if viewers >= 1000 and int(lvl) >= 8:
                     message = await interaction.channel.send(f"🎉 Congratulations, you blew up on the internet. You have enough following now to pursue a career as a streamer. Do you want to quit your job to become a content creator?")
                     await message.add_reaction('✅')
                     try:

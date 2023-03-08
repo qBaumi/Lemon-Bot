@@ -3,6 +3,7 @@ import datetime
 import os
 import random
 from pathlib import Path
+from typing import Optional
 
 import discord, json
 import pytz
@@ -97,15 +98,6 @@ class other(commands.Cog):
         await interaction.response.send_message(f"{interaction.user.mention} gave {user.mention} a hug")
         await interaction.channel.send(hug)
 
-    @commands.has_any_role("Admins", "Developer", "HM")
-    @commands.command()
-    async def forum(self, ctx):
-        category = await self.client.fetch_channel(955151615252385854)
-        guild = await self.client.fetch_guild(598303095352459305)
-        channel = await guild.create_forum(f'test', category=category)
-        role = discord.utils.get(guild.roles, id=598307062086107156)
-        await channel.set_permissions(guild.default_role, view_channel=False)
-        await channel.set_permissions(role, view_channel=True)
 
     @app_commands.command(name="badge", description="Get the PNG file of a role badge")
     async def badge(self, interaction, role : discord.Role):
@@ -113,6 +105,118 @@ class other(commands.Cog):
         #role = discord.utils.get(guild.roles, id=598307062086107156)
         print(role.icon)
         await interaction.response.send_message(role.icon)
+
+    @app_commands.checks.has_role(598307062086107156)
+    @app_commands.command(name="addteam", description="Adds a team to the tournament")
+    async def addteam(self, interaction, name: str, logolink: str, role: discord.Role, captain: discord.Member, member1: discord.Member, member2: discord.Member, member3: discord.Member, member4: discord.Member):
+        await interaction.response.defer()
+        """
+        {
+            "name": "Team 1",
+            "logo": "https://cdn.discordapp.com/attachments/1073219367459880971/1073947900503142480/IMG_3710.png",
+            "role": 992135667805081600,
+            "members": [
+              442913791215140875,
+              198218633955115008
+            ],
+            "msgId": 8,
+            "wins": 2,
+            "losses": 3
+          }
+        """
+        with open("./json/teams.json", "r", encoding="utf-8") as f:
+            teams = json.load(f)
+        channel = await self.client.fetch_channel(1073985397614444635)
+        em = discord.Embed(title=name, description=role.mention)
+        em.set_thumbnail(url=logolink)
+        em.add_field(name="Wins / Losses", value=f"0 / 0", inline=False)
+        em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{member1.mention}\n{member2.mention}\n{member3.mention}\n{member4.mention}", inline=False)
+        em.set_footer(text="----------------------------------------------------------------------------")
+        msg = await channel.send(embed=em)
+        teams.append({
+            "name": name,
+            "logo": logolink,
+            "role": role.id,
+            "members": [
+              captain.id,
+              member1.id,
+              member2.id,
+              member3.id,
+              member4.id
+            ],
+            "msgId":msg.id,
+            "wins":0,
+            "losses":0
+        })
+
+        with open("./json/teams.json", "w") as f:
+            json.dump(teams, f, indent=4)
+        await interaction.followup.send("Succesfully added team")
+
+    @app_commands.checks.has_role(598307062086107156)
+    @app_commands.command(name="editteam", description="Edits a team")
+    async def editteam(self, interaction, name: str, wins: int, losses: int):
+        await interaction.response.defer()
+        with open("./json/teams.json", "r", encoding="utf-8") as f:
+            teams = json.load(f)
+        teamfound = False
+        for team in teams:
+            if team["name"] == name:
+                team["wins"] = wins
+                team["losses"] = losses
+
+                em = discord.Embed(title=name, description=f'<@&{team["role"]}>')
+                em.set_thumbnail(url=team["logo"])
+                em.add_field(name="Wins / Losses", value=f"{wins} / {losses}", inline=False)
+                em.add_field(name="Members",
+                             value=f"<@!{team['members'][0]}> - Team Captain\n<@!{team['members'][1]}>\n<@!{team['members'][2]}>\n<@!{team['members'][3]}>\n<@!{team['members'][4]}>",
+                             inline=False)
+                em.set_footer(text="----------------------------------------------------------------------------")
+                channel = await self.client.fetch_channel(1073985397614444635)
+                message = await channel.fetch_message(team["msgId"])
+                await message.edit(embed=em)
+                teamfound = True
+                break
+
+        with open("./json/teams.json", "w") as f:
+            json.dump(teams, f, indent=4)
+        if teamfound:
+            await interaction.followup.send(f"Succesfully edited {name}")
+        else:
+            await interaction.followup.send(f"Team {name} not found")
+
+    @app_commands.checks.has_role(598307062086107156)
+    @app_commands.command(name="updatetournamentroles", description="copy paste the tournament users")
+    async def updatetournamentroles(self, interaction, users : str):
+        await interaction.response.defer()
+        guild = await self.client.fetch_guild(598303095352459305)
+        members = {}
+        async for member in guild.fetch_members(limit=10000):
+            members[str(member).lower()] = member
+
+        lastindex = 0
+        userlist = []
+        for i, letter in enumerate(users):
+            try:
+                num = int(users[i])
+                if users[i+1] == " ":
+                    userlist.append(users[lastindex:i+1])
+                    lastindex = i+2
+
+            except IndexError as e:
+                userlist.append(users[lastindex:len(users)])
+            except:
+                pass
+        print(userlist)
+        role = discord.utils.get(guild.roles, id=1064211501839286412)
+        failed_members = []
+        for user in userlist:
+            try:
+                await members[user.lower()].add_roles(role)
+            except:
+                failed_members.append(user)
+        await interaction.followup.send(f"Added tournament roles except for {failed_members} because theyre brainded and have to write a space infront of the #")
+
 
 
     @commands.Cog.listener()

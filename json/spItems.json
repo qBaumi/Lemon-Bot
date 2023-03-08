@@ -9,12 +9,12 @@
             "stock": 5
         },
         {
-            "name": "NitroClassic",
-            "price": 500,
-            "desc": "1 Month Nitro Classic",
+            "name": "NitroBasic",
+            "price": 400,
+            "desc": "1 Month Nitro Basic",
             "money": "golden lemons",
             "emoji": "<:13627124:884424774502219776>",
-            "stock": 5
+            "stock": 4
         },
         {
             "name": "DiscordNitro",
