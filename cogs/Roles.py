@@ -80,7 +80,7 @@ class Roles(commands.GroupCog):
         ]
 
     async def getAvailableRoles(self, userid):
-        userCategories = es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'")
+        userCategories = es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'")[0]
         for i in userCategories:
             print(str(userCategories))
         availableRoles = []
