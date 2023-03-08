@@ -43,10 +43,11 @@ class Roles(commands.GroupCog):
     @app_commands.command(name="shop", description="Show all roles that you can buy")
     async def shop(self, interaction: discord.Interaction):
         embed = discord.Embed(title="Roles Tier 1",
-                              description="You can buy permanent Tier 1 roles here which you can then further upgrade for more mone.")
+                              description="You can buy permanent Tier 1 roles here which you can then further upgrade for more mone.\nA tier 1 role costs **5000 Lemons**")
         for category in roles:
             for role in category["roles"]:
-                embed.add_field(name=f'{self.getRoleNameById(role["roleid"])} [{category["category"]}]', value=f"Tier {role['tier']}", inline=False)
+                if role["tier"] == 1:
+                    embed.add_field(name=f'{self.getRoleNameById(role["roleid"])} [{category["category"]}]', value=f"Tier {role['tier']}", inline=False)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="buy", description="Buy a Tier 1 role")
@@ -81,6 +82,7 @@ class Roles(commands.GroupCog):
     async def getAvailableRoles(self, userid):
         print(es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'"))
         userCategories = es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'")[0]
+        print(userCategories)
         availableRoles = []
         for category in roles:
             if not category["category"] in userCategories:
