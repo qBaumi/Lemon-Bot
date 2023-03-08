@@ -26,6 +26,8 @@ class Roles(commands.GroupCog):
     def __init__(self, client):
         self.client = client
         super().__init__()
+        self.guild = await self.client.fetch_guild(598303095352459305)
+
 
     # shop
     # buy all roles you don't already have
@@ -94,8 +96,7 @@ class Roles(commands.GroupCog):
                     return category["category"]
 
     def getRoleNameById(self, roleid):
-        guild = await self.client.fetch_guild(598303095352459305)
-        role = discord.utils.get(guild.roles, id=roleid)
+        role = discord.utils.get(self.guild.roles, id=roleid)
         return role.name
 
 async def setup(client):
