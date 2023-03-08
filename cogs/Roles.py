@@ -24,10 +24,13 @@ roles = [
 
 class Roles(commands.GroupCog):
     def __init__(self, client):
+        self.guild = None
         self.client = client
         super().__init__()
-        self.guild = await self.client.fetch_guild(598303095352459305)
 
+    @commands.Cog.listener()
+    async def setup_hook(self):
+        self.guild = await self.client.fetch_guild(598303095352459305)
 
     # shop
     # buy all roles you don't already have
