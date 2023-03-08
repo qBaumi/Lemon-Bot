@@ -63,7 +63,7 @@ class Roles(commands.GroupCog):
         await es.update_balance(interaction.user, -5000)
         role = self.getRoleByName(role)
         rolename = self.getRoleNameById(role['roleid'])
-        es.sql_exec(f"INSERT INTO roles(id, category, name, tier) VALUES('{interaction.user.id}', '{rolename}', '{self.getRoleNameById(role['roleid'])}', {role['tier']})")
+        es.sql_exec(f"INSERT INTO roles(id, category, name, tier) VALUES('{interaction.user.id}', '{self.getCategoryByName(rolename)}', '{self.getRoleNameById(role['roleid'])}', {role['tier']})")
 
         await interaction.response.send_message(f"{interaction.user.mention}\nYou've successfully bought the Tier 1 - {rolename}")
 
@@ -80,11 +80,11 @@ class Roles(commands.GroupCog):
         ]
 
     async def getAvailableRoles(self, userid):
-        print(es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'"))
         userCategories = es.sql_select(f"SELECT category FROM roles WHERE id = '{userid}'")
         print(userCategories)
         availableRoles = []
         for category in roles:
+            print(category)
             if not category["category"] in userCategories:
                 availableRoles.append(category["roles"][0])
         return availableRoles
