@@ -108,8 +108,15 @@ class other(commands.Cog):
 
     @app_commands.checks.has_role(598307062086107156)
     @app_commands.command(name="addteam", description="Adds a team to the tournament")
-    async def addteam(self, interaction, name: str, role: discord.Role, captain: discord.Member, member1: discord.Member, member2: discord.Member, member3: discord.Member, member4: discord.Member, member5: Optional[discord.Member]):
+    async def addteam(self, interaction, name: str, role: discord.Role, captain: discord.Member):
         await interaction.response.defer()
+        members = []
+        for member in role.members:
+            members.append(member)
+        try:
+            print(members[5])
+        except:
+            members[5] = None
         """
         {
             "name": "Team 1",
@@ -130,24 +137,24 @@ class other(commands.Cog):
         em = discord.Embed(title=name, description=role.mention)
         em.set_thumbnail(url=role.icon.url)
         em.add_field(name="Wins / Losses", value=f"0 / 0", inline=False)
-        if member5:
-            em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{member1.mention}\n{member2.mention}\n{member3.mention}\n{member4.mention}\n{member5.mention}", inline=False)
+        if members[5]:
+            em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{members[1].mention}\n{members[2].mention}\n{members[3].mention}\n{members[4].mention}\n{members[5].mention}", inline=False)
         else:
-            em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{member1.mention}\n{member2.mention}\n{member3.mention}\n{member4.mention}", inline=False)
+            em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{members[1].mention}\n{members[2].mention}\n{members[3].mention}\n{members[4].mention}", inline=False)
         em.set_footer(text="----------------------------------------------------------------------------")
         msg = await channel.send(embed=em)
-        if member5:
+        if members[5]:
             teams.append({
                 "name": name,
                 "logo": role.icon.url,
                 "role": role.id,
                 "members": [
                     captain.id,
-                    member1.id,
-                    member2.id,
-                    member3.id,
-                    member4.id,
-                    member5.id
+                    members[0].id,
+                    members[1].id,
+                    members[2].id,
+                    members[3].id,
+                    members[4].id
                 ],
                 "msgId":msg.id,
                 "wins":0,
@@ -160,10 +167,12 @@ class other(commands.Cog):
                 "role": role.id,
                 "members": [
                     captain.id,
-                    member1.id,
-                    member2.id,
-                    member3.id,
-                    member4.id
+                    members[0].id,
+                    members[1].id,
+                    members[2].id,
+                    members[3].id,
+                    members[4].id,
+                    members[5].id
                 ],
                 "msgId": msg.id,
                 "wins": 0,
