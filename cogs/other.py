@@ -108,7 +108,7 @@ class other(commands.Cog):
 
     @app_commands.checks.has_role(598307062086107156)
     @app_commands.command(name="addteam", description="Adds a team to the tournament")
-    async def addteam(self, interaction, name: str, logolink: str, role: discord.Role, captain: discord.Member, member1: discord.Member, member2: discord.Member, member3: discord.Member, member4: discord.Member, member5: Optional[discord.Member]):
+    async def addteam(self, interaction, name: str, role: discord.Role, captain: discord.Member, member1: discord.Member, member2: discord.Member, member3: discord.Member, member4: discord.Member, member5: Optional[discord.Member]):
         await interaction.response.defer()
         """
         {
@@ -128,7 +128,7 @@ class other(commands.Cog):
             teams = json.load(f)
         channel = await self.client.fetch_channel(1073985397614444635)
         em = discord.Embed(title=name, description=role.mention)
-        em.set_thumbnail(url=logolink)
+        em.set_thumbnail(url=role.icon.url)
         em.add_field(name="Wins / Losses", value=f"0 / 0", inline=False)
         if member5:
             em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{member1.mention}\n{member2.mention}\n{member3.mention}\n{member4.mention}\n{member5.mention}", inline=False)
@@ -139,7 +139,7 @@ class other(commands.Cog):
         if member5:
             teams.append({
                 "name": name,
-                "logo": logolink,
+                "logo": role.icon.url,
                 "role": role.id,
                 "members": [
                     captain.id,
@@ -156,7 +156,7 @@ class other(commands.Cog):
         else:
             teams.append({
                 "name": name,
-                "logo": logolink,
+                "logo": role.icon.url,
                 "role": role.id,
                 "members": [
                     captain.id,
