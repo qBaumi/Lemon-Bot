@@ -116,7 +116,7 @@ class other(commands.Cog):
         try:
             print(members[5])
         except:
-            members[5] = None
+            members.append(None) 
         """
         {
             "name": "Team 1",
