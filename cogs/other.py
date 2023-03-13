@@ -108,8 +108,9 @@ class other(commands.Cog):
 
     @app_commands.checks.has_role(598307062086107156)
     @app_commands.command(name="addteam", description="Adds a team to the tournament")
-    async def addteam(self, interaction, name: str, role: discord.Role, captain: discord.Member):
+    async def addteam(self, interaction, name: str, role: discord.Role, captainrole: discord.Role):
         await interaction.response.defer()
+        captain = captainrole.members[0]
         members = []
         sixthmember = False
         for member in role.members:
@@ -154,7 +155,6 @@ class other(commands.Cog):
                 "logo": role.icon.url,
                 "role": role.id,
                 "members": [
-                    captain.id,
                     members[0].id,
                     members[1].id,
                     members[2].id,
@@ -172,7 +172,6 @@ class other(commands.Cog):
                 "logo": role.icon.url,
                 "role": role.id,
                 "members": [
-                    captain.id,
                     members[0].id,
                     members[1].id,
                     members[2].id,
