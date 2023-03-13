@@ -159,7 +159,8 @@ class other(commands.Cog):
                     members[1].id,
                     members[2].id,
                     members[3].id,
-                    members[4].id
+                    members[4].id,
+                    members[5].id
                 ],
                 "msgId":msg.id,
                 "wins":0,
@@ -176,8 +177,7 @@ class other(commands.Cog):
                     members[1].id,
                     members[2].id,
                     members[3].id,
-                    members[4].id,
-                    members[5].id
+                    members[4].id
                 ],
                 "msgId": msg.id,
                 "wins": 0,
