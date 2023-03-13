@@ -115,7 +115,8 @@ class other(commands.Cog):
         sixthmember = False
         for member in role.members:
             members.append(member)
-
+        members.insert(0, captain)
+        members = list(set(members))
         try:
             print(members[5])
             sixthmember = True
