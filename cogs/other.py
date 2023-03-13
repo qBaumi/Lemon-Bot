@@ -116,7 +116,7 @@ class other(commands.Cog):
         try:
             print(members[5])
         except:
-            members.append(None) 
+            members.append(None)
         """
         {
             "name": "Team 1",
@@ -137,13 +137,13 @@ class other(commands.Cog):
         em = discord.Embed(title=name, description=role.mention)
         em.set_thumbnail(url=role.icon.url)
         em.add_field(name="Wins / Losses", value=f"0 / 0", inline=False)
-        if members[5]:
+        if members[5] is not None:
             em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{members[1].mention}\n{members[2].mention}\n{members[3].mention}\n{members[4].mention}\n{members[5].mention}", inline=False)
         else:
             em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{members[1].mention}\n{members[2].mention}\n{members[3].mention}\n{members[4].mention}", inline=False)
         em.set_footer(text="----------------------------------------------------------------------------")
         msg = await channel.send(embed=em)
-        if members[5]:
+        if members[5] is not None:
             teams.append({
                 "name": name,
                 "logo": role.icon.url,
