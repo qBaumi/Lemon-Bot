@@ -114,11 +114,13 @@ class other(commands.Cog):
         sixthmember = False
         for member in role.members:
             members.append(member)
+
         try:
             print(members[5])
             sixthmember = True
         except:
-            pass
+            sixthmember = False
+
         """
         {
             "name": "Team 1",
@@ -145,6 +147,7 @@ class other(commands.Cog):
             em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{members[1].mention}\n{members[2].mention}\n{members[3].mention}\n{members[4].mention}", inline=False)
         em.set_footer(text="----------------------------------------------------------------------------")
         msg = await channel.send(embed=em)
+        print(sixthmember)
         if sixthmember:
             teams.append({
                 "name": name,
