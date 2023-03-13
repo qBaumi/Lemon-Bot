@@ -111,12 +111,14 @@ class other(commands.Cog):
     async def addteam(self, interaction, name: str, role: discord.Role, captain: discord.Member):
         await interaction.response.defer()
         members = []
+        sixthmember = False
         for member in role.members:
             members.append(member)
         try:
             print(members[5])
+            sixthmember = True
         except:
-            members.append(None)
+            pass
         """
         {
             "name": "Team 1",
@@ -137,13 +139,13 @@ class other(commands.Cog):
         em = discord.Embed(title=name, description=role.mention)
         em.set_thumbnail(url=role.icon.url)
         em.add_field(name="Wins / Losses", value=f"0 / 0", inline=False)
-        if members[5] is not None:
+        if sixthmember:
             em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{members[1].mention}\n{members[2].mention}\n{members[3].mention}\n{members[4].mention}\n{members[5].mention}", inline=False)
         else:
             em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{members[1].mention}\n{members[2].mention}\n{members[3].mention}\n{members[4].mention}", inline=False)
         em.set_footer(text="----------------------------------------------------------------------------")
         msg = await channel.send(embed=em)
-        if members[5] is not None:
+        if sixthmember:
             teams.append({
                 "name": name,
                 "logo": role.icon.url,
