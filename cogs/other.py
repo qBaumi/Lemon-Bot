@@ -108,7 +108,7 @@ class other(commands.Cog):
 
     @app_commands.checks.has_role(598307062086107156)
     @app_commands.command(name="addteam", description="Adds a team to the tournament")
-    async def addteam(self, interaction, name: str, logolink: str, role: discord.Role, captain: discord.Member, member1: discord.Member, member2: discord.Member, member3: discord.Member, member4: discord.Member):
+    async def addteam(self, interaction, name: str, logolink: str, role: discord.Role, captain: discord.Member, member1: discord.Member, member2: discord.Member, member3: discord.Member, member4: discord.Member, member5: Optional[discord.Member]):
         await interaction.response.defer()
         """
         {
@@ -130,24 +130,45 @@ class other(commands.Cog):
         em = discord.Embed(title=name, description=role.mention)
         em.set_thumbnail(url=logolink)
         em.add_field(name="Wins / Losses", value=f"0 / 0", inline=False)
-        em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{member1.mention}\n{member2.mention}\n{member3.mention}\n{member4.mention}", inline=False)
+        if member5:
+            em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{member1.mention}\n{member2.mention}\n{member3.mention}\n{member4.mention}\n{member5.mention}", inline=False)
+        else:
+            em.add_field(name="Members", value=f"{captain.mention} - Team Captain\n{member1.mention}\n{member2.mention}\n{member3.mention}\n{member4.mention}", inline=False)
         em.set_footer(text="----------------------------------------------------------------------------")
         msg = await channel.send(embed=em)
-        teams.append({
-            "name": name,
-            "logo": logolink,
-            "role": role.id,
-            "members": [
-              captain.id,
-              member1.id,
-              member2.id,
-              member3.id,
-              member4.id
-            ],
-            "msgId":msg.id,
-            "wins":0,
-            "losses":0
-        })
+        if member5:
+            teams.append({
+                "name": name,
+                "logo": logolink,
+                "role": role.id,
+                "members": [
+                    captain.id,
+                    member1.id,
+                    member2.id,
+                    member3.id,
+                    member4.id,
+                    member5.id
+                ],
+                "msgId":msg.id,
+                "wins":0,
+                "losses":0
+            })
+        else:
+            teams.append({
+                "name": name,
+                "logo": logolink,
+                "role": role.id,
+                "members": [
+                    captain.id,
+                    member1.id,
+                    member2.id,
+                    member3.id,
+                    member4.id
+                ],
+                "msgId": msg.id,
+                "wins": 0,
+                "losses": 0
+            })
 
         with open("./json/teams.json", "w") as f:
             json.dump(teams, f, indent=4)
@@ -168,9 +189,15 @@ class other(commands.Cog):
                 em = discord.Embed(title=name, description=f'<@&{team["role"]}>')
                 em.set_thumbnail(url=team["logo"])
                 em.add_field(name="Wins / Losses", value=f"{wins} / {losses}", inline=False)
-                em.add_field(name="Members",
-                             value=f"<@!{team['members'][0]}> - Team Captain\n<@!{team['members'][1]}>\n<@!{team['members'][2]}>\n<@!{team['members'][3]}>\n<@!{team['members'][4]}>",
-                             inline=False)
+                try:
+                    em.add_field(name="Members",
+                                 value=f"<@!{team['members'][0]}> - Team Captain\n<@!{team['members'][1]}>\n<@!{team['members'][2]}>\n<@!{team['members'][3]}>\n<@!{team['members'][4]}\n<@!{team['members'][5]}>",
+                                 inline=False)
+                except:
+                    em.add_field(name="Members",
+                                 value=f"<@!{team['members'][0]}> - Team Captain\n<@!{team['members'][1]}>\n<@!{team['members'][2]}>\n<@!{team['members'][3]}>\n<@!{team['members'][4]}>",
+                                 inline=False)
+
                 em.set_footer(text="----------------------------------------------------------------------------")
                 channel = await self.client.fetch_channel(1073985397614444635)
                 message = await channel.fetch_message(team["msgId"])
