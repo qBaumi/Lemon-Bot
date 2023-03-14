@@ -106,7 +106,7 @@ class other(commands.Cog):
         print(role.icon)
         await interaction.response.send_message(role.icon)
 
-    @app_commands.checks.has_any_role(allowedRoles)
+    @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.command(name="addteam", description="Adds a team to the tournament")
     async def addteam(self, interaction, name: str, role: discord.Role, captainrole: discord.Role):
         await interaction.response.defer()
@@ -188,7 +188,7 @@ class other(commands.Cog):
             json.dump(teams, f, indent=4)
         await interaction.followup.send("Succesfully added team")
 
-    @app_commands.checks.has_any_role(allowedRoles)
+    @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.command(name="editteam", description="Edits a team")
     async def editteam(self, interaction, name: str, wins: int, losses: int):
         await interaction.response.defer()
