@@ -12,7 +12,7 @@ from discord.ext import commands
 from discord import app_commands
 from discord import ui
 
-from config import guilds
+from config import guilds, allowedRoles
 from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 
@@ -106,7 +106,7 @@ class other(commands.Cog):
         print(role.icon)
         await interaction.response.send_message(role.icon)
 
-    @app_commands.checks.has_role(598307062086107156)
+    @app_commands.checks.has_any_role(allowedRoles)
     @app_commands.command(name="addteam", description="Adds a team to the tournament")
     async def addteam(self, interaction, name: str, role: discord.Role, captainrole: discord.Role):
         await interaction.response.defer()
@@ -188,7 +188,7 @@ class other(commands.Cog):
             json.dump(teams, f, indent=4)
         await interaction.followup.send("Succesfully added team")
 
-    @app_commands.checks.has_role(598307062086107156)
+    @app_commands.checks.has_any_role(allowedRoles)
     @app_commands.command(name="editteam", description="Edits a team")
     async def editteam(self, interaction, name: str, wins: int, losses: int):
         await interaction.response.defer()
