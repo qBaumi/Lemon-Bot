@@ -205,7 +205,7 @@ class other(commands.Cog):
                 em.add_field(name="Wins / Losses", value=f"{wins} / {losses}", inline=False)
                 try:
                     em.add_field(name="Members",
-                                 value=f"<@!{team['members'][0]}> - Team Captain\n<@!{team['members'][1]}>\n<@!{team['members'][2]}>\n<@!{team['members'][3]}>\n<@!{team['members'][4]}\n<@!{team['members'][5]}>",
+                                 value=f"<@!{team['members'][0]}> - Team Captain\n<@!{team['members'][1]}>\n<@!{team['members'][2]}>\n<@!{team['members'][3]}>\n<@!{team['members'][4]}>\n<@!{team['members'][5]}>",
                                  inline=False)
                 except:
                     em.add_field(name="Members",
