@@ -10,6 +10,7 @@ class events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, messagebefore, messageafter):
+        print(messageafter)
         message = messageafter
         if message.channel.id == 1089172348323762176 and message.content.lower() != "gm <@220607932516139010>":
             await message.delete()
