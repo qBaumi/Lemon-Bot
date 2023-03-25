@@ -15,7 +15,7 @@ class events(commands.Cog):
         if message.channel.id == 1089172348323762176:
             print(message.content)
             if message.content.lower() != "gm <@!220607932516139010>":
-                message.delete()
+                await message.delete()
             return
         if message.channel.id != 598309398976397332:
             return
