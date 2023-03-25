@@ -14,8 +14,15 @@ class events(commands.Cog):
 
         if message.channel.id != 598309398976397332:
             return
+        elif message.channel.id == 1089172348323762176:
+            if message.content.lower() != "gm <@!220607932516139010>":
+                message.delete()
+            return
         if message.author.id == message.author.bot:
             return
+
+
+
         channel = self.client.get_channel(598309398976397332)
         chance = random.randrange(0, 100)
 
