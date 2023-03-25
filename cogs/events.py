@@ -12,12 +12,13 @@ class events(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
 
-        if message.channel.id != 598309398976397332:
-            return
-        elif message.channel.id == 1089172348323762176:
+        if message.channel.id == 1089172348323762176:
             if message.content.lower() != "gm <@!220607932516139010>":
                 message.delete()
             return
+        if message.channel.id != 598309398976397332:
+            return
+
         if message.author.id == message.author.bot:
             return
 
