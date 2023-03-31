@@ -12,20 +12,20 @@ class events(commands.Cog):
     async def on_message_edit(self, messagebefore, messageafter):
         print(messageafter)
         message = messageafter
-        if message.channel.id == 1089172348323762176 and message.content.lower() != "gm <@220607932516139010>":
+        if message.channel.id == 1091483735511273625 and message.content.lower() != "gm <@220607932516139010>":
             await message.delete()
             return
-        if message.channel.id == 1089180133228818484 and message.content.lower() != "gn <@220607932516139010>":
+        if message.channel.id == 1091483817618980955 and message.content.lower() != "gn <@220607932516139010>":
             await message.delete()
             return
 
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.channel.id == 1089172348323762176 and message.content.lower() != "gm <@220607932516139010>":
+        if message.channel.id == 1091483735511273625 and message.content.lower() != "gm <@220607932516139010>":
             await message.delete()
             return
-        if message.channel.id == 1089180133228818484 and message.content.lower() != "gn <@220607932516139010>":
+        if message.channel.id == 1091483817618980955 and message.content.lower() != "gn <@220607932516139010>":
             await message.delete()
             return
         if message.channel.id != 598309398976397332:
