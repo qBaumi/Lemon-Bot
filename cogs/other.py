@@ -35,6 +35,12 @@ class other(commands.Cog):
         await interaction.response.send_modal(modal)
 
 
+    @app_commands.command(name="val", description="Sign up for the valorant tournament")
+    async def val(self, interaction: discord.Interaction):
+        modal = Val(client=self.client)
+        await interaction.response.send_modal(modal)
+
+
     @app_commands.describe(game='The activity you want to start')
     @app_commands.choices(game=[
         Choice(name='Watch Together', value="880218394199220334"),
@@ -418,6 +424,31 @@ class other(commands.Cog):
             embed.set_image(url=links[i])
             embeds.append(embed)
         await ctx.send(view=PagesView(ctx.author, embeds), embed=embeds[0].set_footer(text="1 / 23"))
+
+
+class Val(ui.Modal, title='Valorant Tournament Signup'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+    name = ui.TextInput(label='ingame name', placeholder="Put your RiotID HERE")
+    desc = ui.TextInput(label='Link/Rank',
+                        placeholder="Put your valorant tracker link here. If your profile is on private then put your rank here!")
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'Thanks for your Suggestion!', ephemeral=True)
+
+        # 656636484937449518 this is the suggestion-log channel
+        # 651364619402739713 this is the test channel
+        channel_id = 1109188010303569920  # the id of the channel the results get sent to
+        channel = await self.client.fetch_channel(channel_id)
+
+        # Make an embed with the results
+        em = discord.Embed(title="Valorant Signup", description=f"by {interaction.user}")
+        em.add_field(name=self.name, value=self.desc)
+
+        await channel.send(embed=em)
 
 
 

@@ -97,7 +97,7 @@ class support(commands.Cog):
     @app_commands.command(name="support", description="Open a Support Ticket")
     async def support(self, interaction : discord.Interaction):
         em = discord.Embed(title="Ticket Support", colour=discord.Color.from_rgb(229, 196, 89))
-        em.add_field(name="\u200b", value="""🪙 **- Verification** If you have read the Verification tab under <#945162520275079199> and you need further support, feel free to open a ticket that will allow our staff members to offer you further assistance.
+        em.add_field(name="\u200b", value="""🪙 **- Verification** If you have trouble seeing all channels after verifying yourself in <#1108741931518922862> you can open a ticket here.
 
         🎁 **- Claim a reward** If you claimed a reward through <@881476780765093939>, please open a ticket to claim it.
 
@@ -106,7 +106,6 @@ class support(commands.Cog):
         📔 **- Other** If you have any other issue with the server, questions for the staff members, event ideas or suggestions you'd like to further discuss etc. feel free to open a ticket.
 
         📥 **- Suggestions** This will open a form that will be sent to us to consider, however, this will not open a channel where we can discuss it, so make sure you include as much detail as you can (e.g. Emote name and a link we can download it from)""")
-
 
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await interaction.response.send_message(embed=em, view=DropdownView(self.client), ephemeral=True)
