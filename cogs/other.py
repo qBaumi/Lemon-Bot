@@ -437,7 +437,7 @@ class Val(ui.Modal, title='Valorant Tournament Signup'):
                         placeholder="Put your valorant tracker link here. If your profile is on private then put your rank here!")
 
     async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f'Thanks for your Suggestion!', ephemeral=True)
+        await interaction.response.send_message(f'Thanks for signing up!', ephemeral=True)
 
         # 656636484937449518 this is the suggestion-log channel
         # 651364619402739713 this is the test channel
