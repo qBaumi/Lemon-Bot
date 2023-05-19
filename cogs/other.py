@@ -438,7 +438,7 @@ class Val(ui.Modal, title='Valorant Tournament Signup'):
 
     async def on_submit(self, interaction: discord.Interaction):
         guild = await self.client.fetch_guild(598303095352459305)
-        role = discord.utils.get(guild.roles, id=1064211501839286412)
+        role = discord.utils.get(guild.roles, id=1109197301567725710)
 
         await interaction.user.add_roles(role)
 
