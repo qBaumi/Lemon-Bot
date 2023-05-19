@@ -437,8 +437,10 @@ class Val(ui.Modal, title='Valorant Tournament Signup'):
                         placeholder="Put your valorant tracker link here. If your profile is on private then put your rank here!")
 
     async def on_submit(self, interaction: discord.Interaction):
+        guild = await self.client.fetch_guild(598303095352459305)
+        role = discord.utils.get(guild.roles, id=1064211501839286412)
 
-        await interaction.user.add_role(role_id=1109197301567725710)
+        await interaction.user.add_roles(role)
 
         await interaction.response.send_message(f'Thanks for signing up!', ephemeral=True)
 
