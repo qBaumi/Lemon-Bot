@@ -433,7 +433,7 @@ class Val(ui.Modal, title='Valorant Tournament Signup'):
         self.client = client
 
     name = ui.TextInput(label='ingame name', placeholder="Put your RiotID HERE")
-    desc = ui.TextInput(label='Link/Rank',
+    desc = ui.TextInput(label='Link/Rank', style=discord.TextStyle.paragraph,
                         placeholder="Put your valorant tracker link here. If your profile is on private then put your rank here!")
 
     async def on_submit(self, interaction: discord.Interaction):
