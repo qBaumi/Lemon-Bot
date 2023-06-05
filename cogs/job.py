@@ -56,7 +56,7 @@ class job(commands.GroupCog):
 
     @app_commands.command(name="info", description="Your current job, salary and job level")
     async def info(self, interaction : discord.Interaction):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         xp, lvl_start, lvl = await self.jobxphelp(interaction)
         user = interaction.user
@@ -97,13 +97,13 @@ class job(commands.GroupCog):
             await interaction.response.send_message(embed=embed)
     @app_commands.command(name="help", description="How jobs work")
     async def help(self, interaction: discord.Interaction):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         await self.jobxphelp(interaction)
         await interaction.response.send_message(embed=await job_helper())
     @app_commands.command(name="list", description="List all jobs")
     async def list(self, interaction: discord.Interaction):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         await self.jobxphelp(interaction)
         embed = discord.Embed(title='Open Jobs:')
@@ -122,7 +122,7 @@ class job(commands.GroupCog):
     @app_commands.command(name="select", description="Select a job from open positions")
     @app_commands.describe(job="The job you want to apply for")
     async def select(self, interaction: discord.Interaction, job : str):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         a, b, lvl = await self.jobxphelp(interaction)
         arg2 = job.lower()

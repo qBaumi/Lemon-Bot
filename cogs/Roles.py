@@ -53,7 +53,7 @@ class Roles(commands.GroupCog):
     @app_commands.command(name="buy", description="Buy a Tier 1 role")
     @app_commands.describe(role="The Tier 1 role you want to buy")
     async def buy(self, interaction: discord.Interaction, role: str):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         balance, safe, total = await es.currency(interaction.user)
         price = 5000

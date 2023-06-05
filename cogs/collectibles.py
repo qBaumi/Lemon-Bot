@@ -90,7 +90,7 @@ class collectibles(commands.Cog):
     async def collection(self, interaction : discord.Interaction):
 
         user = interaction.user
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
 
         try:
@@ -128,7 +128,7 @@ class collectibles(commands.Cog):
         users = await es.get_bank_data(user.id)
 
 
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         if users[str(user.id)]["pocket"] < 150:
             await interaction.response.send_message(f"{user.mention}\nYou dont have enough money!")

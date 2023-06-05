@@ -27,7 +27,7 @@ class items(commands.Cog):
     #DISPLAYS USER BAG
     @app_commands.command(name="bag", description="Show your items")
     async def bag(self, interaction : discord.Interaction):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         await es.open_account(interaction.user)
         user = interaction.user
@@ -53,7 +53,7 @@ class items(commands.Cog):
     @app_commands.command(name="use", description="Use an item from your bag")
     @app_commands.describe(item="The item you use")
     async def use(self, interaction : discord.Interaction, item : str):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         if item == "None":
             await interaction.response.send_message(f"{interaction.user.mention}\nYou cant use nothing")

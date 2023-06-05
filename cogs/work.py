@@ -28,7 +28,7 @@ class work(commands.Cog):
     @app_commands.command(name="work", description="Time to work Voidge")
     async def work(self, interaction : discord.Interaction):
 
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
 
         user = interaction.user

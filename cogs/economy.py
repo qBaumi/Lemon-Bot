@@ -10,8 +10,6 @@ import asyncio
 import discord
 from discord import Colour
 from discord.ext import commands
-import mysql.connector
-
 from cogs.support import support_channel_id
 from discord import app_commands
 from config import guilds
@@ -31,6 +29,7 @@ globalmainshop = [{"name": "Lemonade", "price": 5, "desc": "Everyone likes lemon
                 {"name": "Candy", "price": 10, "desc": "f", "money": "lemons","emoji": "🍬"}]
                 #{"name": "Adventcalendar", "price": 10000, "desc": "Open a door and get a price everyday", "money": "lemons", "emoji": "🎅"}
 notlisted = ["Candy", "Adventcalendar"]
+blacklist = ["safe", "adventcalendar"]
 
 
 class economy(commands.Cog):
@@ -43,54 +42,28 @@ class economy(commands.Cog):
     """---------------------------------------COMMANDS----------------------------------------------"""
     """---------------------------------------------------------------------------------------------"""
 
-
-
-    # Startup command to open account
     @app_commands.command(name="startup", description="Get a quick introduction")
     async def startup(self, interaction : discord.Interaction):
-        # Use the open_account function and give a quick overview to the bot, help, some commands etc
-        # GLOBALS
-        STARTMONEY = 50
-        user = interaction.user
-        # Get the function into accountopened to check if already an account was made
-        accountopened = await es.open_account(user=user)
-
+        accountopened = await es.open_account(user=interaction.user)
         if accountopened == False:
             em = discord.Embed()
             em.add_field(name=f"Sorry, you already created an account!",
                          value=f"If you didn't read the message the first time you used this command, try: `/help` , to get more information")
-            await interaction.response.send_message(f"{user.mention}\n", embed=em)
+            await interaction.response.send_message(f"{interaction.user.mention}\n", embed=em)
             return
-
-        # Now if an account wasn't opened the code comes here and sends the embed
-        em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
-                           description=f"Let me introduce you to our little friend Lemon right here.")
-        em.add_field(name="Welcome you can find out more about me with `/about`",
-                     value="Congrats! You already found the *startup command*. \n"
-                           "Next is the `/balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `/help` for more information")
-        await interaction.response.send_message(embed=em)
-        await es.update_balance(user, STARTMONEY)
+        await es.startup_helper(interaction, interaction.user)
 
 
-    # Get your balance
-    @app_commands.command(name="balance", description="Your bank account details")
+    @app_commands.command(name="balance", description="Your bank account details {}")
     async def balance(self, interaction : discord.Interaction):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
-        # Get currency with helper function and send it in an embed
-        # If you returned several things in one variable you can get one specific with
-        # f. E. money[0]      *the first index*
-        # START WITH ZERO
         money = await es.currency(interaction.user)
-
-        # Make a nice looking embed
         em = discord.Embed(title="Your currency", colour=Colour.gold())
-        # Set the footer text
         if money[2] < 100:
             em.set_footer(text="Pff, what a poor commoner")
         elif money[2] > 1000:
             em.set_footer(text="Welcome to the rich people gang")
-        # Set the Fields for pocket and safe
         em.add_field(name="You have ", value=f"`{int(round(money[0], 0)):g}` <:lemon2:881595266757713920> lemons in your pocket", inline=False)
         em.add_field(name="You have ", value=f"`{int(round(money[1], 0)):g}` <:GoldenLemon:882634893039923290> golden lemons", inline=False)
 
@@ -240,7 +213,7 @@ class economy(commands.Cog):
 
     @app_commands.command(name="shop", description="Have a look at the shop")
     async def shop(self, interaction : discord.Interaction):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         page = 1
         shop = "normal"
@@ -279,13 +252,11 @@ class economy(commands.Cog):
     @app_commands.command(name="buy", description="Buy an item from the shop")
     async def buy(self, interaction : discord.Interaction, item : str, amount : Optional[int]):
 
-        # GLOBALS
-        blacklist = ["safe", "adventcalendar"]
         user = interaction.user
 
         if amount is None:
             amount = 1
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         if amount < 1:
             await interaction.response.send_message(":)")
@@ -440,7 +411,7 @@ class economy(commands.Cog):
         if amount is None:
             amount = 1
 
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         if amount < 1:
             await interaction.response.send_message(":)")
@@ -550,7 +521,7 @@ class economy(commands.Cog):
     # daily lemons and cooldown 86400 is one day in seconds
     @app_commands.command(name="daily", description="Get your daily 20 lemons")
     async def daily(self, interaction : discord.Interaction):
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         user = interaction.user
 
@@ -611,7 +582,7 @@ class economy(commands.Cog):
         if victim == user:
             await interaction.response.send_message(f"{user.mention}\nHwat? You wanna rob yourself?!?!? I am always a thought ahead of you...trust me")
             return
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         if users[str(user.id)]['pocket'] < 100:
             await interaction.response.send_message(f"{user.mention}\nYou need atleast `100 lemons` in your pocket in order to steal from another person")
@@ -687,7 +658,7 @@ class economy(commands.Cog):
         userid = user
         author = interaction.user
         """False checks"""
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             await interaction.response.send_message(f"{author.mention}\nYou need to use `/startup` first")
             return
         if userid == author:

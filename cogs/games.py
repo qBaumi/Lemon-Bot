@@ -20,7 +20,7 @@ class games(commands.Cog):
         users = await es.get_bank_data(interaction.user.id)
         user = interaction.user
 
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             return
         if bet == 0:
             await interaction.response.send_message(f"{user.mention}\n<:FeelsDankMan:810802803739983903>")
@@ -83,7 +83,7 @@ class games(commands.Cog):
         users = await es.get_bank_data(interaction.user.id)
         user = interaction.user
 
-        if not await es.interaction_check_account(interaction):
+        if not await es.isUserRegistered(interaction):
             await interaction.response.send_message(f"{user.mention}\nYou need to use `/startup` first")
             return
         if bet == 0:

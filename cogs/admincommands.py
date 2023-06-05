@@ -48,24 +48,10 @@ class admincommands(commands.Cog):
         if not await es.checkPerms(interaction, allowedAdminRoles):
             return
 
-        async def check_account(userid):
-            ids = es.sql_select("SELECT id FROM users")
-            for id in ids:
-                ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
-                if str(userid) == id[0]:
-                    return True
-            return False
 
-        if await check_account(user.id) == False:
-            # here startup
+        if not es.isUserRegistered_helper(user):
             await es.open_account(user)
-            em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
-                               description=f"Let me introduce you to our little friend Lemon right here.")
-            em.add_field(name="Welcome you can find out more about me with `/about`",
-                         value="Congrats! You already found the *startup command*. \n"
-                               "Next is the `/lemons` or `/balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `/help` for more information")
-            await interaction.channel.send(f"{user.mention}", embed=em)
-            await es.update_balance(user, 50)
+            await es.startup_helper(interaction, user)
         if currency == "lemons":
             mode = "pocket"
         else:

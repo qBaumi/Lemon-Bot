@@ -78,15 +78,29 @@ async def open_account(user):
 RETURNS TRUE IF USER USED /STARTUP
 OR RETURNS FALSE IF NOT AND GIVES MESSAGE
 """
-async def interaction_check_account(interaction : discord.Interaction):
-    ids = sql_select("SELECT id FROM users")
+async def isUserRegistered(interaction : discord.Interaction):
+    isUserRegistered = isUserRegistered_helper(interaction.user)
+    if not isUserRegistered:
+        await interaction.response.send_message(f"{interaction.user.mention}\nUse the `/startup` command first!")
+    return isUserRegistered
 
+
+def isUserRegistered_helper(user: discord.User):
+    ids = sql_select("SELECT id FROM users")
     for id in ids:
-        ### SELECT RETURNS TUPLES WHICH HAVE AN INDEX
-        if str(interaction.user.id) == id[0]:
+        if str(user.id) == id[0]:
             return True
-    await interaction.response.send_message(f"{interaction.user.mention}\nUse the `/startup` command first!")
     return False
+
+async def startup_helper(interaction: discord.Interaction, user):
+    STARTMONEY = 50
+    em = discord.Embed(color=discord.Color.blurple(), title="Hello!",
+                       description=f"Let me introduce you to our little friend Lemon right here.")
+    em.add_field(name="Welcome you can find out more about me with `/about`",
+                 value="Congrats! You already found the *startup command*. \n"
+                       "Next is the `/balance` command. You can look up your balance there, \nbut don't forget to NEVER share your bank account data! \nUse `/help` for more information")
+    await interaction.response.send_message(embed=em)
+    await update_balance(user, STARTMONEY)
 
 """
 GETS USER BANK DATA
