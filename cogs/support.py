@@ -301,7 +301,7 @@ class Verification(ui.Modal, title='Verification'):
         em.add_field(name="Description", value=self.description, inline=False)
 
         guild = await self.client.fetch_guild(598303095352459305)
-        verificationrole = guild.get_role(955467902738378853)
+        verificationrole = guild.get_role(598307062086107156) # CHANGED TO MODERATOR ROLE
 
         await setmodperms(interaction.user, ticketchannel, self.client, False)
         await setheadmodperms(interaction.user, ticketchannel, self.client, False)
