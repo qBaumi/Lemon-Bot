@@ -55,7 +55,7 @@ async def setmodperms(user, channel, client, enabled):
     await channel.set_permissions(user, view_channel=True)
 async def setverifiedperms(user, channel, client, enabled):
     guild = await client.fetch_guild(598303095352459305)
-    role = discord.utils.get(guild.roles, id=955467902738378853)
+    role = discord.utils.get(guild.roles, id=598307062086107156) # changed these perms to mod because verification helper role doesn't exist anymore
     await channel.set_permissions(guild.default_role, view_channel=False)
     await channel.set_permissions(role, view_channel=enabled)
     await channel.set_permissions(user, view_channel=True)
