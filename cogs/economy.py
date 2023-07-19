@@ -342,6 +342,7 @@ class economy(commands.Cog):
         index = 0
         for spitem in specialitems["MysterySkin"]:
             name = spitem["name"]
+            price = spitem['price']
             if item.lower() == name.lower():
                 specialitems["MysterySkin"][index]["stock"] = specialitems["MysterySkin"][index]["stock"] - amount
                 with open("./json/spItems.json", "w") as f:
@@ -352,7 +353,7 @@ class economy(commands.Cog):
                 channel = await self.client.fetch_channel(598608660125581362) # Send message to an admin channel or idk
                 noti = await self.client.fetch_user(198218633955115008) # fetch noti, ing and vain
                 ing = await self.client.fetch_user(497508029923852299) # fetch noti, ing and vain
-                await channel.send(f"{noti.mention}{ing.mention}\n{user.mention} | {user} claimed {item}!")
+                await channel.send(f"{noti.mention}{ing.mention}\n{user.mention} | {user} claimed {item} for {price} Golden Lemons!")
                 break
             index+=1
 
