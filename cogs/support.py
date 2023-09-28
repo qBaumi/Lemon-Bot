@@ -102,6 +102,8 @@ class support(commands.Cog):
         🎁 **- Claim a reward** If you claimed a reward through <@881476780765093939>, please open a ticket to claim it.
 
         ❗ **- Make a report** If you notice someone breaking the rules or you're negatively affected by someone's behavior, open a ticket to discuss it with our staff members.
+        
+        🔎 **- Report staff member** If you have a problem with a staff member open this.
 
         📔 **- Other** If you have any other issue with the server, questions for the staff members, event ideas or suggestions you'd like to further discuss etc. feel free to open a ticket.
 
@@ -125,6 +127,7 @@ class Dropdown(discord.ui.Select):
             discord.SelectOption(label='Claim a reward', description='Claim a reward you won', emoji='🎁'),
             discord.SelectOption(label='Twitch Support', description='Get help from twitch mods', emoji='📺'),
             discord.SelectOption(label='Make a Report', description='Report one or multiple users', emoji='❗'),
+            discord.SelectOption(label='Report staff member', description='Report a staff member', emoji='🔎'),
             discord.SelectOption(label='Other', description='Open a ticket with staff members', emoji='📔'),
             discord.SelectOption(label='Suggestion', description='Suggest and emote or something else', emoji='📥')
         ]
@@ -154,6 +157,8 @@ class Dropdown(discord.ui.Select):
             modal = Twitch(self.client)
         elif category == "Make a Report":
             modal = Report(self.client)
+        elif category == "Report staff member":
+            modal = ReportStaff(self.client)
         elif category == "Suggestion":
             modal = Suggestion(self.client)
         else: # this is for category other
@@ -391,6 +396,46 @@ class Report(ui.Modal, title='Report'):
         addid(msg.id, ticketchannel.id, interaction.user.id)
 
         await openTicketResponse(interaction, ticketchannel)
+
+class ReportStaff(ui.Modal, title='Report Staff member'):
+
+    def __init__(self, client):
+        super().__init__()
+        self.client = client
+
+    name = ui.TextInput(label='Title', placeholder="Title of your Report")
+    description = ui.TextInput(label='Description', placeholder="Please put a detailed description here to make it easier for us :)", style=discord.TextStyle.paragraph)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        ticketchannel = await openticket(self.client, interaction)
+        if ticketchannel == None:
+            await interaction.followup.send(f"{interaction.user.mention}\nYou can only open one ticket at a time!", ephemeral=True)
+            return
+
+        # Make an embed with the results
+        em = discord.Embed(title="Report", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
+        em.add_field(name="Title", value=self.name, inline=False)
+        em.add_field(name="Description", value=self.description, inline=False)
+
+
+        guild = await self.client.fetch_guild(598303095352459305)
+
+        # Get Rocsie
+        naughty = await self.client.fetch_user(497508029923852299)
+        ing = await self.client.fetch_user(198218633955115008)
+        mention = f"{naughty} {ing}"
+        if TESTMODE == False:
+            mention = f"{naughty.mention}{ing.mention}"
+
+        await setmodperms(interaction.user, ticketchannel, self.client, False)
+        await setheadmodperms(interaction.user, ticketchannel, self.client, False)
+
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        addid(msg.id, ticketchannel.id, interaction.user.id)
+
+        await openTicketResponse(interaction, ticketchannel)
+
 class Other(ui.Modal, title='Other'):
 
     def __init__(self, client):
