@@ -18,7 +18,7 @@ twitchmod_channel_id = 841020368323870761 # this is the channel for the twitch t
 support_category_id = 955151615252385854
 support_channel_id = 955476670352093204 # #support for the claim message in cogs.economy
 feedback_message_id = 994313931877257386
-support_message_id = 971321595803082802 # message in #support
+support_message_id = 1157032299024621639 # message in #support
 TESTMODE = False
 
 def getmsgids():
