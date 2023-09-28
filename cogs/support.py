@@ -90,7 +90,7 @@ class support(commands.Cog):
 
 🔎 **- Report staff member** If you have a problem with a staff member open this.
 
-📔 **- Other** If you have any other issue with the server, questions for the staff members, event ideas or suggestions you'd like to further discuss etc. feel free to open a ticket.
+📔 **- Other** If you have any other issue with the server, questions for the staff members, event ideas or suggestions you'd like to further discuss
 
 📥 **- Suggestions** This will open a form that will be sent to us to consider, however, this will not open a channel where we can discuss it, so make sure you include as much detail as you can (e.g. Emote name and a link we can download it from)""")
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
