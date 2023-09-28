@@ -88,6 +88,8 @@ class support(commands.Cog):
 
 ❗ **- Make a report** If you notice someone breaking the rules or you're negatively affected by someone's behavior, open a ticket to discuss it with our staff members.
 
+🔎 **- Report staff member** If you have a problem with a staff member open this.
+
 📔 **- Other** If you have any other issue with the server, questions for the staff members, event ideas or suggestions you'd like to further discuss etc. feel free to open a ticket.
 
 📥 **- Suggestions** This will open a form that will be sent to us to consider, however, this will not open a channel where we can discuss it, so make sure you include as much detail as you can (e.g. Emote name and a link we can download it from)""")
