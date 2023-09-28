@@ -15,6 +15,7 @@ import io
 
 channel_id = 970083491586900068  # this is the channel where results get sent in archive, aka #actions ITS #tickets NOW
 twitchmod_channel_id = 841020368323870761 # this is the channel for the twitch tickets
+admin_channel_id =  598608660125581362# this is the channel for the report staff tickets
 support_category_id = 955151615252385854
 support_channel_id = 955476670352093204 # #support for the claim message in cogs.economy
 feedback_message_id = 994313931877257386
@@ -202,6 +203,8 @@ class CloseButtons(discord.ui.View):
 
         if self.type == "twitch":
             resultschannel = await self.client.fetch_channel(twitchmod_channel_id)
+        elif self.type == "admin":
+            resultschannel = await self.client.fetch_channel(admin_channel_id)
         else:
             resultschannel = await self.client.fetch_channel(channel_id)
 
@@ -267,6 +270,8 @@ class CloseWithReason(ui.Modal, title='Close Ticket with Reason'):
         await interaction.response.send_message(f'Closed Ticket with reason {self.reason}', ephemeral=True)
         if self.type == "twitch":
             resultschannel = await self.client.fetch_channel(twitchmod_channel_id)
+        elif self.type == "admin":
+            resultschannel = await self.client.fetch_channel(admin_channel_id)
         else:
             resultschannel = await self.client.fetch_channel(channel_id)
 
@@ -435,7 +440,7 @@ class ReportStaff(ui.Modal, title='Report Staff member'):
         await setmodperms(interaction.user, ticketchannel, self.client, False)
         await setheadmodperms(interaction.user, ticketchannel, self.client, False)
 
-        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention, "admin"))
         addid(msg.id, ticketchannel.id, interaction.user.id)
 
         await openTicketResponse(interaction, ticketchannel)
