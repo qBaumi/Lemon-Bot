@@ -52,7 +52,7 @@ class other(commands.Cog):
         em.add_field(name="link", value=link)
         em.set_footer(text=f"{interaction.user.id}")
         await thread.send(embed=em)
-        await interaction.response.send_modal("Thanks for submitting!", ephemeral=True)
+        await interaction.response.send_message("Thanks for submitting!", ephemeral=True)
 
 
     @app_commands.command(name="val", description="Sign up for the valorant tournament")
