@@ -67,7 +67,6 @@ class other(commands.Cog):
             print("worked reaction")
             channel = await self.client.fetch_channel(staffqueuecheck_channel_id)
             msg = await channel.fetch_message(reaction.message_id)
-            print(msg)
             embed = msg.embeds[0]
             if embed.fields[0].name == "Food":
                 color = discord.Color.red()
@@ -76,7 +75,7 @@ class other(commands.Cog):
                 color = discord.Color.blue()
                 thread = await self.client.fetch_channel(1158007765646716988)
             embed.set_image(url=None)
-            thread.send(embed=embed)
+            await thread.send(embed=embed)
 
     @app_commands.command(name="val", description="Sign up for the valorant tournament")
     async def val(self, interaction: discord.Interaction):
