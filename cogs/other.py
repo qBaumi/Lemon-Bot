@@ -61,7 +61,7 @@ class other(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
-        if(reaction.channel_id != staffqueuecheck_channel_id):
+        if(reaction.channel_id != staffqueuecheck_channel_id or reaction.user_id == 881476780765093939):
             return
         if(reaction.emoji.name == "✅"):
             print("worked reaction")
