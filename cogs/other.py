@@ -61,11 +61,12 @@ class other(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
-        print(reaction)
         if(reaction.channel_id != staffqueuecheck_channel_id):
             return
         if(reaction.emoji == "✅"):
+            print("worked reaction")
             msg = await self.client.fetch_message(reaction.message_id)
+            print(msg)
             embeds = msg.embeds
             print(embeds)
 
