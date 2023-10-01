@@ -34,6 +34,26 @@ class other(commands.Cog):
         modal = Suggestion(client=self.client)
         await interaction.response.send_modal(modal)
 
+    @app_commands.choices(tag=[
+        Choice(name='Food', value="food"),
+        Choice(name='Setups', value="setups"),
+    ])
+    @app_commands.describe(link='A link to the image/gif')
+    @app_commands.command(name="submit", description="Submit an image for Nemesis to view on stream!")
+    async def submit(self, interaction: discord.Interaction, tag, link):
+
+        if tag.value == "food":
+            color = discord.Color.red()
+            thread = await self.client.fetch_channel(1158007582854746112)
+        else:
+            color = discord.Color.blue()
+            thread = await self.client.fetch_channel(1158007765646716988)
+        em = discord.Embed(title=f"{interaction.user}", color=color)
+        em.add_field(name="link", value=link)
+        em.set_footer(text=f"{interaction.user.id}")
+        await thread.send(embed=em)
+        await interaction.response.send_modal("Thanks for submitting!", ephemeral=True)
+
 
     @app_commands.command(name="val", description="Sign up for the valorant tournament")
     async def val(self, interaction: discord.Interaction):
