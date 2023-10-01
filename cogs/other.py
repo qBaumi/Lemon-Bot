@@ -62,10 +62,11 @@ class other(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
         print(reaction)
-        if(reaction.channel.id != staffqueuecheck_channel_id):
+        if(reaction.channel_id != staffqueuecheck_channel_id):
             return
         if(reaction.emoji == "✅"):
-            embeds = reaction.message.embeds
+            msg = await self.client.fetch_message(reaction.message_id)
+            embeds = msg.embeds
             print(embeds)
 
     @app_commands.command(name="val", description="Sign up for the valorant tournament")
