@@ -63,7 +63,7 @@ class other(commands.Cog):
     async def on_raw_reaction_add(self, reaction):
         if(reaction.channel_id != staffqueuecheck_channel_id):
             return
-        if(reaction.emoji == "✅"):
+        if(reaction.emoji.name == "✅"):
             print("worked reaction")
             msg = await self.client.fetch_message(reaction.message_id)
             print(msg)
