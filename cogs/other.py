@@ -40,7 +40,7 @@ class other(commands.Cog):
     ])
     @app_commands.describe(link='A link to the image/gif')
     @app_commands.command(name="submit", description="Submit an image for Nemesis to view on stream!")
-    async def submit(self, interaction: discord.Interaction, tag, link):
+    async def submit(self, interaction: discord.Interaction, tag: Choice[str], link: str):
 
         if tag.value == "food":
             color = discord.Color.red()
