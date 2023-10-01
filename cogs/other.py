@@ -65,7 +65,8 @@ class other(commands.Cog):
             return
         if(reaction.emoji.name == "✅"):
             print("worked reaction")
-            msg = await self.client.fetch_message(reaction.message_id)
+            channel = await self.client.fetch_channel(staffqueuecheck_channel_id)
+            msg = await channel.fetch_message(reaction.message_id)
             print(msg)
             embeds = msg.embeds
             print(embeds)
