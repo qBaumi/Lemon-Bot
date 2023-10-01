@@ -46,18 +46,18 @@ class other(commands.Cog):
         await ctx.send(embed=em)
 
         em = discord.Embed(title="Nemesis Twitch Stream Submissions!", colour=discord.Color.from_rgb(229, 196, 89))
-        em.add_field(name="\u200b", value="""Do you want Nemesis to look at your setup or rate your food? This is the channel to submit it in! The contributions from this channel will be sent in \<#1158007237894213672> for Nemesis to go through in between his games on stream.
+        em.add_field(name="\u200b", value="""Do you want Nemesis to look at your setup or rate your food? This is the channel to submit it in! The contributions from this channel will be sent in <#1158007237894213672> for Nemesis to go through in between his games on stream.
 
-*How to submit*
+**How to submit**
 To submit queue content, you have to:
 1. Click on the submit button under this message
 2. Choose the category for the content you want to submit
 3. Paste the link for the picture or video you want to submit in the textbox 
 
-*Info*
+**Info**
 - All server rules still apply!
 - Please dont send very long clips, we will not approve that.
-- Mods will go through every submission, so if you don't see your submission right away its not approved yet. Sit tight, it will appear in \<#1158007237894213672> once its cleared. 
+- Mods will go through every submission, so if you don't see your submission right away its not approved yet. Sit tight, it will appear in <#1158007237894213672> once its cleared. 
 - We do not choose when Nemesis decides to go through it and we do not take responsibility if you miss out on his review of your submission.""")
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await ctx.send(embed=em, view=QueueContentDropdownView(self.client))
