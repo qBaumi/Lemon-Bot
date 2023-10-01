@@ -17,6 +17,7 @@ from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 
 staffqueuecheck_channel_id = 1158016066543427724
+queuecontent_message_id = 0 # message in #stream-submissions
 
 class other(commands.Cog):
     def __init__(self, client):
@@ -36,6 +37,19 @@ class other(commands.Cog):
         modal = Suggestion(client=self.client)
         await interaction.response.send_modal(modal)
 
+    @commands.has_any_role("Admins", "Head Mods", "Developer")
+    @commands.command(name="permqueuecontent", description="Permanent message for stream-submissions channel, admincommand")
+    async def permqueuecontent(self, ctx):
+        em = discord.Embed(colour=discord.Color.from_rgb(229, 196, 89))
+        em.set_image(
+            url="https://media.discordapp.net/attachments/651364619402739713/1158021337617531060/streamcontentsmile.png?ex=651abae9&is=65196969&hm=28a33f154353470d8249a3f9f159d897e72bec4845a0c71bc142ae28504c78d8&=&width=1440&height=458")
+        await ctx.send(embed=em)
+
+        em = discord.Embed(title="Nemesis Twitch Stream Submissions!", colour=discord.Color.from_rgb(229, 196, 89))
+        em.add_field(name="\u200b", value="""test""")
+        em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
+        await ctx.send(embed=em, view=QueueContentDropdownView(self.client))
+
     @app_commands.choices(tag=[
         Choice(name='Food', value="food"),
         Choice(name='Setups', value="setups"),
@@ -46,10 +60,10 @@ class other(commands.Cog):
 
         if tag.value == "food":
             color = discord.Color.red()
-            thread = await self.client.fetch_channel(1158007582854746112)
+            #thread = await self.client.fetch_channel(1158007582854746112)
         else:
             color = discord.Color.blue()
-            thread = await self.client.fetch_channel(1158007765646716988)
+            #thread = await self.client.fetch_channel(1158007765646716988)
         em = discord.Embed(title=f"{interaction.user}", color=color)
         em.add_field(name=tag.name, value=link)
         em.set_footer(text=f"{interaction.user.id}")
@@ -594,8 +608,60 @@ class PagesView(discord.ui.View):
         await interaction.response.edit_message(view=self, embed=self.pages[self.current_page])
 
 
+class QueueContentDropdownView(discord.ui.View):
+    def __init__(self, client):
+        # Pass the timeout in the initilization of the super class
+        super().__init__(timeout=None)
+
+        # Adds the dropdown to our view object.
+        self.add_item(Dropdown(client))
+
+class Dropdown(discord.ui.Select):
+    def __init__(self, client):
+        # Set the options that will be presented inside the dropdown
+        options = [
+            discord.SelectOption(label='Food', description='', emoji='🍗'),
+            discord.SelectOption(label='Setups', description='', emoji='🖥️'),
+        ]
+
+        super().__init__(placeholder='Select a category', min_values=1, max_values=1,
+                         options=options, custom_id='persistent_view:selectdropdown_reviews')
+        self.client = client
+
+    async def callback(self, interaction: discord.Interaction):
+
+        # we can get the values of the selection, cause self is the dropdown class and it has the attribute values
+        category = self.values[0]
+        # Now the embed will be changed depending on the value of the selection
+        # Also we set the option to True so it will be shown down in the select menu and not be empty again
+        modal = QueueContentModal(self.client, category)
+        await interaction.response.send_modal(modal)
+
+class QueueContentModal(ui.Modal, title='Submit Content'):
+
+    def __init__(self, client, category):
+        super().__init__()
+        self.client = client
+        self.category = category
 
 
+    link = ui.TextInput(label='Link', placeholder="Put your link to an image/video here, you can use imgur.com to generate one", style=discord.TextStyle.paragraph)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        if self.category == "food":
+            color = discord.Color.red()
+            #thread = await self.client.fetch_channel(1158007582854746112)
+        else:
+            color = discord.Color.blue()
+            #thread = await self.client.fetch_channel(1158007765646716988)
+        em = discord.Embed(title=f"{interaction.user}", color=color)
+        em.add_field(name=self.category, value=self.link)
+        em.set_footer(text=f"{interaction.user.id}")
+        em.set_image(url=self.link)
+        channel = await self.client.fetch_channel(staffqueuecheck_channel_id)
+        msg = await channel.send(embed=em)
+        await msg.add_reaction("✅")
+        await interaction.response.send_message("Thanks for submitting!", ephemeral=True)
 
 
 async def setup(client):
