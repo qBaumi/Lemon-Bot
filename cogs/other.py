@@ -51,7 +51,7 @@ class other(commands.Cog):
             color = discord.Color.blue()
             thread = await self.client.fetch_channel(1158007765646716988)
         em = discord.Embed(title=f"{interaction.user}", color=color)
-        em.add_field(name="Link", value=link)
+        em.add_field(name=tag.name, value=link)
         em.set_footer(text=f"{interaction.user.id}")
         em.set_image(url=link)
         channel = await self.client.fetch_channel(staffqueuecheck_channel_id)
@@ -68,8 +68,15 @@ class other(commands.Cog):
             channel = await self.client.fetch_channel(staffqueuecheck_channel_id)
             msg = await channel.fetch_message(reaction.message_id)
             print(msg)
-            embeds = msg.embeds
-            print(embeds)
+            embed = msg.embeds[0]
+            if embed.fields[0].name == "Food":
+                color = discord.Color.red()
+                thread = await self.client.fetch_channel(1158007582854746112)
+            else:
+                color = discord.Color.blue()
+                thread = await self.client.fetch_channel(1158007765646716988)
+            embed.set_image(url=None)
+            thread.send(embed=embed)
 
     @app_commands.command(name="val", description="Sign up for the valorant tournament")
     async def val(self, interaction: discord.Interaction):
