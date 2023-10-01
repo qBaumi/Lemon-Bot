@@ -17,7 +17,7 @@ from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 
 staffqueuecheck_channel_id = 1158016066543427724
-queuecontent_message_id = 0 # message in #stream-submissions
+queuecontent_message_id = 1158033761955491881 # message in #stream-submissions
 
 class other(commands.Cog):
     def __init__(self, client):
