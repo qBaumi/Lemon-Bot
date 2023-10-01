@@ -16,6 +16,8 @@ from config import guilds, allowedRoles
 from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 
+staffqueuecheck_channel_id = 1158016066543427724
+
 class other(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -51,9 +53,20 @@ class other(commands.Cog):
         em = discord.Embed(title=f"{interaction.user}", color=color)
         em.add_field(name="Link", value=link)
         em.set_footer(text=f"{interaction.user.id}")
-        await thread.send(embed=em)
+        em.set_image(url=link)
+        channel = await self.client.fetch_channel(staffqueuecheck_channel_id)
+        msg = await channel.send(embed=em)
+        await msg.add_reaction("✅")
         await interaction.response.send_message("Thanks for submitting!", ephemeral=True)
 
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, reaction):
+        print(reaction)
+        if(reaction.channel.id != staffqueuecheck_channel_id):
+            return
+        if(reaction.emoji == "✅"):
+            embeds = reaction.message.embeds
+            print(embeds)
 
     @app_commands.command(name="val", description="Sign up for the valorant tournament")
     async def val(self, interaction: discord.Interaction):
