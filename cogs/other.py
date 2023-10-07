@@ -117,7 +117,10 @@ To submit queue content, you have to:
             else:
                 color = discord.Color.blue()
                 thread = await self.client.fetch_channel(1160167420439318618)
-            embed.fields[0].value = f"[Link]({embed.fields[0].value})"
+            newTitle = embed.fields[0].name
+            newLink = f"[Link]({embed.fields[0].value})"
+            embed.clear_fields()
+            embed.add_field(name = newTitle, value=newLink)
             embed.set_footer(text=None)
             #embed.set_image(url=None)
             await thread.send(embed=embed)
