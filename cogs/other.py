@@ -113,10 +113,10 @@ To submit queue content, you have to:
             embed = msg.embeds[0]
             if embed.fields[0].name == "Food":
                 color = discord.Color.red()
-                thread = await self.client.fetch_channel(1158007582854746112)
+                thread = await self.client.fetch_channel(1160167505478828052)
             else:
                 color = discord.Color.blue()
-                thread = await self.client.fetch_channel(1158007765646716988)
+                thread = await self.client.fetch_channel(1160167420439318618)
             embed.fields[0].value = f"[Link]({embed.fields[0].value})"
             embed.set_footer(text=None)
             #embed.set_image(url=None)
