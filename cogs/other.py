@@ -38,6 +38,15 @@ class other(commands.Cog):
         await interaction.response.send_modal(modal)
 
     @commands.has_any_role("Admins", "Head Mods", "Developer")
+    @commands.command(name="queuecontentthread", description="Permanent message for queue content thread channel, admincommand")
+    async def queuecontentthread(self, ctx):
+        em = discord.Embed(colour=discord.Color.from_rgb(229, 196, 89))
+        em.set_image(
+            url="https://cdn.discordapp.com/attachments/651364619402739713/1158035904519229530/streamcontentsmile.png?ex=652bebfa&is=651976fa&hm=53d5f95edce450346e2a52121a7e1f708bb8ad8c35e02f318e70104e420a3ec9&")
+        await ctx.send(embed=em)
+
+
+    @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="permqueuecontent", description="Permanent message for stream-submissions channel, admincommand")
     async def permqueuecontent(self, ctx):
         em = discord.Embed(colour=discord.Color.from_rgb(229, 196, 89))
@@ -100,7 +109,9 @@ To submit queue content, you have to:
             else:
                 color = discord.Color.blue()
                 thread = await self.client.fetch_channel(1158007765646716988)
-            embed.set_image(url=None)
+            embed.fields[0].value = f"[Link]({embed.fields[0].value})"
+            embed.set_footer(text=None)
+            #embed.set_image(url=None)
             await thread.send(embed=embed)
 
     @app_commands.command(name="val", description="Sign up for the valorant tournament")
