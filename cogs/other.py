@@ -50,7 +50,8 @@ class other(commands.Cog):
             url="https://cdn.discordapp.com/attachments/651364619402739713/1158035904519229530/streamcontentsmile.png?ex=652bebfa&is=651976fa&hm=53d5f95edce450346e2a52121a7e1f708bb8ad8c35e02f318e70104e420a3ec9&")
         await ctx.send(embed=em)
         em = discord.Embed(title="Nemesis Twitch Stream Submissions!", colour=discord.Color.from_rgb(229, 196, 89))
-        em.add_field(name="\u200b", value="""Here you can find approved submissions for the Stream.\nYou can scroll through the content by clicking on the different threads""")
+        em.add_field(name="\u200b", value="""Here you can find approved submissions for the Stream.\nYou can scroll through the content by clicking on the different threads\nHead over to <#1158008053904441367> to submit your own!""")
+        em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await ctx.send(embed=em)
 
 
