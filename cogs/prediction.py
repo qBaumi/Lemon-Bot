@@ -24,20 +24,20 @@ class PredictionDropdownView(discord.ui.View):
         super().__init__(timeout=None)
 
         # Adds the dropdown to our view object.
-        self.add_item(PredictionDropdown(client))
-        self.add_item(PredictionDropdown(client))
+        self.add_item(PredictionDropdown(client, 1))
+        self.add_item(PredictionDropdown(client, 2))
 
 class PredictionDropdown(discord.ui.Select):
-    def __init__(self, client):
+    def __init__(self, client, id):
         # Set the options that will be presented inside the dropdown
         options = [
             discord.SelectOption(label="1"),
             discord.SelectOption(label="2"),
             discord.SelectOption(label="3"),
         ]
-
+        self.id = id
         super().__init__(placeholder='-', min_values=1, max_values=1,
-                         options=options, custom_id='persistent_view:predictiondropdown_reviews')
+                         options=options, custom_id=f'persistent_view:predictiondropdown_{self.id}')
         self.client = client
 
     async def callback(self, interaction: discord.Interaction):
