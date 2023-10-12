@@ -100,6 +100,7 @@ To submit queue content, you have to:
             oldLink = embed.fields[0].value
             if oldLink.startswith("https://imgur.com/"):
                 oldLink = "https://i.imgur.com/" + oldLink.rsplit('/', 1)[1] + ".jpeg"
+            print(oldLink)
             newLink = f"[Link]({embed.fields[0].value})"
             embed.clear_fields()
             embed.add_field(name = newTitle, value=newLink)
