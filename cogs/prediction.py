@@ -37,7 +37,8 @@ class PredictionDropdown(discord.ui.Select):
         ]
         self.id = id
         super().__init__(placeholder='-', min_values=1, max_values=1,
-                         options=options, custom_id=f'persistent_view:predictiondropdown_{self.id}')
+                         options=options, custom_id=f'persistent_view:predictiondropdown_{self.id}',
+                         row=1)
         self.client = client
 
     async def callback(self, interaction: discord.Interaction):
