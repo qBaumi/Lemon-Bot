@@ -3,7 +3,8 @@ import discord
 from discord.ext import commands
 from discord import Emoji
 
-from cogs.other import FeedbackButtons, QueueContentDropdownView, queuecontent_message_id
+from cogs.other import FeedbackButtons
+from cogs.streamsubmissions import QueueContentDropdownView, queuecontent_message_id
 from cogs.support import DropdownView, support_message_id, getmsgids, CloseButtons, feedback_message_id
 from config import token
 from discord import app_commands
@@ -54,7 +55,7 @@ async def setup_hook():
     await client.load_extension("cogs.loyalty")
     await client.load_extension("cogs.work")
     await client.load_extension("cogs.support")
-    await client.load_extension("cogs.googlesheets")
+    #await client.load_extension("cogs.googlesheets")
     await client.load_extension("cogs.Roles")
     client.add_view(DropdownView(client), message_id=support_message_id)
     client.add_view(QueueContentDropdownView(client), message_id=queuecontent_message_id)
