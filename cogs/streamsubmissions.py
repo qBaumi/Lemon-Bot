@@ -97,11 +97,14 @@ To submit queue content, you have to:
                 color = discord.Color.blue()
                 thread = await self.client.fetch_channel(setups_thread_id)
             newTitle = embed.fields[0].name
+            oldLink = embed.fields[0].value
+            if oldLink.startswith("https://imgur.com/"):
+                oldLink = "https://i.imgur.com/" + oldLink.rsplit('/', 1)[1] + "jpeg"
             newLink = f"[Link]({embed.fields[0].value})"
             embed.clear_fields()
             embed.add_field(name = newTitle, value=newLink)
             embed.set_footer(text=None)
-            #embed.set_image(url=None)
+            embed.set_image(url=oldLink)
             await thread.send(embed=embed)
 
 
