@@ -59,7 +59,13 @@ class prediction(commands.Cog):
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @commands.command(name="lockprediction")
     async def lockprediction(self, ctx, matchid):
-
+        msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
+        channel = await self.client.fetch_channel(predictions_channel_id)
+        msg = await channel.fetch_message(msgid)
+        select = msg.view.children[0]
+        print(select)
+        select.disabled = True
+        await msg.edit(embed=msg.embed[0], view=select.view)
         await ctx.send("asdf")
 
 
@@ -121,7 +127,7 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         WHERE p.matchid = {matchid} AND userid = '{interaction.user.id}'
         """)[0]
         print(mypredictions)
-        await interaction.response.send_message(f"You have currently selected {mypredictions[0]} - {mypredictions[1]} for {mypredictions[2].decode('utf-8')} vs {mypredictions[3].decode('utf-8')}", ephemeral=True)
+        await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
 class PredictionSelectBestofOne(discord.ui.Select):
     def __init__(self, client, teams, matchid):
