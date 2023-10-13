@@ -30,6 +30,7 @@ class prediction(commands.Cog):
         else:
             view = PredictionDropdownView(self.client)
         await interaction.channel.send(embed=em, view=view)
+        await interaction.send_message("Successfully created prediction")
 
 
 class PredictionDropdownView(discord.ui.View):
@@ -46,6 +47,8 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         super().__init__(timeout=None)
         self.client = client
         self.teams = teams
+        async def team(self, interaction: discord.Interaction):
+            await interaction.response.send_message(f"You predicted a **win for {self.label}**", ephemeral=True)
         button1 = discord.ui.Button(label=teams[0].name, style=discord.ButtonStyle.primary, custom_id=teams[0].value)
         button1.callback = self.team
         button2 = discord.ui.Button(label=teams[1].name, style=discord.ButtonStyle.primary, custom_id=teams[1].value)
@@ -53,8 +56,6 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         self.add_item(button1)
         self.add_item(button2)
 
-    async def team(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message(f"You predicted a **win for {button.label}**", ephemeral=True)
 
 class PredictionDropdown(discord.ui.Select):
     def __init__(self, client, id):
