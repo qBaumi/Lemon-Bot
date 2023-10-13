@@ -25,8 +25,10 @@ class prediction(commands.Cog):
         Choice(name="Best of three", value="3"),
     ])
     @app_commands.command(name="prediction", description="Create a prediction")
-    async def prediction(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str]):
-        em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description="Predictions close at 19:00 on the 13.10.2023")
+    async def prediction(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str], matchbegin_timestamp: str):
+        em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
+        em.add_field(name=f"Votes for {team1.name}", value="0")
+        em.add_field(name=f"Votes for {team2.name}", value="0")
         if bestof.value == "1":
             view = PredictionDropdownViewBestofOne(self.client, [team1, team2])
         else:
