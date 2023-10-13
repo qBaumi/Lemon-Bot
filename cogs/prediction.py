@@ -121,7 +121,7 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         WHERE p.matchid = {matchid} AND userid = '{interaction.user.id}'
         """)[0]
         print(mypredictions)
-        await interaction.response.send_message(f"You have currently selected {mypredictions[0]} - {mypredictions[1]} for {mypredictions[2]} vs {mypredictions[3]}", ephemeral=True)
+        await interaction.response.send_message(f"You have currently selected {mypredictions[0]} - {mypredictions[1]} for {mypredictions[2].decode('utf-8')} vs {mypredictions[3].decode('utf-8')}", ephemeral=True)
 
 class PredictionSelectBestofOne(discord.ui.Select):
     def __init__(self, client, teams, matchid):
