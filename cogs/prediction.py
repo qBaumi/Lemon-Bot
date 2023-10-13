@@ -19,7 +19,7 @@ class prediction(commands.Cog):
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @app_commands.command(name="predictionresult", description="Put result into a Prediction")
-    async def predictionresult(self, interaction: discord.Interaction, matchid, team1score, team2score):
+    async def predictionresult(self, interaction: discord.Interaction, matchid: int, team1score: int, team2score: int):
         es.sql_exec(f"UPDATE matches SET team1={int(team1score)}, team2={int(team2score)} WHERE matchid={int(matchid)}")
         await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
 
@@ -59,7 +59,7 @@ class prediction(commands.Cog):
         em.set_footer(text=str(new_matchid))
         msg = await interaction.channel.send(embed=em, view=view)
         print(msg)
-        
+
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
 
