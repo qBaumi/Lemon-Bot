@@ -8,8 +8,8 @@ from config import guilds
 from discord.app_commands import Choice
 
 teams = [
-    Choice(name='FNC', value="fnc"),
-    Choice(name='G2', value="g2")
+    Choice(name='FNC', value="<:FNC:1162308600128086096>"),
+    Choice(name='G2', value="<:G2:1162308625763672154>")
     ]
 
 class prediction(commands.Cog):
