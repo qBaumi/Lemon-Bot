@@ -141,9 +141,9 @@ class PredictionSelectBestofOne(discord.ui.Select):
         print(oldPrediction)
         #check if prediction is already in
         if oldPrediction:
-            if self.values[0] == self.teams[0].name and oldPrediction[0][3] == 1:
+            if self.values[0] == self.teams[0].name and oldPrediction[0][2] == 1:
                 print("same prediction")
-            elif self.values[1] == self.teams[1].name and oldPrediction[0][4] == 1:
+            elif self.values[1] == self.teams[1].name and oldPrediction[0][3] == 1:
                 print("same prediction")
 
         if self.values[0] == self.teams[0].name:
