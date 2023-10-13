@@ -125,8 +125,8 @@ class PredictionSelectBestofOne(discord.ui.Select):
 
     async def update_votes(self, matchid):
             votes = es.sql_select(f"""SELECT
-      SUM(CASE WHEN p.team1 > p.team2 THEN 1 ELSE 0 END) AS team1_score,
-      SUM(CASE WHEN p.team2 > p.team1 THEN 1 ELSE 0 END) AS team2_score
+      SUM(CASE WHEN m.team1 > m.team2 THEN 1 ELSE 0 END) AS team1_score,
+      SUM(CASE WHEN m.team2 > m.team1 THEN 1 ELSE 0 END) AS team2_score
     FROM matches m WHERE matchid={matchid};""")
             print(votes[0])
             print(votes[1])
