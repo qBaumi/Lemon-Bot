@@ -49,9 +49,9 @@ ORDER BY score DESC
 LIMIT 10;""")
         em = discord.Embed(title="Predictions Leaderboard")
         for user in leaderboard:
-            print(str(user[0]))
+            print(user[0].decode('utf-8'))
             print(int(user[1]))
-            member = await self.client.fetch_user(str(user[0]))
+            member = await self.client.fetch_user(user[0].decode('utf-8'))
             em.add_field(name=member.name, value=int(user[1]))
         await ctx.send(embed=em)
 
