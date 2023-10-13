@@ -31,7 +31,7 @@ class prediction(commands.Cog):
         em.add_field(name=f"Votes for {team1.name}", value="0")
         em.add_field(name=f"Votes for {team2.name}", value="0")
         # Calculate the new matchid value separately
-        new_matchid = es.sql_select("SELECT COALESCE(MAX(matchid), 0) + 1 FROM matches")
+        new_matchid = es.sql_select("SELECT COALESCE(MAX(matchid), 0) + 1 FROM matches")[0][0]
         print(new_matchid)
         # Use the calculated new_matchid value in the INSERT statement
         es.sql_exec(
