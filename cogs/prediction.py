@@ -90,7 +90,7 @@ class PredictionSelectBestofOne(discord.ui.Select):
             es.sql_exec(f"INSERT INTO predictions(userid, matchid, team1, team2) VALUES('{interaction.user.id}', {int(self.matchid)}, {team1score}, {team2score})")
             print("inserted")
         else:
-            es.sql_exec(f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}'")
+            es.sql_exec(f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {self.matchid}")
         await interaction.response.send_message(f"You predicted a **win for {self.values[0]}**", ephemeral=True)
 
 class PredictionDropdown(discord.ui.Select):
