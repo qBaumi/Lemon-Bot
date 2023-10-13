@@ -21,7 +21,7 @@ class prediction(commands.Cog):
     @app_commands.command(name="predictionresult", description="Put result into a Prediction")
     async def predictionresult(self, interaction: discord.Interaction, matchid: int, team1score: int, team2score: int):
         es.sql_exec(f"UPDATE matches SET team1={int(team1score)}, team2={int(team2score)} WHERE matchid={int(matchid)}")
-        msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0]
+        msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
         print(f"msgid {msgid}")
         channel = await self.client.fetch_channel(predictions_channel_id)
         msg = await channel.fetch_message(msgid)
