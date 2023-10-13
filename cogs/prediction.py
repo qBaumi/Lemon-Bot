@@ -48,7 +48,6 @@ class prediction(commands.Cog):
     async def predictionresult(self, interaction: discord.Interaction, matchid: int, team1score: int, team2score: int):
         es.sql_exec(f"UPDATE matches SET team1={int(team1score)}, team2={int(team2score)} WHERE matchid={int(matchid)}")
         msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
-        print(f"msgid {msgid}")
         channel = await self.client.fetch_channel(predictions_channel_id)
         msg = await channel.fetch_message(msgid)
         embed = msg.embeds[0]
@@ -87,7 +86,6 @@ class prediction(commands.Cog):
         em.add_field(name=f"Votes for {team2.name}", value="0")
         # Calculate the new matchid value separately
         new_matchid = es.sql_select("SELECT COALESCE(MAX(matchid), 0) + 1 FROM matches")[0][0]
-        print(new_matchid)
         # Use the calculated new_matchid value in the INSERT statement
         es.sql_exec(f"INSERT INTO matches (matchid, messageid, team1, team2, timestamp, team1name, team2name) VALUES ({new_matchid}, 'none', 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
         matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
@@ -98,7 +96,6 @@ class prediction(commands.Cog):
 
         em.set_footer(text=str(new_matchid))
         msg = await interaction.channel.send(embed=em, view=view)
-        print(msg)
         es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
@@ -134,6 +131,7 @@ class PredictionSelectBestofOne(discord.ui.Select):
             embed = msg.embeds[0]
             embed.fields[0].value = int(votes[0])
             embed.fields[1].value = int(votes[1])
+            print(embed)
             await msg.edit(embed=embed)
 
 
