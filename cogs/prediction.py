@@ -13,9 +13,34 @@ teams = [
     Choice(name='G2', value="<:G2:1162308625763672154>")
     ]
 predictions_channel_id = 651364619402739713
+leaderboard_message_id = 1162372921692524684
+
 class prediction(commands.Cog):
     def __init__(self, client):
         self.client = client
+
+    async def update_leaderboard(self):
+        channel = await self.client.fetch_channel(predictions_channel_id)
+        msg = await channel.fetch_message(leaderboard_message_id)
+        await msg.edit(embed=await self.getLeaderboardEmbed())
+
+    async def getLeaderboardEmbed(self):
+        leaderboard = es.sql_select(f"""SELECT p.userid,
+               SUM(CASE 
+               WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 2 
+               WHEN p.team1 = m.team1 AND p.team2 != m.team2 THEN 1
+               WHEN p.team2 = m.team2 AND p.team1 != m.team1 THEN 1
+               ELSE 0 END) AS score
+          FROM predictions p
+               JOIN matches m ON p.matchid = m.matchid
+        GROUP BY p.userid
+        ORDER BY score DESC
+        LIMIT 10;""")
+        em = discord.Embed(title="Predictions Leaderboard")
+        for user in leaderboard:
+            member = await self.client.fetch_user(user[0].decode('utf-8'))
+            em.add_field(name=member.name, value=int(user[1]), inline=False)
+        return em
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @app_commands.command(name="predictionresult", description="Put result into a Prediction")
@@ -28,6 +53,7 @@ class prediction(commands.Cog):
         embed = msg.embeds[0]
         embed.title = f"Prediction has ended {team1score} - {team2score} | {embed.title}"
         await msg.edit(embed=embed)
+        await self.update_leaderboard()
         await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
@@ -40,17 +66,7 @@ class prediction(commands.Cog):
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @commands.command(name="predictionleaderboard")
     async def predictionleaderboard(self, ctx):
-        leaderboard = es.sql_select(f"""SELECT p.userid,
-       SUM(CASE WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 1 ELSE 0 END) AS score
-  FROM predictions p
-       JOIN matches m ON p.matchid = m.matchid
-GROUP BY p.userid
-ORDER BY score DESC
-LIMIT 10;""")
-        em = discord.Embed(title="Predictions Leaderboard")
-        for user in leaderboard:
-            member = await self.client.fetch_user(user[0].decode('utf-8'))
-            em.add_field(name=member.name, value=int(user[1]), inline=False)
+        em = await self.getLeaderboardEmbed()
         await ctx.send(embed=em)
 
 
