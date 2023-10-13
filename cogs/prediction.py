@@ -138,13 +138,11 @@ class PredictionSelectBestofOne(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         oldPrediction = es.sql_select(f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {self.matchid}")
-        print(oldPrediction)
         #check if prediction is already in
         if oldPrediction:
-            if self.values[0] == self.teams[0].name and oldPrediction[0][2] == 1:
-                print("same prediction")
-            elif self.values[0] == self.teams[1].name and oldPrediction[0][3] == 1:
-                print("same prediction")
+            if self.values[0] == self.teams[0].name and oldPrediction[0][2] == 1 or self.values[0] == self.teams[1].name and oldPrediction[0][3] == 1:
+                await interaction.response.send_message(f"You've already choosen {self.values[0]}\n**Try to click Show my Prediction!**", ephemeral=True)
+                return
 
         if self.values[0] == self.teams[0].name:
             team1score = 1
