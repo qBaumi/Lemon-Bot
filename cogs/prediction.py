@@ -110,7 +110,7 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         self.add_item(PredictionSelectBestofOne(client, teams, matchid))
 
         showmypredictionsbutton = discord.ui.Button(label="Show my Prediction", style=discord.ButtonStyle.green, custom_id=f"showmyprediction_{matchid}")
-        showmypredictionsbutton.callback = partial(self.showmyprediction, button=showmypredictionsbutton)
+        showmypredictionsbutton.callback = partial(self.showmyprediction, matchid=matchid)
         self.add_item(showmypredictionsbutton)
 
     async def showmyprediction(self, interaction, matchid):
