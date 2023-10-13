@@ -128,13 +128,12 @@ class PredictionSelectBestofOne(discord.ui.Select):
       SUM(CASE WHEN m.team1 > m.team2 THEN 1 ELSE 0 END) AS team1_score,
       SUM(CASE WHEN m.team2 > m.team1 THEN 1 ELSE 0 END) AS team2_score
     FROM predictions m WHERE matchid={matchid};""")[0]
-            votes[0] = int(votes[0])
-            votes[1] = int(votes[1])
+
             channel = await self.client.fetch_channel(predictions_channel_id)
             msg = await channel.fetch_message(msgid)
             embed = msg.embeds[0]
-            embed.fields[0].value = votes[0]
-            embed.fields[1].value = votes[1]
+            embed.fields[0].value = int(votes[0])
+            embed.fields[1].value = int(votes[1])
             await msg.edit(embed=embed)
 
 
