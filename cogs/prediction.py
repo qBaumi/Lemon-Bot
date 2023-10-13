@@ -12,7 +12,7 @@ teams = [
     Choice(name='FNC', value="<:FNC:1162308600128086096>"),
     Choice(name='G2', value="<:G2:1162308625763672154>")
     ]
-
+predictions_channel_id = 651364619402739713
 class prediction(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -21,6 +21,13 @@ class prediction(commands.Cog):
     @app_commands.command(name="predictionresult", description="Put result into a Prediction")
     async def predictionresult(self, interaction: discord.Interaction, matchid: int, team1score: int, team2score: int):
         es.sql_exec(f"UPDATE matches SET team1={int(team1score)}, team2={int(team2score)} WHERE matchid={int(matchid)}")
+        msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0]
+        print(f"msgid {msgid}")
+        channel = await self.client.fetch_channel(predictions_channel_id)
+        msg = await channel.fetch_message(msgid)
+        embed = msg.embeds[0]
+        embed.title = f"Prediction has ended {team1score} - {team2score} | {embed.title}"
+        await msg.edit(embed=embed)
         await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
@@ -59,7 +66,7 @@ class prediction(commands.Cog):
         em.set_footer(text=str(new_matchid))
         msg = await interaction.channel.send(embed=em, view=view)
         print(msg)
-
+        es.sql_exec(f"UPDATE matches SET messageid='{msg.id}'")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
 
