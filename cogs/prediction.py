@@ -74,6 +74,17 @@ class PredictionSelectBestofOne(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         oldPrediction = es.sql_select(f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {self.matchid}")
         print(oldPrediction)
+        if self.values[0] == self.teams[0].name:
+            team1score = 1
+            team2score = 0
+        else:
+            team1score = 0
+            team2score = 1
+        if not oldPrediction:
+            es.sql_exec(f"INSERT INTO predictions(userid, matchid, team1, team2) VALUES('{interaction.user.id}', {int(self.matchid)}, {team1score}, {team2score})")
+            print("inserted")
+        else:
+            es.sql_exec(f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}'")
         await interaction.response.send_message(f"You predicted a **win for {self.values[0]}**", ephemeral=True)
 
 class PredictionDropdown(discord.ui.Select):
