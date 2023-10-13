@@ -5,17 +5,31 @@ from discord import ui
 from config import guilds
 from discord.app_commands import Choice
 
-
+teams = [
+    Choice(name='FNC', value="fnc"),
+    Choice(name='G2', value="g2")
+    ]
 
 class prediction(commands.Cog):
     def __init__(self, client):
         self.client = client
 
     @commands.has_any_role("Admins", "Head Mods", "Developer")
-    @commands.command(name="prediction")
-    async def prediction(self, ctx):
-        em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2")
-        await ctx.send(embed=em, view=PredictionDropdownView(self.client))
+    @app_commands.choices(team1=teams)
+    @app_commands.choices(team2=teams)
+    @app_commands.choices(bestof=[
+        Choice(name="Best of one", value=1),
+        Choice(name="Best of two", value=2),
+        Choice(name="Best of three", value=3),
+    ])
+    @app_commands.command(name="prediction", description="Create a prediction")
+    async def prediction(self, ctx, team1: Choice[str], team2: Choice[str], bestof: Choice[str]):
+        em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description="Predictions close at 19:00 on the 13.10.2023")
+        if bestof.value == 1:
+            view = PredictionDropdownViewBestofOne(self.client, [team1, team2])
+        else:
+            view = PredictionDropdownView(self.client)
+        await ctx.send(embed=em, view=view)
 
 
 class PredictionDropdownView(discord.ui.View):
@@ -27,6 +41,21 @@ class PredictionDropdownView(discord.ui.View):
         self.add_item(PredictionDropdown(client, 1))
         self.add_item(PredictionDropdown(client, 2))
 
+class PredictionDropdownViewBestofOne(discord.ui.View):
+    def __init__(self, client, teams):
+        super().__init__(timeout=None)
+        self.client = client
+        self.teams = teams
+        button1 = discord.ui.Button(label=teams[0].name, style=discord.ButtonStyle.primary, custom_id=teams[0].value)
+        button1.callback = self.team
+        button2 = discord.ui.Button(label=teams[1].name, style=discord.ButtonStyle.primary, custom_id=teams[1].value)
+        button2.callback = self.team
+        self.add_item(button1)
+        self.add_item(button2)
+
+    async def team(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(f"You predicted a **win for {button.label}**", ephemeral=True)
+
 class PredictionDropdown(discord.ui.Select):
     def __init__(self, client, id):
         # Set the options that will be presented inside the dropdown
@@ -37,8 +66,7 @@ class PredictionDropdown(discord.ui.Select):
         ]
         self.id = id
         super().__init__(placeholder='-', min_values=1, max_values=1,
-                         options=options, custom_id=f'persistent_view:predictiondropdown_{self.id}',
-                         row=0)
+                         options=options, custom_id=f'persistent_view:predictiondropdown_{self.id}')
         self.client = client
 
     async def callback(self, interaction: discord.Interaction):
