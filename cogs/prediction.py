@@ -140,10 +140,11 @@ class PredictionSelectBestofOne(discord.ui.Select):
         oldPrediction = es.sql_select(f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {self.matchid}")
         print(oldPrediction)
         #check if prediction is already in
-        if self.values[0] == self.teams[0].name and oldPrediction[0][3] == 1:
-            print("same prediction")
-        elif self.values[1] == self.teams[1].name and oldPrediction[0][4] == 1:
-            print("same prediction")
+        if oldPrediction:
+            if self.values[0] == self.teams[0].name and oldPrediction[0][3] == 1:
+                print("same prediction")
+            elif self.values[1] == self.teams[1].name and oldPrediction[0][4] == 1:
+                print("same prediction")
 
         if self.values[0] == self.teams[0].name:
             team1score = 1
