@@ -6,6 +6,7 @@ from discord import app_commands
 from discord import ui
 from config import guilds
 from discord.app_commands import Choice
+import essentialfunctions as es
 
 teams = [
     Choice(name='FNC', value="<:FNC:1162308600128086096>"),
@@ -33,7 +34,9 @@ class prediction(commands.Cog):
             view = PredictionDropdownViewBestofOne(self.client, [team1, team2])
         else:
             view = PredictionDropdownView(self.client)
+        es.sql_exec(f"INSERT INTO matches(matchid, team1, team2, timestamp, team1name, team2name) VALUES (SELECT COALESCE(MAX(id), 0) + 1, 0, 0, {matchbegin_timestamp}, {team1.name}, {team2.name});")
         await interaction.channel.send(embed=em, view=view)
+
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
 
