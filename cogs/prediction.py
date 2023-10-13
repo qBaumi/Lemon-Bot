@@ -18,14 +18,14 @@ class prediction(commands.Cog):
     @app_commands.choices(team1=teams)
     @app_commands.choices(team2=teams)
     @app_commands.choices(bestof=[
-        Choice(name="Best of one", value=1),
-        Choice(name="Best of two", value=2),
-        Choice(name="Best of three", value=3),
+        Choice(name="Best of one", value="1"),
+        Choice(name="Best of two", value="2"),
+        Choice(name="Best of three", value="3"),
     ])
     @app_commands.command(name="prediction", description="Create a prediction")
     async def prediction(self, ctx, team1: Choice[str], team2: Choice[str], bestof: Choice[str]):
         em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description="Predictions close at 19:00 on the 13.10.2023")
-        if bestof.value == 1:
+        if bestof.value == "1":
             view = PredictionDropdownViewBestofOne(self.client, [team1, team2])
         else:
             view = PredictionDropdownView(self.client)
