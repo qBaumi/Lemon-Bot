@@ -37,6 +37,21 @@ class prediction(commands.Cog):
         await ctx.send("asdf")
 
 
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.command(name="predictionleaderboard")
+    async def predictionleaderboard(self, ctx):
+        leaderboard = es.sql_select(f"""SELECT p.userid,
+       SUM(CASE WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 1 ELSE 0 END) AS score
+  FROM predictions p
+       JOIN matches m ON p.matchid = m.matchid
+GROUP BY p.userid
+ORDER BY score DESC
+LIMIT 10;""")
+        for user in leaderboard:
+            print(user)
+        await ctx.send("asdf")
+
+
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @app_commands.choices(team1=teams)
