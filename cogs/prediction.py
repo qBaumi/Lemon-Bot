@@ -129,9 +129,12 @@ class PredictionSelectBestofOne(discord.ui.Select):
             channel = await self.client.fetch_channel(predictions_channel_id)
             msg = await channel.fetch_message(msgid)
             embed = msg.embeds[0]
-            embed.fields[0].value = int(votes[0])
-            embed.fields[1].value = int(votes[1])
-            print(embed)
+            field1name = embed.fields[0].name
+            field2name = embed.fields[1].name
+            embed.clear_fields()
+            embed.add_field(name=field1name, value=int(votes[0]))
+            embed.add_field(name=field2name, value=int(votes[1]))
+            print(embed.fields[0])
             await msg.edit(embed=embed)
 
 
