@@ -24,13 +24,7 @@ class prediction(commands.Cog):
         msg = await channel.fetch_message(leaderboard_message_id)
         await msg.edit(embed=await self.getLeaderboardEmbed())
 
-    async def update_votes(self, matchid):
-        votes = es.sql_select(f"""SELECT
-  SUM(CASE WHEN p.team1 > p.team2 THEN 1 ELSE 0 END) AS team1_score,
-  SUM(CASE WHEN p.team2 > p.team1 THEN 1 ELSE 0 END) AS team2_score
-FROM matches m WHERE matchid={matchid};""")
-        print(votes[0])
-        print(votes[1])
+
     async def getLeaderboardEmbed(self):
         leaderboard = es.sql_select(f"""SELECT p.userid,
                SUM(CASE 
@@ -129,7 +123,13 @@ class PredictionSelectBestofOne(discord.ui.Select):
         super().__init__(placeholder='Pick a winner', min_values=1, max_values=1,
                          options=options, custom_id=f'persistent_view:match_id_{matchid}')
 
-
+    async def update_votes(self, matchid):
+            votes = es.sql_select(f"""SELECT
+      SUM(CASE WHEN p.team1 > p.team2 THEN 1 ELSE 0 END) AS team1_score,
+      SUM(CASE WHEN p.team2 > p.team1 THEN 1 ELSE 0 END) AS team2_score
+    FROM matches m WHERE matchid={matchid};""")
+            print(votes[0])
+            print(votes[1])
 
     async def callback(self, interaction: discord.Interaction):
         oldPrediction = es.sql_select(f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {self.matchid}")
@@ -145,6 +145,7 @@ class PredictionSelectBestofOne(discord.ui.Select):
             print("inserted")
         else:
             es.sql_exec(f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {self.matchid}")
+        await self.update_votes(self.matchid)
         await interaction.response.send_message(f"You predicted a **win for {self.values[0]}**", ephemeral=True)
 
 
