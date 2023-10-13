@@ -57,7 +57,6 @@ class prediction(commands.Cog):
         # Use the calculated new_matchid value in the INSERT statement
         es.sql_exec(f"INSERT INTO matches (matchid, messageid, team1, team2, timestamp, team1name, team2name) VALUES ({new_matchid}, 'none', 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
         matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
-        print(matchid)
         if bestof.value == "1":
             view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid)
         else:
@@ -66,7 +65,7 @@ class prediction(commands.Cog):
         em.set_footer(text=str(new_matchid))
         msg = await interaction.channel.send(embed=em, view=view)
         print(msg)
-        es.sql_exec(f"UPDATE matches SET messageid='{msg.id}'")
+        es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
 
