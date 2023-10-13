@@ -67,7 +67,7 @@ class prediction(commands.Cog):
         select = View.from_message(msg).children[0]
         print(select)
         select.disabled = True
-        await msg.edit(embed=msg.embed[0], view=select.view)
+        await msg.edit(view=select.view)
         await ctx.send("asdf")
 
 
