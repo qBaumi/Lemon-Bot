@@ -349,11 +349,6 @@ class other(commands.Cog):
 
 
 
-    @app_commands.command(name="worlds", description="Sign up for the Prediction Sheet!")
-    async def worlds(self, interaction: discord.Interaction):
-        modal = self.Prediction(client=self.client, tournament="Worlds 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit?usp=sharing")
-        await interaction.response.send_modal(modal)
-
 
     #@app_commands.command(name="lec", description="Sign up for the Prediction Sheet!")
     #async def lec(self, interaction: discord.Interaction):
