@@ -32,7 +32,7 @@ class prediction(commands.Cog):
         else:
             view = PredictionDropdownView(self.client)
         await interaction.channel.send(embed=em, view=view)
-        await interaction.send_message("Successfully created prediction")
+        await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
 
 class PredictionDropdownView(discord.ui.View):

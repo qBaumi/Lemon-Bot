@@ -40,6 +40,11 @@ class other(commands.Cog):
     async def parrot(self, ctx, msg):
         await ctx.send(msg)
 
+    @commands.command(name="listemojis")
+    async def listemojis(self, ctx):
+        server = ctx.guild
+        emoji_list = [f'<:{emoji.name}:{emoji.id}>' for emoji in server.emojis]
+        await ctx.send(' '.join(emoji_list))
 
 
 
