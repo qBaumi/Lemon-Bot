@@ -6,7 +6,7 @@ from discord import app_commands
 from discord import ui
 from config import guilds
 from discord.app_commands import Choice
-import essentialfunctions as es
+import cogs.essentialfunctions as es
 
 teams = [
     Choice(name='FNC', value="<:FNC:1162308600128086096>"),
