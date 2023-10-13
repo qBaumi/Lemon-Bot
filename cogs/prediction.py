@@ -127,7 +127,7 @@ class PredictionSelectBestofOne(discord.ui.Select):
             votes = es.sql_select(f"""SELECT
       SUM(CASE WHEN m.team1 > m.team2 THEN 1 ELSE 0 END) AS team1_score,
       SUM(CASE WHEN m.team2 > m.team1 THEN 1 ELSE 0 END) AS team2_score
-    FROM matches m WHERE matchid={matchid};""")
+    FROM predictions m WHERE matchid={matchid};""")
             print(votes[0])
             print(votes[1])
 
