@@ -123,12 +123,19 @@ class PredictionSelectBestofOne(discord.ui.Select):
         super().__init__(placeholder='Pick a winner', min_values=1, max_values=1,
                          options=options, custom_id=f'persistent_view:match_id_{matchid}')
 
-    async def update_votes(self, matchid):
+    async def update_votes(self, matchid, msgid):
             votes = es.sql_select(f"""SELECT
       SUM(CASE WHEN m.team1 > m.team2 THEN 1 ELSE 0 END) AS team1_score,
       SUM(CASE WHEN m.team2 > m.team1 THEN 1 ELSE 0 END) AS team2_score
-    FROM predictions m WHERE matchid={matchid};""")
-            print(votes)
+    FROM predictions m WHERE matchid={matchid};""")[0]
+            votes[0] = int(votes[0])
+            votes[1] = int(votes[1])
+            channel = await self.client.fetch_channel(predictions_channel_id)
+            msg = await channel.fetch_message(msgid)
+            embed = msg.embeds[0]
+            embed.fields[0].value = votes[0]
+            embed.fields[1].value = votes[1]
+            await msg.edit(embed=embed)
 
 
     async def callback(self, interaction: discord.Interaction):
@@ -145,7 +152,7 @@ class PredictionSelectBestofOne(discord.ui.Select):
             print("inserted")
         else:
             es.sql_exec(f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {self.matchid}")
-        await self.update_votes(self.matchid)
+        await self.update_votes(self.matchid, interaction.message.id)
         await interaction.response.send_message(f"You predicted a **win for {self.values[0]}**", ephemeral=True)
 
 
