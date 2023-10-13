@@ -30,7 +30,13 @@ class prediction(commands.Cog):
         em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
         em.add_field(name=f"Votes for {team1.name}", value="0")
         em.add_field(name=f"Votes for {team2.name}", value="0")
-        es.sql_exec(f"INSERT INTO matches(matchid, team1, team2, timestamp, team1name, team2name) VALUES ((SELECT (MAX(matchid)+1) FROM matches), 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
+        # Calculate the new matchid value separately
+        new_matchid = es.sql_exec("SELECT COALESCE(MAX(matchid), 0) + 1 FROM matches")
+
+        # Use the calculated new_matchid value in the INSERT statement
+        es.sql_exec(
+            f"INSERT INTO matches (matchid, team1, team2, timestamp, team1name, team2name) VALUES ({new_matchid}, 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
+
         matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
         print(matchid)
         if bestof.value == "1":
