@@ -43,7 +43,7 @@ class other(commands.Cog):
     @commands.command(name="listemojis")
     async def listemojis(self, ctx):
         server = ctx.guild
-        emoji_list = [f'<:{emoji.name}:{emoji.id}>' for emoji in server.emojis]
+        emoji_list = [f'`<:{emoji.name}:{emoji.id}>`' for emoji in server.emojis]
         await ctx.send(' '.join(emoji_list))
 
 
