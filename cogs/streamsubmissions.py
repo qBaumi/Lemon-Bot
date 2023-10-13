@@ -86,7 +86,6 @@ To submit queue content, you have to:
         if(reaction.channel_id != staffqueuecheck_channel_id or reaction.user_id == 881476780765093939):
             return
         if(reaction.emoji.name == "✅"):
-            print("worked reaction")
             channel = await self.client.fetch_channel(staffqueuecheck_channel_id)
             msg = await channel.fetch_message(reaction.message_id)
             embed = msg.embeds[0]
@@ -100,7 +99,6 @@ To submit queue content, you have to:
             oldLink = embed.fields[0].value
             if oldLink.startswith("https://imgur.com/"):
                 oldLink = "https://i.imgur.com/" + oldLink.rsplit('/', 1)[1] + ".jpeg"
-            print(oldLink)
             newLink = f"[Link]({embed.fields[0].value})"
             embed.clear_fields()
             embed.add_field(name = newTitle, value=newLink)
