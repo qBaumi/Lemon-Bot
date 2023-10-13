@@ -31,7 +31,7 @@ class prediction(commands.Cog):
         em.add_field(name=f"Votes for {team1.name}", value="0")
         em.add_field(name=f"Votes for {team2.name}", value="0")
         es.sql_exec(f"INSERT INTO matches(matchid, team1, team2, timestamp, team1name, team2name) VALUES ((SELECT COALESCE(MAX(matchid), 0)) + 1, 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
-        matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")
+        matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
         print(matchid)
         if bestof.value == "1":
             view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid)
