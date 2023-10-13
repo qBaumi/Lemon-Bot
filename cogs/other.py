@@ -48,11 +48,6 @@ class other(commands.Cog):
 
 
 
-    @app_commands.command(name="val", description="Sign up for the valorant tournament")
-    async def val(self, interaction: discord.Interaction):
-        modal = Val(client=self.client)
-        await interaction.response.send_modal(modal)
-
 
     @app_commands.describe(game='The activity you want to start')
     @app_commands.choices(game=[
