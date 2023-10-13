@@ -64,11 +64,10 @@ class prediction(commands.Cog):
         msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
         channel = await self.client.fetch_channel(predictions_channel_id)
         msg = await channel.fetch_message(msgid)
-        select = View.from_message(msg).children[0]
-        print(select)
-        select.disabled = True
-        await msg.edit(view=select.view)
-        await ctx.send("asdf")
+        view = View.from_message(msg)
+        view.children[0].disabled = True
+        await msg.edit(view=view)
+        await ctx.send("Locked prediction")
 
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
