@@ -43,21 +43,28 @@ class PredictionDropdownView(discord.ui.View):
         # Adds the dropdown to our view object.
         self.add_item(PredictionDropdown(client, 1))
         self.add_item(PredictionDropdown(client, 2))
-
 class PredictionDropdownViewBestofOne(discord.ui.View):
     def __init__(self, client, teams):
+        # Pass the timeout in the initilization of the super class
         super().__init__(timeout=None)
+
+        # Adds the dropdown to our view object.
+        self.add_item(PredictionSelectBestofOne(client, teams))
+class PredictionSelectBestofOne(discord.ui.Select):
+    def __init__(self, client, teams):
         self.client = client
         self.teams = teams
-        button1 = discord.ui.Button(label=teams[0].name, style=discord.ButtonStyle.primary, custom_id=teams[0].value)
-        button1.callback = partial(self.team, button=button1)
-        button2 = discord.ui.Button(label=teams[1].name, style=discord.ButtonStyle.primary, custom_id=teams[1].value)
-        button2.callback = partial(self.team, button=button2)
-        self.add_item(button1)
-        self.add_item(button2)
+        options = [
+            discord.SelectOption(label=teams[0].name, emoji=teams[0].value, description=f"Pick {teams[0].name} as winner"),
+            discord.SelectOption(label=teams[1].name, emoji=teams[1].value, description=f"Pick {teams[1].name} as winner"),
+        ]
+        super().__init__(placeholder='Pick a winner', min_values=1, max_values=1,
+                         options=options, custom_id='persistent_view:selectbestofone')
 
-    async def team(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message(f"You predicted a **win for {button.label}**", ephemeral=True)
+
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f"You predicted a **win for {self.values[0]}**", ephemeral=True)
 
 class PredictionDropdown(discord.ui.Select):
     def __init__(self, client, id):
