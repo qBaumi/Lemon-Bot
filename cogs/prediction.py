@@ -128,7 +128,7 @@ class PredictionSelectBestofOne(discord.ui.Select):
       SUM(CASE WHEN m.team1 > m.team2 THEN 1 ELSE 0 END) AS team1_score,
       SUM(CASE WHEN m.team2 > m.team1 THEN 1 ELSE 0 END) AS team2_score
     FROM predictions m WHERE matchid={matchid};""")[0]
-
+            print(int(votes[0]))
             channel = await self.client.fetch_channel(predictions_channel_id)
             msg = await channel.fetch_message(msgid)
             embed = msg.embeds[0]
@@ -139,7 +139,6 @@ class PredictionSelectBestofOne(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         oldPrediction = es.sql_select(f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {self.matchid}")
-        print(oldPrediction)
         if self.values[0] == self.teams[0].name:
             team1score = 1
             team2score = 0
@@ -148,7 +147,6 @@ class PredictionSelectBestofOne(discord.ui.Select):
             team2score = 1
         if not oldPrediction:
             es.sql_exec(f"INSERT INTO predictions(userid, matchid, team1, team2) VALUES('{interaction.user.id}', {int(self.matchid)}, {team1score}, {team2score})")
-            print("inserted")
         else:
             es.sql_exec(f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {self.matchid}")
         await self.update_votes(self.matchid, interaction.message.id)
