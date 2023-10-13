@@ -354,6 +354,11 @@ class other(commands.Cog):
     #async def lec(self, interaction: discord.Interaction):
     #    modal = self.Prediction(client=self.client, tournament="LEC Summer Playoffs 2022", resultchannelid=820728066514354206, sheetlink="https://docs.google.com/spreadsheets/d/1SsnIXuAFAUWcs97ccKotfmurvuUNnHhdf-Jg7i1Bu58/edit#gid=715753226")
     #    await interaction.response.send_modal(modal)
+    @app_commands.command(name="timestamp", description="Get a timestamp of CET")
+    async def timestamp(self, interaction: discord.Interaction, day : app_commands.Range[int, 0, 31], month : app_commands.Range[int, 0, 12], year : app_commands.Range[int, 0, 2030], hour : app_commands.Range[int, 0, 23], minutes : app_commands.Range[int, 0, 59]):
+        time = datetime.datetime.strptime(f"{'{:02d}'.format(day)}/{'{:02d}'.format(month)}/{'{:04d}'.format(year)} {'{:02d}'.format(hour)}:{'{:02d}'.format(minutes)}", "%d/%m/%Y %H:%M").timestamp()
+        time = int(time)
+        await interaction.response.send_message(f"`{time}`\nUse `<t:{time}>` to get <t:{time}>")
 
 
     @app_commands.command(name="feedback", description="Give us anonymous feedback!")
@@ -364,11 +369,6 @@ class other(commands.Cog):
         print(f"Feedback by: {interaction.user}")
         await interaction.response.send_modal(modal)
 
-    @app_commands.command(name="timestamp", description="Get a timestamp of CET")
-    async def timestamp(self, interaction: discord.Interaction, day : app_commands.Range[int, 0, 31], month : app_commands.Range[int, 0, 12], year : app_commands.Range[int, 0, 2030], hour : app_commands.Range[int, 0, 23], minutes : app_commands.Range[int, 0, 59]):
-        time = datetime.datetime.strptime(f"{'{:02d}'.format(day)}/{'{:02d}'.format(month)}/{'{:04d}'.format(year)} {'{:02d}'.format(hour)}:{'{:02d}'.format(minutes)}", "%d/%m/%Y %H:%M").timestamp()
-        time = int(time)
-        await interaction.response.send_message(f"`{time}`\nUse `<t:{time}>` to get <t:{time}>")
 
     @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="permfeedback", description="Permanent message for feedback channel, admincommand")
