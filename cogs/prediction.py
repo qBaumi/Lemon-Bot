@@ -47,9 +47,13 @@ class prediction(commands.Cog):
 GROUP BY p.userid
 ORDER BY score DESC
 LIMIT 10;""")
+        em = discord.Embed(title="Predictions Leaderboard")
         for user in leaderboard:
-            print(user)
-        await ctx.send("asdf")
+            print(str(user[0]))
+            print(int(user[1]))
+            member = await self.client.fetch_user(str(user[0]))
+            em.add_field(name=member.name, value=int(user[1]))
+        await ctx.send(embed=em)
 
 
 
