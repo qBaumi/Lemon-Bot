@@ -1,3 +1,5 @@
+from functools import partial
+
 import discord, json
 from discord.ext import commands
 from discord import app_commands
@@ -47,15 +49,15 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         super().__init__(timeout=None)
         self.client = client
         self.teams = teams
-        async def team(self, interaction: discord.Interaction):
-            await interaction.response.send_message(f"You predicted a **win for {self.label}**", ephemeral=True)
         button1 = discord.ui.Button(label=teams[0].name, style=discord.ButtonStyle.primary, custom_id=teams[0].value)
-        button1.callback = self.team
+        button1.callback = partial(self.team, button=button1)
         button2 = discord.ui.Button(label=teams[1].name, style=discord.ButtonStyle.primary, custom_id=teams[1].value)
-        button2.callback = self.team
+        button2.callback = partial(self.team, button=button2)
         self.add_item(button1)
         self.add_item(button2)
 
+    async def team(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(f"You predicted a **win for {button.label}**", ephemeral=True)
 
 class PredictionDropdown(discord.ui.Select):
     def __init__(self, client, id):
