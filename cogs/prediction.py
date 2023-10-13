@@ -66,6 +66,7 @@ class prediction(commands.Cog):
         msg = await channel.fetch_message(msgid)
         view = View.from_message(msg)
         view.children[0].disabled = True
+        view.children[1].disabled = True
         await msg.edit(view=view)
         await ctx.send("Locked prediction")
 
