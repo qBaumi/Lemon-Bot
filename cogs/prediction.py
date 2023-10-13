@@ -30,11 +30,13 @@ class prediction(commands.Cog):
         em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
         em.add_field(name=f"Votes for {team1.name}", value="0")
         em.add_field(name=f"Votes for {team2.name}", value="0")
+        es.sql_exec(f"INSERT INTO matches(matchid, team1, team2, timestamp, team1name, team2name) VALUES ((SELECT COALESCE(MAX(matchid), 0)) + 1, 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
+        matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")
+        print(matchid)
         if bestof.value == "1":
-            view = PredictionDropdownViewBestofOne(self.client, [team1, team2])
+            view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid)
         else:
             view = PredictionDropdownView(self.client)
-        es.sql_exec(f"INSERT INTO matches(matchid, team1, team2, timestamp, team1name, team2name) VALUES ((SELECT COALESCE(MAX(matchid), 0)) + 1, 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
         await interaction.channel.send(embed=em, view=view)
 
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
@@ -49,26 +51,29 @@ class PredictionDropdownView(discord.ui.View):
         self.add_item(PredictionDropdown(client, 1))
         self.add_item(PredictionDropdown(client, 2))
 class PredictionDropdownViewBestofOne(discord.ui.View):
-    def __init__(self, client, teams):
+    def __init__(self, client, teams, matchid):
         # Pass the timeout in the initilization of the super class
         super().__init__(timeout=None)
 
         # Adds the dropdown to our view object.
-        self.add_item(PredictionSelectBestofOne(client, teams))
+        self.add_item(PredictionSelectBestofOne(client, teams, matchid))
 class PredictionSelectBestofOne(discord.ui.Select):
-    def __init__(self, client, teams):
+    def __init__(self, client, teams, matchid):
         self.client = client
         self.teams = teams
+        self.matchid = matchid
         options = [
             discord.SelectOption(label=teams[0].name, emoji=teams[0].value, description=f"Pick {teams[0].name} as winner"),
             discord.SelectOption(label=teams[1].name, emoji=teams[1].value, description=f"Pick {teams[1].name} as winner"),
         ]
         super().__init__(placeholder='Pick a winner', min_values=1, max_values=1,
-                         options=options, custom_id='persistent_view:selectbestofone')
+                         options=options, custom_id=f'persistent_view:match_id_{matchid}')
 
 
 
     async def callback(self, interaction: discord.Interaction):
+        oldPrediction = es.sql_select(f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {self.matchid}")
+        print(oldPrediction)
         await interaction.response.send_message(f"You predicted a **win for {self.values[0]}**", ephemeral=True)
 
 class PredictionDropdown(discord.ui.Select):
