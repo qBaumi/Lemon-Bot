@@ -17,7 +17,21 @@ class prediction(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer")
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @app_commands.command(name="predictionresult", description="Put result into a Prediction")
+    async def predictionresult(self, interaction: discord.Interaction, matchid, team1score, team2score):
+        es.sql_exec(f"UPDATE matches SET team1={int(team1score)}, team2={int(team2score)} WHERE matchid={int(matchid)}")
+        await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
+
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.command(name="lockprediction")
+    async def lockprediction(self, ctx, matchid):
+
+        await ctx.send("asdf")
+
+
+
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @app_commands.choices(team1=teams)
     @app_commands.choices(team2=teams)
     @app_commands.choices(bestof=[
@@ -34,28 +48,22 @@ class prediction(commands.Cog):
         new_matchid = es.sql_select("SELECT COALESCE(MAX(matchid), 0) + 1 FROM matches")[0][0]
         print(new_matchid)
         # Use the calculated new_matchid value in the INSERT statement
-        es.sql_exec(
-            f"INSERT INTO matches (matchid, team1, team2, timestamp, team1name, team2name) VALUES ({new_matchid}, 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
-
+        es.sql_exec(f"INSERT INTO matches (matchid, team1, team2, timestamp, team1name, team2name) VALUES ({new_matchid}, 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}');")
         matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
         print(matchid)
         if bestof.value == "1":
             view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid)
         else:
-            view = PredictionDropdownView(self.client)
-        await interaction.channel.send(embed=em, view=view)
+            view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid)
 
+        em.set_footer(text=str(new_matchid))
+        msg = await interaction.channel.send(embed=em, view=view)
+        print(msg)
+        
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
 
-class PredictionDropdownView(discord.ui.View):
-    def __init__(self, client):
-        # Pass the timeout in the initilization of the super class
-        super().__init__(timeout=None)
 
-        # Adds the dropdown to our view object.
-        self.add_item(PredictionDropdown(client, 1))
-        self.add_item(PredictionDropdown(client, 2))
 class PredictionDropdownViewBestofOne(discord.ui.View):
     def __init__(self, client, teams, matchid):
         # Pass the timeout in the initilization of the super class
@@ -92,24 +100,6 @@ class PredictionSelectBestofOne(discord.ui.Select):
         else:
             es.sql_exec(f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {self.matchid}")
         await interaction.response.send_message(f"You predicted a **win for {self.values[0]}**", ephemeral=True)
-
-class PredictionDropdown(discord.ui.Select):
-    def __init__(self, client, id):
-        # Set the options that will be presented inside the dropdown
-        options = [
-            discord.SelectOption(label="1"),
-            discord.SelectOption(label="2"),
-            discord.SelectOption(label="3"),
-        ]
-        self.id = id
-        super().__init__(placeholder='-', min_values=1, max_values=1,
-                         options=options, custom_id=f'persistent_view:predictiondropdown_{self.id}')
-        self.client = client
-
-    async def callback(self, interaction: discord.Interaction):
-
-
-        await interaction.response.send_message(f"You successfully changed your Prediction to {self.values[0]}")
 
 
 
