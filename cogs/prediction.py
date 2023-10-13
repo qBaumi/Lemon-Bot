@@ -4,6 +4,8 @@ import discord, json
 from discord.ext import commands
 from discord import app_commands
 from discord import ui
+from discord.ui import View
+
 from config import guilds
 from discord.app_commands import Choice
 import cogs.essentialfunctions as es
@@ -62,7 +64,7 @@ class prediction(commands.Cog):
         msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
         channel = await self.client.fetch_channel(predictions_channel_id)
         msg = await channel.fetch_message(msgid)
-        select = msg.view.children[0]
+        select = View.from_message(msg).children[0]
         print(select)
         select.disabled = True
         await msg.edit(embed=msg.embed[0], view=select.view)
