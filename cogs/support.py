@@ -13,7 +13,7 @@ from .other import Suggestion
 import chat_exporter
 import io
 
-channel_id = 1162741970381324289  # this is the channel where results get sent in archive, aka #actions ITS #tickets NOW # tickets thread now
+channel_id = 1162745672215302205  # this is the channel where results get sent in archive, aka #actions ITS #tickets NOW # tickets thread now
 twitchmod_channel_id = 841020368323870761 # this is the channel for the twitch tickets
 admin_channel_id =  1162741546706284574# this is the channel for the report staff tickets
 support_category_id = 955151615252385854
