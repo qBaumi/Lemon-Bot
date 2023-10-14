@@ -355,9 +355,10 @@ class Claim(ui.Modal, title='Claim a reward'):
         # Get Rocsie
         naughty = await self.client.fetch_user(497508029923852299)
         ing = await self.client.fetch_user(198218633955115008)
+        mini = await self.client.fetch_user(85457129233739776)
         mention = f"{naughty} {ing}"
         if TESTMODE == False:
-            mention = f"{naughty.mention}{ing.mention}"
+            mention = f"{naughty.mention}{ing.mention}{mini.mention}"
 
         await setmodperms(interaction.user, ticketchannel, self.client, False)
         await setheadmodperms(interaction.user, ticketchannel, self.client, False)
@@ -433,9 +434,10 @@ class ReportStaff(ui.Modal, title='Report Staff member'):
         # Get Rocsie
         naughty = await self.client.fetch_user(497508029923852299)
         ing = await self.client.fetch_user(198218633955115008)
+        mini = await self.client.fetch_user(85457129233739776)
         mention = f"{naughty} {ing}"
         if TESTMODE == False:
-            mention = f"{naughty.mention}{ing.mention}"
+            mention = f"{naughty.mention}{ing.mention}{mini.mention}"
 
         await setmodperms(interaction.user, ticketchannel, self.client, False)
         await setheadmodperms(interaction.user, ticketchannel, self.client, False)
