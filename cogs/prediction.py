@@ -55,6 +55,7 @@ leaderboard_message_id = 1162372921692524684
 class prediction(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.lock_prediction_timer.start()
 
     async def update_leaderboard(self):
         channel = await self.client.fetch_channel(predictions_channel_id)
@@ -150,7 +151,8 @@ class prediction(commands.Cog):
         await msg.edit(view=view)
 
     @tasks.loop(seconds=59)
-    async def lock_sheet_timer(self):
+    async def lock_prediction_timer(self):
+        print("lock prediction timer")
         messageid_timestamps_matchid = es.sql_select(f"SELECT messageid, timestamp, matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW());")
         for msgid, timestamp, matchid in messageid_timestamps_matchid:
             print(msgid)
