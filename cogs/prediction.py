@@ -271,7 +271,7 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
             mypredictions = mypredictions[0]
             await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
         else:
-            await interaction.response.send_message(f"You haven't done this one yet!")
+            await interaction.response.send_message(f"**You haven't selected a winner for {mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')} yet!**", ephemeral=True)
 
 class PredictionViewScoreButtons(discord.ui.View):
     def __init__(self, client, teams, matchid, bestof, winnerteam, votes_message_id):
