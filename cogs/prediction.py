@@ -320,22 +320,30 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
         f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {matchid}")
     # check if prediction is already in
     print(oldPrediction)
+
+    if winnerteam == teams[0].name:
+        team1score = winningscore[0]
+        team2score = winningscore[1]
+    else:
+        team1score = winningscore[1]
+        team2score = winningscore[0]
+
+    
     if oldPrediction:
         print(winnerteam)
-        print(winningscore)
         oldPrediction = oldPrediction[0]
         print(f"{int(winningscore[0])} == {int(oldPrediction[2])} and {winnerteam} == {teams[0]} and {winningscore[1]} == {oldPrediction[3]}")
-        if int(winningscore[0]) == int(oldPrediction[2]) and winnerteam == teams[0].name and int(winningscore[1]) == int(oldPrediction[3]) or int(winningscore[0]) == int(oldPrediction[3]) and winnerteam == teams[1].name and int(winningscore[1]) == int(oldPrediction[2]):
+        if int(team1score) == int(oldPrediction[2]) and winnerteam == teams[0].name and int(team2score) == int(oldPrediction[3]) or int(team1score) == int(oldPrediction[3]) and winnerteam == teams[1].name and int(team2score) == int(oldPrediction[2]):
             await interaction.response.send_message(
                 f"You've already choosen {winnerteam}\n**Try to click Show my Prediction!**", ephemeral=True)
             return
 
     if not oldPrediction:
         es.sql_exec(
-            f"INSERT INTO predictions(userid, matchid, team1, team2) VALUES('{interaction.user.id}', {int(matchid)}, {winningscore[0]}, {winningscore[1]})")
+            f"INSERT INTO predictions(userid, matchid, team1, team2) VALUES('{interaction.user.id}', {int(matchid)}, {team1score}, {team2score})")
     else:
         es.sql_exec(
-            f"UPDATE predictions SET team1={winningscore[0]}, team2={winningscore[1]} WHERE userid = '{interaction.user.id}' AND matchid = {matchid}")
+            f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {matchid}")
     await update_votes(client, matchid, interaction.message.id)
     await interaction.response.send_message(f"You predicted a **win for {winnerteam}**", ephemeral=True)
 
