@@ -266,8 +266,12 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         FROM predictions p
         JOIN matches m ON p.matchid = m.matchid
         WHERE p.matchid = {matchid} AND userid = '{interaction.user.id}'
-        """)[0]
-        await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
+        """)
+        if mypredictions:
+            mypredictions = mypredictions[0]
+            await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"You haven't done this one yet!")
 
 class PredictionViewScoreButtons(discord.ui.View):
     def __init__(self, client, teams, matchid, bestof, winnerteam, votes_message_id):
