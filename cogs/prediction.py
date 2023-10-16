@@ -212,7 +212,7 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         # Adds the dropdown to our view object.
         self.add_item(PredictionSelectBestofOne(client, teams, matchid))
 
-        showmypredictionsbutton = discord.ui.Button(label="Show my Prediction", style=discord.ButtonStyle.green, custom_id=f"showmyprediction_{matchid}")
+        showmypredictionsbutton = discord.ui.Button(label="Show my Prediction", style=discord.ButtonStyle.green, custom_id=f"showmyprediction")
         showmypredictionsbutton.callback = partial(self.showmyprediction, matchid=matchid)
         self.add_item(showmypredictionsbutton)
 
@@ -235,7 +235,7 @@ class PredictionSelectBestofOne(discord.ui.Select):
             discord.SelectOption(label=teams[1].name, emoji=teams[1].value, description=f"Pick {teams[1].name} as winner"),
         ]
         super().__init__(placeholder='Pick a winner', min_values=1, max_values=1,
-                         options=options, custom_id=f'persistent_view:match_id_{matchid}')
+                         options=options, custom_id=f'predictionselectbestofone')
 
 
     async def update_votes(self, matchid, msgid):
