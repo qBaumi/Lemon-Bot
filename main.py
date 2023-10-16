@@ -5,7 +5,7 @@ from discord import Emoji
 
 from cogs.other import FeedbackButtons
 from cogs.prediction import LeaderboardDropdownView, leaderboard_message_id, PredictionDropdownViewBestofOne
-from cogs.prediction import teams as teamchoices
+from cogs.prediction import teamchoices as teamchoices
 from cogs.streamsubmissions import QueueContentDropdownView, queuecontent_message_id
 from cogs.support import DropdownView, support_message_id, getmsgids, CloseButtons, feedback_message_id
 from config import token
