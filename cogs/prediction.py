@@ -137,7 +137,17 @@ class prediction(commands.GroupCog):
         channel = await self.client.fetch_channel(predictions_channel_id)
         msg = await channel.fetch_message(msgid)
         embed = msg.embeds[0]
-        embed.title = f"Prediction has ended {team1score} - {team2score} | {embed.title}"
+        embed.title = f"{embed.title} | Prediction has ended {team1score} - {team2score}"
+        winner = es.sql_select(f"""SELECT
+    CASE
+        WHEN team1 > team2 THEN team1name
+        WHEN team2 > team1 THEN team2name
+        ELSE 'Tie or Unknown'
+    END AS team_with_higher_score
+FROM matches
+WHERE matchid = {matchid}
+""")[0].decode("utf-8")
+        embed.add_field(name=f"Winner", value=f"{winner} {team1score} - {team2score}")
         await msg.edit(embed=embed)
         await self.update_leaderboard()
         await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
@@ -201,7 +211,7 @@ class prediction(commands.GroupCog):
         else:
             view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid)
 
-        em.set_footer(text=f"Match id: {str(new_matchid)}")
+        em.set_footer(text=f"MatchID: {str(new_matchid)}")
         msg = await interaction.channel.send(embed=em, view=view)
         es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
