@@ -40,9 +40,50 @@ class prediction(commands.Cog):
         ORDER BY score DESC
         LIMIT 10;""")
         em = discord.Embed(title="Predictions Leaderboard")
-        for user in leaderboard:
+        firstpoints = leaderboard[0][1]
+        print(firstpoints)
+        secondpoints = 0
+        thirdpoints = 0
+        for i, user in enumerate(leaderboard):
+            if user[1] < firstpoints:
+                secondpoints = user[1]
+                break
+        for i, user in enumerate(leaderboard):
+            if user[1] < thirdpoints:
+                thirdpoints = user[1]
+                break
+        def getUsercountWithPoints(points):
+            es.sql_select(f"""SELECT p.userid,
+                           SUM(CASE 
+                           WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 2 
+                           WHEN p.team1 = m.team1 AND p.team2 != m.team2 THEN 1
+                           WHEN p.team2 = m.team2 AND p.team1 != m.team1 THEN 1
+                           ELSE 0 END) AS score
+                      FROM predictions p
+                           JOIN matches m ON p.matchid = m.matchid
+                      WHERE score = {points}
+                    """)
+        ties_firstplace = getUsercountWithPoints(firstpoints)
+        ties_secondplace = getUsercountWithPoints(secondpoints)
+        ties_thirdplace = getUsercountWithPoints(thirdpoints)
+        for i, user in enumerate(leaderboard):
             member = await self.client.fetch_user(user[0].decode('utf-8'))
-            em.add_field(name=member.name, value=int(user[1]), inline=False)
+            str = f""
+            if i == 0:
+                str += "🥇 "
+            elif i == 0:
+                str += "🥈 "
+            elif i == 0:
+                str += "🥉 "
+            else:
+                str += f"{i+1}. "
+            str += member.name
+            em.add_field(name=str, value=int(user[1]), inline=False)
+        em.add_field(name="Ties for 🥇:", value=f"{ties_firstplace} have tied for first place with {firstpoints} points")
+        em.add_field(name="Ties for 🥈:", value=f"{ties_secondplace} have tied for first place with {secondpoints} points")
+        em.add_field(name="Ties for 🥉:", value=f"{ties_thirdplace} have tied for first place with {thirdpoints} points")
+
+
         return em
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
