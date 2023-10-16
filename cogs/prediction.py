@@ -323,7 +323,8 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
     if oldPrediction:
         print(winnerteam)
         print(winningscore)
-        if winnerteam == teams[0].name and oldPrediction[0][2] == winningscore[0] and oldPrediction[0][3] == winningscore[1] or winnerteam == teams[1].name and oldPrediction[0][3] == winningscore[0] and oldPrediction[0][2] == winningscore[1]:
+        oldPrediction = oldPrediction[0]
+        if winningscore[0] == oldPrediction[2] and winnerteam == teams[0] and winningscore[1] == oldPrediction[3] or winningscore[0] == oldPrediction[3] and winnerteam == teams[1] and winningscore[1] == oldPrediction[2]:
             await interaction.response.send_message(
                 f"You've already choosen {winnerteam}\n**Try to click Show my Prediction!**", ephemeral=True)
             return
