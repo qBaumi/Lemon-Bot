@@ -77,7 +77,6 @@ class prediction(commands.Cog):
         LIMIT 10;""")
         em = discord.Embed(title="Predictions Leaderboard")
         firstpoints = leaderboard[0][1]
-        print(firstpoints)
         secondpoints = 0
         thirdpoints = 0
         for i, user in enumerate(leaderboard):
@@ -153,18 +152,13 @@ class prediction(commands.Cog):
     @tasks.loop(seconds=59)
     async def lock_prediction_timer(self):
         print("lock prediction timer")
-        messageid_timestamps_matchid = es.sql_select(f"SELECT messageid, timestamp, matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW());")
-        for msgid, timestamp, matchid in messageid_timestamps_matchid:
-            msgid = int(msgid.decode("utf-8"))
-            timestamp = int(timestamp.decode("utf-8"))
-            print(msgid)
-            print(timestamp)
+        matchids = es.sql_select(f"SELECT matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW()) AND locked = 0;")
+        for matchid in matchids:
             print(matchid)
-            if datetime.datetime.now().strftime("%d-%m-%Y") == datetime.datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y") and datetime.datetime.fromtimestamp(timestamp).strftime("%H:%M") == datetime.datetime.now().strftime("%H:%M"):
-                await self.lock_prediction(matchid)
-                channel = await self.client.fetch_channel(651364619402739713) # test channel id
-                await channel.send("Prediction was succesfully locked!")
-                await asyncio.sleep(1)
+            await self.lock_prediction(matchid)
+            channel = await self.client.fetch_channel(651364619402739713) # test channel id
+            await channel.send("Prediction was succesfully locked!")
+            await asyncio.sleep(1)
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @commands.command(name="predictionleaderboard")
@@ -218,7 +212,6 @@ class LeaderboardDropdownView(discord.ui.View):
         JOIN matches m ON p.matchid = m.matchid
         WHERE userid = '{interaction.user.id}'
         """)
-        print(mypredictions)
         str = f""
         for prediction in mypredictions:
             str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
