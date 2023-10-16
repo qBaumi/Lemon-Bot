@@ -1,7 +1,9 @@
+import asyncio
+import datetime
 from functools import partial
 
 import discord, json
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
 from discord import ui
 from discord.ui import View
@@ -134,6 +136,11 @@ class prediction(commands.Cog):
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @commands.command(name="lockprediction")
     async def lockprediction(self, ctx, matchid):
+        await self.lock_prediction(matchid)
+        await ctx.send("Locked prediction")
+
+
+    async def lock_prediction(self, matchid):
         msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
         channel = await self.client.fetch_channel(predictions_channel_id)
         msg = await channel.fetch_message(msgid)
@@ -141,8 +148,19 @@ class prediction(commands.Cog):
         view.children[0].disabled = True
         view.children[1].disabled = True
         await msg.edit(view=view)
-        await ctx.send("Locked prediction")
 
+    @tasks.loop(seconds=59)
+    async def lock_sheet_timer(self):
+        messageid_timestamps_matchid = es.sql_select(f"SELECT messageid, timestamp, matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW());")
+        for msgid, timestamp, matchid in messageid_timestamps_matchid:
+            print(msgid)
+            print(timestamp)
+            print(matchid)
+            if datetime.datetime.now().strftime("%d-%m-%Y") == datetime.datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y") and datetime.datetime.fromtimestamp(timestamp).strftime("%H:%M") == datetime.datetime.now().strftime("%H:%M"):
+                await self.lock_prediction(matchid)
+                channel = await self.client.fetch_channel(651364619402739713) # test channel id
+                await channel.send("Prediction was succesfully locked!")
+                await asyncio.sleep(1)
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @commands.command(name="predictionleaderboard")
