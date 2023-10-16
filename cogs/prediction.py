@@ -49,6 +49,14 @@ teams = [
     Choice(name='BDS', value="<:BDS:1163070288406265966>"),
     Choice(name='GAM', value="<:GAM:1163070290205614170>"),
     ]
+
+
+def getChoiceByTeamname(teamname):
+    for team in teams:
+        if team.name == teamname:
+            return team
+    return None
+
 predictions_channel_id = 651364619402739713
 leaderboard_message_id = 1162372921692524684
 
@@ -181,8 +189,8 @@ class prediction(commands.GroupCog):
     @app_commands.describe(matchbegin_timestamp="Use `/timestamp` to get a timestamp for the date and time or a website")
     async def create(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str], matchbegin_timestamp: str):
         em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
-        em.add_field(name=f"Votes for {team1.name}", value="0")
-        em.add_field(name=f"Votes for {team2.name}", value="0")
+        em.add_field(name=f"Votes for {team1.value} {team1.name}", value="0")
+        em.add_field(name=f"Votes for {team2.value} {team2.name}", value="0")
         # Calculate the new matchid value separately
         new_matchid = es.sql_select("SELECT COALESCE(MAX(matchid), 0) + 1 FROM matches")[0][0]
         # Use the calculated new_matchid value in the INSERT statement
@@ -193,7 +201,7 @@ class prediction(commands.GroupCog):
         else:
             view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid)
 
-        em.set_footer(text=str(new_matchid))
+        em.set_footer(text=f"Match id: {str(new_matchid)}")
         msg = await interaction.channel.send(embed=em, view=view)
         es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
@@ -203,7 +211,7 @@ class LeaderboardDropdownView(discord.ui.View):
         # Pass the timeout in the initilization of the super class
         super().__init__(timeout=None)
         self.client = client
-        showallmypredictionsbutton = discord.ui.Button(label="Show all my Predictions", style=discord.ButtonStyle.green, custom_id=f"showallmypredictions")
+        showallmypredictionsbutton = discord.ui.Button(label="Show all my Predictions", style=discord.ButtonStyle.grey, custom_id=f"showallmypredictions")
         showallmypredictionsbutton.callback = self.showallmypredictions
         self.add_item(showallmypredictionsbutton)
 
