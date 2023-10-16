@@ -148,6 +148,7 @@ class prediction(commands.Cog):
         view.children[0].disabled = True
         view.children[1].disabled = True
         await msg.edit(view=view)
+        es.sql_exec(f"UPDATE matches SET locked = 1  WHERE matchid={matchid}")
 
     @tasks.loop(seconds=59)
     async def lock_prediction_timer(self):
