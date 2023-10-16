@@ -52,7 +52,7 @@ teams = [
 predictions_channel_id = 651364619402739713
 leaderboard_message_id = 1162372921692524684
 
-class prediction(commands.Cog):
+class prediction(commands.GroupCog):
     def __init__(self, client):
         self.client = client
         self.lock_prediction_timer.start()
@@ -75,7 +75,7 @@ class prediction(commands.Cog):
         GROUP BY p.userid
         ORDER BY score DESC
         LIMIT 10;""")
-        em = discord.Embed(title="Predictions Leaderboard")
+        em = discord.Embed(title="Predictions Leaderboard", colour=discord.Color.dark_red())
         firstpoints = leaderboard[0][1]
         secondpoints = 0
         thirdpoints = 0
@@ -121,8 +121,9 @@ class prediction(commands.Cog):
         return em
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
-    @app_commands.command(name="predictionresult", description="Put result into a Prediction")
-    async def predictionresult(self, interaction: discord.Interaction, matchid: int, team1score: int, team2score: int):
+    @app_commands.command(name="result", description="Put result into a Prediction")
+    @app_commands.describe(matchid="The matchid is the last line / footer of the prediction")
+    async def result(self, interaction: discord.Interaction, matchid: int, team1score: int, team2score: int):
         es.sql_exec(f"UPDATE matches SET team1={int(team1score)}, team2={int(team2score)} WHERE matchid={int(matchid)}")
         msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
         channel = await self.client.fetch_channel(predictions_channel_id)
@@ -152,11 +153,9 @@ class prediction(commands.Cog):
 
     @tasks.loop(seconds=59)
     async def lock_prediction_timer(self):
-        print("lock prediction timer")
         matchids = es.sql_select(f"SELECT matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW()) AND locked = 0;")
         for matchid in matchids:
             matchid = matchid[0]
-            print(matchid)
             await self.lock_prediction(matchid)
             channel = await self.client.fetch_channel(651364619402739713) # test channel id
             await channel.send("Prediction was succesfully locked!")
@@ -178,9 +177,10 @@ class prediction(commands.Cog):
         Choice(name="Best of two", value="2"),
         Choice(name="Best of three", value="3"),
     ])
-    @app_commands.command(name="prediction", description="Create a prediction")
-    async def prediction(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str], matchbegin_timestamp: str):
-        em = discord.Embed(colour=discord.Color.dark_red(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
+    @app_commands.command(name="create", description="Create a prediction")
+    @app_commands.describe(matchbegin_timestamp="Use `/timestamp` to get a timestamp for the date and time or a website")
+    async def create(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str], matchbegin_timestamp: str):
+        em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
         em.add_field(name=f"Votes for {team1.name}", value="0")
         em.add_field(name=f"Votes for {team2.name}", value="0")
         # Calculate the new matchid value separately
