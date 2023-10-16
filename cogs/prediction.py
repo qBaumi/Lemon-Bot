@@ -146,7 +146,7 @@ class prediction(commands.GroupCog):
     END AS team_with_higher_score
 FROM matches
 WHERE matchid = {matchid}
-""")[0].decode("utf-8")
+""")[0][0].decode("utf-8")
         embed.add_field(name=f"Winner", value=f"{winner} {team1score} - {team2score}")
         await msg.edit(embed=embed)
         await self.update_leaderboard()
