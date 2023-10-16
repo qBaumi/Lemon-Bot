@@ -189,8 +189,8 @@ class prediction(commands.GroupCog):
     @app_commands.describe(matchbegin_timestamp="Use `/timestamp` to get a timestamp for the date and time or a website")
     async def create(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str], matchbegin_timestamp: str):
         em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
-        em.add_field(name=f"Votes for {team1.value} {team1.name}", value="0")
-        em.add_field(name=f"Votes for {team2.value} {team2.name}", value="0")
+        em.add_field(name=f"Votes for {team1.name} {team1.value}", value="0")
+        em.add_field(name=f"Votes for {team2.name} {team2.value}", value="0")
         # Calculate the new matchid value separately
         new_matchid = es.sql_select("SELECT COALESCE(MAX(matchid), 0) + 1 FROM matches")[0][0]
         # Use the calculated new_matchid value in the INSERT statement
