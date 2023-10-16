@@ -67,9 +67,9 @@ class prediction(commands.Cog):
             str = f""
             if i == 0:
                 str += "🥇 "
-            elif i == 0:
+            elif i == 1:
                 str += "🥈 "
-            elif i == 0:
+            elif i == 2:
                 str += "🥉 "
             else:
                 str += f"{i+1}. "
