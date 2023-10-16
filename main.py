@@ -75,21 +75,18 @@ async def setup_hook():
     def getPredictionMsgIds():
         return es.sql_select(f"SELECT matchid, messageid, team1name, team2name FROM matches ")
     def getTeamChoicesByTeamname(teamname1, teamname2):
-        print(teamname1)
-        print(teamname2)
         teams = []
         for team in teamchoices:
             if team.name == teamname1:
                 teams.append(team)
             elif team.name == teamname2:
                 teams.append(team)
-        print(teams)
         return teams
 
     # add show all my predictions view leaderboard
     client.add_view(LeaderboardDropdownView(client), message_id=leaderboard_message_id)
     for match in getPredictionMsgIds():
-        print(match[1])
+        print(match[1].decode("utf-8"))
         teams = getTeamChoicesByTeamname(match[2].decode("utf-8"), match[3].decode("utf-8"))
         client.add_view(PredictionDropdownViewBestofOne(client, teams, match[0]), message_id=match[1].decode("utf-8"))
 
