@@ -162,7 +162,7 @@ class prediction(commands.Cog):
     ])
     @app_commands.command(name="prediction", description="Create a prediction")
     async def prediction(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str], matchbegin_timestamp: str):
-        em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
+        em = discord.Embed(colour=discord.Color.dark_red(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
         em.add_field(name=f"Votes for {team1.name}", value="0")
         em.add_field(name=f"Votes for {team2.name}", value="0")
         # Calculate the new matchid value separately
@@ -197,6 +197,10 @@ class LeaderboardDropdownView(discord.ui.View):
         WHERE userid = '{interaction.user.id}'
         """)
         print(mypredictions)
+        str = f""
+        for prediction in mypredictions:
+            str += "**{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}** | **{mypredictions[0]}** - **{mypredictions[1]}**\n"
+        em = discord.Embed(title="All your Predictions", colour=discord.Color.dark_red(), description=str)
         #await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
 class PredictionDropdownViewBestofOne(discord.ui.View):
