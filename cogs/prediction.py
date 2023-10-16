@@ -10,9 +10,42 @@ from config import guilds
 from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 
+"""
+<:FNC:1162308600128086096>
+<:GEN:1162308602250399744>
+<:JDG:1162308603504508949>
+<:KT:1162308604787957781>
+<:LNG:1162308607409397770>
+<:MAD:1162308610173452298>
+<:NRG:1162308612291567686>
+<:T1:1162308614413877308>
+<:TL:1162308616657829958>
+<:WBG:1162308617979048008>
+<:BLG:1162308619203784784>
+<:C9:1162308621657440267>
+<:G2:1162308625763672154>
+<:DK:1162308751433404516>
+<:BDS:1163070288406265966>
+<:GAM:1163070290205614170>
+"""
+
 teams = [
     Choice(name='FNC', value="<:FNC:1162308600128086096>"),
-    Choice(name='G2', value="<:G2:1162308625763672154>")
+    Choice(name='GEN', value="<:GEN:1162308602250399744>"),
+    Choice(name='JDG', value="<:JDG:1162308603504508949>"),
+    Choice(name='KT', value="<:KT:1162308604787957781>"),
+    Choice(name='LNG', value="<:LNG:1162308607409397770>"),
+    Choice(name='MAD', value="<:MAD:1162308610173452298>"),
+    Choice(name='NRG', value="<:NRG:1162308612291567686>"),
+    Choice(name='T1', value="<:T1:1162308614413877308>"),
+    Choice(name='TL', value="<:TL:1162308616657829958>"),
+    Choice(name='WBG', value="<:WBG:1162308617979048008>"),
+    Choice(name='BLG', value="<:BLG:1162308619203784784>"),
+    Choice(name='C9', value="<:C9:1162308621657440267>"),
+    Choice(name='G2', value="<:G2:1162308625763672154>"),
+    Choice(name='DK', value="<:DK:1162308751433404516>"),
+    Choice(name='BDS', value="<:BDS:1163070288406265966>"),
+    Choice(name='GAM', value="<:GAM:1163070290205614170>"),
     ]
 predictions_channel_id = 651364619402739713
 leaderboard_message_id = 1162372921692524684
@@ -115,7 +148,7 @@ class prediction(commands.Cog):
     @commands.command(name="predictionleaderboard")
     async def predictionleaderboard(self, ctx):
         em = await self.getLeaderboardEmbed()
-        await ctx.send(embed=em)
+        await ctx.send(embed=em, view=LeaderboardDropdownView(client=self.client))
 
 
 
@@ -147,7 +180,24 @@ class prediction(commands.Cog):
         es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
+class LeaderboardDropdownView(discord.ui.View):
+    def __init__(self, client):
+        # Pass the timeout in the initilization of the super class
+        super().__init__(timeout=None)
+        self.client = client
+        showallmypredictionsbutton = discord.ui.Button(label="Show all my Predictions", style=discord.ButtonStyle.green, custom_id=f"showallmypredictions")
+        showallmypredictionsbutton.callback = self.showallmypredictions
+        self.add_item(showallmypredictionsbutton)
 
+    async def showallmypredictions(self, interaction, matchid):
+        mypredictions = es.sql_select(f"""        
+        SELECT p.team1, p.team2, m.team1name, m.team2name
+        FROM predictions p
+        JOIN matches m ON p.matchid = m.matchid
+        WHERE userid = '{interaction.user.id}'
+        """)[0]
+        print(mypredictions)
+        #await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
 class PredictionDropdownViewBestofOne(discord.ui.View):
     def __init__(self, client, teams, matchid):
@@ -168,7 +218,6 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         JOIN matches m ON p.matchid = m.matchid
         WHERE p.matchid = {matchid} AND userid = '{interaction.user.id}'
         """)[0]
-        print(mypredictions)
         await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
 class PredictionSelectBestofOne(discord.ui.Select):
