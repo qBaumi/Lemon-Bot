@@ -218,7 +218,7 @@ WHERE matchid = {matchid}
         # Use the calculated new_matchid value in the INSERT statement
         es.sql_exec(f"INSERT INTO matches (matchid, messageid, team1, team2, timestamp, team1name, team2name, bestof) VALUES ({new_matchid}, 'none', 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}', {int(bestof.value)});")
         matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
-        view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid, bestof.value)
+        view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid, int(bestof.value))
 
         em.set_footer(text=f"MatchID: {str(new_matchid)}")
         msg = await interaction.channel.send(embed=em, view=view)
@@ -328,7 +328,7 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
         #print(f"{int(winningscore[0])} == {int(oldPrediction[2])} and {winnerteam} == {teams[0]} and {winningscore[1]} == {oldPrediction[3]}")
         if int(team1score) == int(oldPrediction[2]) and winnerteam == teams[0].name and int(team2score) == int(oldPrediction[3]) or int(team1score) == int(oldPrediction[2]) and winnerteam == teams[1].name and int(team2score) == int(oldPrediction[3]):
             await interaction.response.send_message(
-                f"You've already choosen {teams[0]} vs {teams[1]} | {team1score} - {team2score}\n**Try to click Show my Prediction!**", ephemeral=True)
+                f"You've already choosen {teams[0].name} vs {teams[1].name} | {team1score} - {team2score}\n**Try to click Show my Prediction!**", ephemeral=True)
             return
 
     if not oldPrediction:
