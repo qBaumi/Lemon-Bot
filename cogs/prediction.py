@@ -319,6 +319,7 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
     oldPrediction = es.sql_select(
         f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {matchid}")
     # check if prediction is already in
+    print(oldPrediction)
     if oldPrediction:
         if winnerteam == teams[0].name and oldPrediction[0][2] == winningscore[0] or winnerteam == teams[1].name and oldPrediction[0][3] == winningscore[0]:
             await interaction.response.send_message(
