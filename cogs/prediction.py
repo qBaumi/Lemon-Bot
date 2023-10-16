@@ -155,6 +155,8 @@ class prediction(commands.Cog):
         print("lock prediction timer")
         messageid_timestamps_matchid = es.sql_select(f"SELECT messageid, timestamp, matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW());")
         for msgid, timestamp, matchid in messageid_timestamps_matchid:
+            msgid = int(msgid.decode("utf-8"))
+            timestamp = timestamp.decode("utf-8")
             print(msgid)
             print(timestamp)
             print(matchid)
