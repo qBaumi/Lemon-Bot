@@ -201,7 +201,7 @@ class LeaderboardDropdownView(discord.ui.View):
         for prediction in mypredictions:
             str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
         em = discord.Embed(title="All your Predictions", colour=discord.Color.dark_red(), description=str)
-        await interaction.response.send_message(embed=em)
+        await interaction.response.send_message(embed=em, ephemeral=True)
         #await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
 class PredictionDropdownViewBestofOne(discord.ui.View):

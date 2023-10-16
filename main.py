@@ -4,11 +4,14 @@ from discord.ext import commands
 from discord import Emoji
 
 from cogs.other import FeedbackButtons
+from cogs.prediction import LeaderboardDropdownView, leaderboard_message_id, PredictionDropdownViewBestofOne
+from cogs.prediction import teams as teamchoices
 from cogs.streamsubmissions import QueueContentDropdownView, queuecontent_message_id
 from cogs.support import DropdownView, support_message_id, getmsgids, CloseButtons, feedback_message_id
 from config import token
 from discord import app_commands
 from config import guilds, guild
+import cogs.essentialfunctions as es
 
 intents = discord.Intents.all()
 
@@ -68,6 +71,27 @@ async def setup_hook():
         ticketchannel = await guild.fetch_channel(msg["ticketchannel_id"])
         opener = await guild.fetch_member(msg["opener_id"])
         client.add_view(CloseButtons(client=client, ticketchannel=ticketchannel, opener=opener), message_id=msgid)
+
+    def getPredictionMsgIds():
+        return es.sql_select(f"SELECT matchid, messageid, team1name, team2name FROM matches ")
+    def getTeamChoicesByTeamname(teamname1, teamname2):
+
+        teams = []
+        for team in teamchoices:
+            if team.name == teamname1:
+                teams.append(team)
+            elif team.name == teamname2:
+                teams.append(team)
+        return teams
+
+    # add show all my predictions view leaderboard
+    client.add_view(LeaderboardDropdownView(client), message_id=leaderboard_message_id)
+    for match in getPredictionMsgIds():
+        print(msgid)
+        teams = getTeamChoicesByTeamname(match[2], match[3])
+        client.add_view(PredictionDropdownViewBestofOne(client, teams, match[0]), message_id=match[1])
+
+
 
     #channel = await client.fetch_channel(955476670352093204)
     #msg = await channel.fetch_message(971321595803082802)
