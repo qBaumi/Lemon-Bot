@@ -154,6 +154,7 @@ class prediction(commands.Cog):
         print("lock prediction timer")
         matchids = es.sql_select(f"SELECT matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW()) AND locked = 0;")
         for matchid in matchids:
+            matchid = matchid[0]
             print(matchid)
             await self.lock_prediction(matchid)
             channel = await self.client.fetch_channel(651364619402739713) # test channel id
