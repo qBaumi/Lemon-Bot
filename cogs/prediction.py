@@ -273,35 +273,33 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
 class PredictionViewScoreButtons(discord.ui.View):
-    def __init__(self, client, teams, matchid, bestof):
+    def __init__(self, client, teams, matchid, bestof, winnerteam):
         # Pass the timeout in the initilization of the super class
         super().__init__(timeout=None)
+        self.client = client
+        self.teams = teams
+        self.matchid = matchid
+        self.bestof = bestof
 
-        # Adds the dropdown to our view object.
-        self.add_item(PredictionSelectBestofOne(client, teams, matchid))
         if bestof == 2:
             options = [(2, 0), (2, 1)]
         else:
             options = [(3, 0), (3, 1), (3, 2)]
         for option in options:
             button = discord.ui.Button(label=f"{option[0]} - {option[1]}", style=discord.ButtonStyle.green, custom_id=f"scoreoption_{option[0]}_{option[1]}")
-            button.callback = partial(self.showmyprediction, matchid=matchid, option=option)
+            button.callback = partial(self.selectScore, matchid=matchid, option=option, winnerteam=winnerteam)
             self.add_item(button)
 
-    async def showmyprediction(self, interaction, matchid, option):
-        mypredictions = es.sql_select(f"""        
-        SELECT p.team1, p.team2, m.team1name, m.team2name
-        FROM predictions p
-        JOIN matches m ON p.matchid = m.matchid
-        WHERE p.matchid = {matchid} AND userid = '{interaction.user.id}'
-        """)[0]
-        await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
+    async def selectScore(self, interaction, matchid, winnerteam,  option):
+        await update_user_prediction(self.client, interaction, matchid, self.teams, winnerteam, option)
+
 
 class PredictionSelectBestofOne(discord.ui.Select):
-    def __init__(self, client, teams, matchid):
+    def __init__(self, client, teams, matchid, bestof):
         self.client = client
         self.teams = teams
         self.matchid = matchid
+        self.bestof = bestof
         options = [
             discord.SelectOption(label=teams[0].name, emoji=teams[0].value, description=f"Pick {teams[0].name} as winner"),
             discord.SelectOption(label=teams[1].name, emoji=teams[1].value, description=f"Pick {teams[1].name} as winner"),
@@ -309,17 +307,15 @@ class PredictionSelectBestofOne(discord.ui.Select):
         super().__init__(placeholder='Pick a winner', min_values=1, max_values=1,
                          options=options, custom_id=f'predictionselectbestofone')
 
-
-
-
     async def callback(self, interaction: discord.Interaction):
-        await update_user_prediction(self.client, interaction, self.matchid, self.teams, self.values[0], (1, 0))
+        if self.bestof == 1:
+            await update_user_prediction(self.client, interaction, self.matchid, self.teams, self.values[0], (1, 0))
+        else:
+            await interaction.response.send_message(view=PredictionViewScoreButtons(self.client, self.teams, self.matchid, self.bestof, self.values[0]))
 
 async def update_user_prediction(client, interaction, matchid, teams, winnerteam, winningscore):
     oldPrediction = es.sql_select(
         f"SELECT * FROM predictions WHERE userid = {interaction.user.id} AND matchid = {matchid}")
-    # check if prediction is already in
-    print(oldPrediction)
 
     if winnerteam == teams[0].name:
         team1score = winningscore[0]
@@ -328,14 +324,13 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
         team1score = winningscore[1]
         team2score = winningscore[0]
 
-
+    # check if prediction is already in
     if oldPrediction:
-        print(winnerteam)
         oldPrediction = oldPrediction[0]
-        print(f"{int(winningscore[0])} == {int(oldPrediction[2])} and {winnerteam} == {teams[0]} and {winningscore[1]} == {oldPrediction[3]}")
+        #print(f"{int(winningscore[0])} == {int(oldPrediction[2])} and {winnerteam} == {teams[0]} and {winningscore[1]} == {oldPrediction[3]}")
         if int(team1score) == int(oldPrediction[2]) and winnerteam == teams[0].name and int(team2score) == int(oldPrediction[3]) or int(team1score) == int(oldPrediction[2]) and winnerteam == teams[1].name and int(team2score) == int(oldPrediction[3]):
             await interaction.response.send_message(
-                f"You've already choosen {winnerteam}\n**Try to click Show my Prediction!**", ephemeral=True)
+                f"You've already choosen {teams[0]} vs {teams[1]} | {team1score} - {team2score}\n**Try to click Show my Prediction!**", ephemeral=True)
             return
 
     if not oldPrediction:
@@ -345,7 +340,7 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
         es.sql_exec(
             f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {matchid}")
     await update_votes(client, matchid, interaction.message.id)
-    await interaction.response.send_message(f"You predicted a **win for {winnerteam}**", ephemeral=True)
+    await interaction.response.send_message(f"You predicted **{teams[0]} vs {teams[1]} | {team1score} - {team2score}**", ephemeral=True)
 
 async def update_votes(client, matchid, msgid):
         votes = es.sql_select(f"""SELECT
