@@ -189,7 +189,7 @@ class LeaderboardDropdownView(discord.ui.View):
         showallmypredictionsbutton.callback = self.showallmypredictions
         self.add_item(showallmypredictionsbutton)
 
-    async def showallmypredictions(self, interaction, matchid):
+    async def showallmypredictions(self, interaction):
         mypredictions = es.sql_select(f"""        
         SELECT p.team1, p.team2, m.team1name, m.team2name
         FROM predictions p
