@@ -309,7 +309,7 @@ class PredictionSelectBestofOne(discord.ui.Select):
         if self.bestof == 1:
             await update_user_prediction(self.client, interaction, self.matchid, self.teams, self.values[0], (1, 0), interaction.message.id)
         else:
-            await interaction.response.send_message(view=PredictionViewScoreButtons(self.client, self.teams, self.matchid, self.bestof, self.values[0], interaction.message.id), ephemeral=True)
+            await interaction.response.send_message(f"You've picked **{self.values[0]}** as **winner**. What score will they finish?", view=PredictionViewScoreButtons(self.client, self.teams, self.matchid, self.bestof, self.values[0], interaction.message.id), ephemeral=True)
 
 async def update_user_prediction(client, interaction, matchid, teams, winnerteam, winningscore, votes_message_id):
     oldPrediction = es.sql_select(
