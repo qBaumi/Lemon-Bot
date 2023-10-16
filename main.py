@@ -90,8 +90,8 @@ async def setup_hook():
     client.add_view(LeaderboardDropdownView(client), message_id=leaderboard_message_id)
     for match in getPredictionMsgIds():
         print(match[1])
-        teams = getTeamChoicesByTeamname(match[2], match[3])
-        client.add_view(PredictionDropdownViewBestofOne(client, teams, match[0]), message_id=match[1])
+        teams = getTeamChoicesByTeamname(match[2].decode("utf-8"), match[3].decode("utf-8"))
+        client.add_view(PredictionDropdownViewBestofOne(client, teams, match[0]), message_id=match[1].decode("utf-8"))
 
 
 
