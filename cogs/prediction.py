@@ -279,7 +279,7 @@ class PredictionViewScoreButtons(discord.ui.View):
         self.bestof = bestof
         self.votes_message_id = votes_message_id
 
-        if bestof == 2:
+        if int(bestof) == 2:
             options = [(2, 0), (2, 1)]
         else:
             options = [(3, 0), (3, 1), (3, 2)]
