@@ -75,13 +75,15 @@ async def setup_hook():
     def getPredictionMsgIds():
         return es.sql_select(f"SELECT matchid, messageid, team1name, team2name FROM matches ")
     def getTeamChoicesByTeamname(teamname1, teamname2):
-
+        print(teamname1)
+        print(teamname2)
         teams = []
         for team in teamchoices:
             if team.name == teamname1:
                 teams.append(team)
             elif team.name == teamname2:
                 teams.append(team)
+        print(teams)
         return teams
 
     # add show all my predictions view leaderboard
