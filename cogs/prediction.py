@@ -195,7 +195,7 @@ class LeaderboardDropdownView(discord.ui.View):
         FROM predictions p
         JOIN matches m ON p.matchid = m.matchid
         WHERE userid = '{interaction.user.id}'
-        """)[0]
+        """)
         print(mypredictions)
         #await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
