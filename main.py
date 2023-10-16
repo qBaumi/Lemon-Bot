@@ -73,7 +73,7 @@ async def setup_hook():
         client.add_view(CloseButtons(client=client, ticketchannel=ticketchannel, opener=opener), message_id=msgid)
 
     def getPredictionMsgIds():
-        return es.sql_select(f"SELECT matchid, messageid, team1name, team2name FROM matches ")
+        return es.sql_select(f"SELECT matchid, messageid, team1name, team2name, bestof FROM matches ")
     def getTeamChoicesByTeamname(teamname1, teamname2):
         teams = []
         for team in teamchoices:
@@ -87,7 +87,7 @@ async def setup_hook():
     client.add_view(LeaderboardDropdownView(client), message_id=leaderboard_message_id)
     for match in getPredictionMsgIds():
         teams = getTeamChoicesByTeamname(match[2].decode("utf-8"), match[3].decode("utf-8"))
-        client.add_view(PredictionDropdownViewBestofOne(client=client, teams=teams, matchid=match[0]), message_id=int(match[1].decode("utf-8")))
+        client.add_view(PredictionDropdownViewBestofOne(client=client, teams=teams, matchid=match[0], bestof=int(match[4])), message_id=int(match[1].decode("utf-8")))
 
 
 
