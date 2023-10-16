@@ -73,11 +73,14 @@ class prediction(commands.Cog):
                 str += "🥉 "
             else:
                 str += f"{i+1}. "
-            str += member.name
+            str += f"{member.name} with {user[1]} points"
             em.add_field(name=str, value=int(user[1]), inline=False)
-        em.add_field(name="Ties for 🥇:", value=f"{ties_firstplace} have tied for first place with {firstpoints} points")
-        em.add_field(name="Ties for 🥈:", value=f"{ties_secondplace} have tied for first place with {secondpoints} points")
-        em.add_field(name="Ties for 🥉:", value=f"{ties_thirdplace} have tied for first place with {thirdpoints} points")
+        if ties_firstplace >= 2:
+            em.add_field(name="Ties for 🥇:", value=f"{ties_firstplace} users have tied for first place with {firstpoints} points", inline=False)
+        if ties_secondplace >= 2:
+            em.add_field(name="Ties for 🥈:", value=f"{ties_secondplace} users have tied for second place with {secondpoints} points", inline=False)
+        if ties_thirdplace >= 2:
+            em.add_field(name="Ties for 🥉:", value=f"{ties_thirdplace} users have tied for third place with {thirdpoints} points", inline=False)
 
 
         return em
