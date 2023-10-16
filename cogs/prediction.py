@@ -53,16 +53,12 @@ class prediction(commands.Cog):
                 thirdpoints = user[1]
                 break
         def getUsercountWithPoints(points):
-            es.sql_select(f"""SELECT p.userid,
-                           SUM(CASE 
-                           WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 2 
-                           WHEN p.team1 = m.team1 AND p.team2 != m.team2 THEN 1
-                           WHEN p.team2 = m.team2 AND p.team1 != m.team1 THEN 1
-                           ELSE 0 END) AS score
-                      FROM predictions p
-                           JOIN matches m ON p.matchid = m.matchid
-                      WHERE score = {points}
-                    """)
+            usercount = 0
+            for user in leaderboard:
+                if user[1] == points:
+                    usercount+=1
+
+            return usercount
         ties_firstplace = getUsercountWithPoints(firstpoints)
         ties_secondplace = getUsercountWithPoints(secondpoints)
         ties_thirdplace = getUsercountWithPoints(thirdpoints)
