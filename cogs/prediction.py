@@ -147,7 +147,7 @@ class prediction(commands.GroupCog):
 FROM matches
 WHERE matchid = {matchid}
 """)[0][0].decode("utf-8")
-        embed.add_field(name=f"Winner", value=f"{winner} {team1score} - {team2score}", inline=False)
+        embed.add_field(name=f"Winner", value=f"{getChoiceByTeamname(winner).value} {winner} {team1score} - {team2score}", inline=False)
         await msg.edit(embed=embed)
         await self.update_leaderboard()
         await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)

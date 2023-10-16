@@ -86,7 +86,6 @@ async def setup_hook():
     # add show all my predictions view leaderboard
     client.add_view(LeaderboardDropdownView(client), message_id=leaderboard_message_id)
     for match in getPredictionMsgIds():
-        print(match[1].decode("utf-8"))
         teams = getTeamChoicesByTeamname(match[2].decode("utf-8"), match[3].decode("utf-8"))
         client.add_view(PredictionDropdownViewBestofOne(client=client, teams=teams, matchid=match[0]), message_id=int(match[1].decode("utf-8")))
 
