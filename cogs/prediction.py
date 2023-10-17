@@ -253,7 +253,7 @@ __**Prizes**__
         matchid = interaction.namespace.matchid
         print(matchid)
 
-        bestof = es.sql_select(f"SELECT bestof FROM matches WHERE matchid = {matchid}")[0]
+        bestof = int(es.sql_select(f"SELECT bestof FROM matches WHERE matchid = {matchid}")[0][0])
         print(bestof)
         if bestof == 1:
             return [
