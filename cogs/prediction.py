@@ -224,9 +224,17 @@ __**Prizes**__
     async def select(self, interaction, matchid: str, score_team1: str, score_team2: str):
         await interaction.response.defer()
 
-        #teams =
-
-        #await update_user_prediction(self.client, interaction, matchid, teams, winnerteam, winningscore, votes_message_id)
+        teams = es.sql_select(f"SELECT team1, team2 FROM predictions WHERE matchid = {matchid} and userid = '{interaction.user.id}'")[0]
+        votes_message_id = es.sql_select(f"SELECT messageid FROM matches WHERE matchid = {matchid}").decode("utf-8")
+        print(teams)
+        print(votes_message_id)
+        if score_team1 > score_team2:
+            winnerteam = teams[0]
+            winningscore = score_team1
+        else:
+            winnerteam = teams[1]
+            winningscore = score_team2
+        await update_user_prediction(self.client, interaction, matchid, [getChoiceByTeamname(teams[0]), getChoiceByTeamname(teams[1])], winnerteam, winningscore, votes_message_id)
 
 
     @select.autocomplete('matchid')
