@@ -226,8 +226,6 @@ __**Prizes**__
 
         teams = es.sql_select(f"SELECT team1name, team2name, messageid FROM matches WHERE matchid = {matchid}")[0]
         votes_message_id = teams[2].decode("utf-8")
-        print(teams)
-        print(votes_message_id)
         if score_team1 > score_team2:
             winnerteam = teams[0].decode("utf-8")
             winningscore = (score_team1, score_team2)
@@ -245,7 +243,6 @@ __**Prizes**__
     ) -> List[app_commands.Choice[str]]:
         currentMatches = es.sql_select(
             f"SELECT matchid FROM matches WHERE timestamp > UNIX_TIMESTAMP(NOW()) AND locked = 0;")
-        print(currentMatches)
         return [
             Choice(name=str(match[0]), value=str(match[0]))
             for match in currentMatches
@@ -259,10 +256,8 @@ __**Prizes**__
     ) -> List[app_commands.Choice[str]]:
 
         matchid = interaction.namespace.matchid
-        print(matchid)
 
         bestof = int(es.sql_select(f"SELECT bestof FROM matches WHERE matchid = {matchid}")[0][0])
-        print(bestof)
         if bestof == 1:
             return [
                 Choice(name="0", value="0"),
@@ -291,11 +286,13 @@ __**Prizes**__
     ) -> List[app_commands.Choice[str]]:
 
         matchid = interaction.namespace.matchid
-        print(matchid)
 
         bestof = int(es.sql_select(f"SELECT bestof FROM matches WHERE matchid = {matchid}")[0][0])
-        print(bestof)
-        if bestof == 1:
+        if bestof == 1 and int(interaction.namespace.score_team1) == 1:
+            return [
+                Choice(name="0", value="0")
+            ]
+        if bestof == 1 or bestof == 2 and int(interaction.namespace.score_team1) == 2:
             return [
                 Choice(name="0", value="0"),
                 Choice(name="1", value="1"),
