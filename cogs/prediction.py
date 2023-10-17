@@ -160,6 +160,7 @@ WHERE matchid = {matchid}
         await ctx.send("Locked prediction")
 
 
+
     async def lock_prediction(self, matchid):
         msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
         channel = await self.client.fetch_channel(predictions_channel_id)
@@ -220,11 +221,11 @@ WHERE matchid = {matchid}
         es.sql_exec(f"INSERT INTO matches (matchid, messageid, team1, team2, timestamp, team1name, team2name, bestof) VALUES ({new_matchid}, 'none', 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}', {int(bestof.value)});")
         matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
         view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid, int(bestof.value))
-        em.set_image(url="https://liquipedia.net/commons/images/thumb/8/87/LoL_World_Championship_2023_lightmode.png/600px-LoL_World_Championship_2023_lightmode.png")
         em.set_footer(text=f"MatchID: {str(new_matchid)}")
         msg = await interaction.channel.send(embed=em, view=view)
         es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
+
 
 class LeaderboardDropdownView(discord.ui.View):
     def __init__(self, client):
@@ -262,6 +263,7 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         self.add_item(showmypredictionsbutton)
 
     async def showmyprediction(self, interaction, matchid):
+        await interaction.response.defer()
         mypredictions = es.sql_select(f"""        
         SELECT p.team1, p.team2, m.team1name, m.team2name
         FROM predictions p
@@ -270,9 +272,9 @@ class PredictionDropdownViewBestofOne(discord.ui.View):
         """)
         if mypredictions:
             mypredictions = mypredictions[0]
-            await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
+            await interaction.followup.send(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
         else:
-            await interaction.response.send_message(f"**You haven't selected a winner for this prediction yet!**", ephemeral=True)
+            await interaction.followup.send(f"**You haven't selected a winner for this prediction yet!**", ephemeral=True)
 
 class PredictionViewScoreButtons(discord.ui.View):
     def __init__(self, client, teams, matchid, bestof, winnerteam, votes_message_id):
@@ -294,6 +296,7 @@ class PredictionViewScoreButtons(discord.ui.View):
             self.add_item(button)
 
     async def selectScore(self, interaction, matchid, winnerteam,  option):
+        await interaction.response.defer()
         await update_user_prediction(self.client, interaction, matchid, self.teams, winnerteam, option, self.votes_message_id)
 
 
@@ -311,10 +314,11 @@ class PredictionSelectBestofOne(discord.ui.Select):
                          options=options, custom_id=f'predictionselectbestofone')
 
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         if self.bestof == 1:
             await update_user_prediction(self.client, interaction, self.matchid, self.teams, self.values[0], (1, 0), interaction.message.id)
         else:
-            await interaction.response.send_message(f"You've picked **{self.values[0]}** as **winner**. What score will they finish?", view=PredictionViewScoreButtons(self.client, self.teams, self.matchid, self.bestof, self.values[0], interaction.message.id), ephemeral=True)
+            await interaction.followup.send(f"You've picked **{self.values[0]}** as **winner**. What score will they finish?", view=PredictionViewScoreButtons(self.client, self.teams, self.matchid, self.bestof, self.values[0], interaction.message.id), ephemeral=True)
 
 async def update_user_prediction(client, interaction, matchid, teams, winnerteam, winningscore, votes_message_id):
     oldPrediction = es.sql_select(
@@ -332,7 +336,7 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
         oldPrediction = oldPrediction[0]
         #print(f"{int(winningscore[0])} == {int(oldPrediction[2])} and {winnerteam} == {teams[0]} and {winningscore[1]} == {oldPrediction[3]}")
         if int(team1score) == int(oldPrediction[2]) and winnerteam == teams[0].name and int(team2score) == int(oldPrediction[3]) or int(team1score) == int(oldPrediction[2]) and winnerteam == teams[1].name and int(team2score) == int(oldPrediction[3]):
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 f"You've already choosen {teams[0].name} vs {teams[1].name} | {team1score} - {team2score}\n**Try to click Show my Prediction!**", ephemeral=True)
             return
 
@@ -343,7 +347,7 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
         es.sql_exec(
             f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {matchid}")
     await update_votes(client, matchid, votes_message_id)
-    await interaction.response.send_message(f"You predicted **{teams[0].name} vs {teams[1].name} | {team1score} - {team2score}**", ephemeral=True)
+    await interaction.followup.send(f"You predicted **{teams[0].name} vs {teams[1].name} | {team1score} - {team2score}**", ephemeral=True)
 
 async def update_votes(client, matchid, msgid):
         votes = es.sql_select(f"""SELECT
