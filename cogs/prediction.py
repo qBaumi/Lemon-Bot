@@ -220,7 +220,7 @@ WHERE matchid = {matchid}
         es.sql_exec(f"INSERT INTO matches (matchid, messageid, team1, team2, timestamp, team1name, team2name, bestof) VALUES ({new_matchid}, 'none', 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}', {int(bestof.value)});")
         matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
         view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid, int(bestof.value))
-
+        em.set_author(icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdOnRegXiLd_kXJ3cdT5reBi_9Kx_8KZA2DQ&usqp=CAU")
         em.set_footer(text=f"MatchID: {str(new_matchid)}")
         msg = await interaction.channel.send(embed=em, view=view)
         es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
