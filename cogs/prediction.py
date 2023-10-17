@@ -300,12 +300,13 @@ __**Prizes**__
                 Choice(name="0", value="0"),
                 Choice(name="1", value="1"),
             ]
-        elif bestof == 2:
+        elif bestof == 2 or bestof == 3 and int(interaction.namespace.score_team1) == 3:
             return [
                 Choice(name="0", value="0"),
                 Choice(name="1", value="1"),
                 Choice(name="2", value="2"),
             ]
+
         else:
             return [
                 Choice(name="0", value="0"),
