@@ -221,7 +221,7 @@ __**Prizes**__
     @app_commands.describe(matchid="MatchID is on the bottom of the Prediction")
     @app_commands.describe(score_team1="e.g. FNC vs G2 - team1 is FNC in this case and team2 is G2")
     @app_commands.describe(score_team2="e.g. FNC vs G2 - team1 is FNC in this case and team2 is G2")
-    async def select(self, interaction, matchid: Choice[str], score_team1: Choice[str], score_team2: Choice[str]):
+    async def select(self, interaction, matchid: str, score_team1: str, score_team2: str):
         await interaction.response.defer()
 
         #teams =
