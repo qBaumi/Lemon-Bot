@@ -461,8 +461,8 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
     else:
         es.sql_exec(
             f"UPDATE predictions SET team1={team1score}, team2={team2score} WHERE userid = '{interaction.user.id}' AND matchid = {matchid}")
-    await update_votes(client, matchid, votes_message_id)
     await interaction.followup.send(f"You predicted **{teams[0].name} vs {teams[1].name} | {team1score} - {team2score}**", ephemeral=True)
+    await update_votes(client, matchid, votes_message_id)
 
 async def update_votes(client, matchid, msgid):
         votes = es.sql_select(f"""SELECT
