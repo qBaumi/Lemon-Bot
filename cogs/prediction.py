@@ -224,8 +224,8 @@ __**Prizes**__
     async def select(self, interaction, matchid: str, score_team1: str, score_team2: str):
         await interaction.response.defer()
 
-        teams = es.sql_select(f"SELECT team1, team2 FROM predictions WHERE matchid = {matchid} and userid = '{interaction.user.id}'")[0]
-        votes_message_id = es.sql_select(f"SELECT messageid FROM matches WHERE matchid = {matchid}").decode("utf-8")
+        teams = es.sql_select(f"SELECT team1name, team2name, messageid FROM matches WHERE matchid = {matchid}")[0]
+        votes_message_id = teams[2]
         print(teams)
         print(votes_message_id)
         if score_team1 > score_team2:
