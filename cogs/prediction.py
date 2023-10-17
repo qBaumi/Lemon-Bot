@@ -187,9 +187,21 @@ WHERE matchid = {matchid}
         await ctx.send(embed=em)
         em = discord.Embed(colour=discord.Color.dark_red(), title="Prediction Info", description=
         """
-        prediction info ing noti write smth here
-        termsnconditions
-        prizes
+This new system will make it way easier for everyone to participate in predictions! Keep in mind it is still new and we might experience bugs along the way, so please be patient and let us know if something isn't working for you.
+
+To participate in predictions all you have to do is:
+* Go to <#1162712749407731792> 
+* Click the button `Pick a winner` for the match you want to predict
+* If the match is a Bo3 or Bo5 you will get a message under the prediction that makes you able to pick the result
+* If you're unsure what you predicted later you can press `Show my prediction` under the same match and Lemon Bot will tell you what you predicted. 
+
+The predictions will be locked on game start!
+
+__**Prizes**__
+🥇 20€ worth of RP
+🥈 10€ worth of RP
+🥉 Mystery skin
+🏅 Rest of top 10 will get 100 Golden Lemons
         """)
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
         await ctx.send(embed=em)
