@@ -58,7 +58,7 @@ def getChoiceByTeamname(teamname):
             return team
     return None
 
-predictions_channel_id = 1162712749407731792 # 651364619402739713# 
+predictions_channel_id = 1162712749407731792 # 651364619402739713#
 leaderboard_message_id = 1163855942761328742
 leaderboard_channel_id = 1162712965087244298
 
@@ -443,8 +443,8 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
         team1score = winningscore[1]
         team2score = winningscore[0]
 
-    print(f"TEAM 1 {teams[0].name} {team1score}")
-    print(f"TEAM 1 {teams[1].name} {team2score}")
+    #print(f"TEAM 1 {teams[0].name} {team1score}")
+    #print(f"TEAM 1 {teams[1].name} {team2score}")
 
     # check if prediction is already in
     if oldPrediction:
