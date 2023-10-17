@@ -285,7 +285,7 @@ __**Prizes**__
         matchid = interaction.namespace.matchid
         print(matchid)
 
-        bestof = es.sql_select(f"SELECT bestof FROM matches WHERE matchid = {matchid}")[0]
+        bestof = int(es.sql_select(f"SELECT bestof FROM matches WHERE matchid = {matchid}")[0][0])
         print(bestof)
         if bestof == 1:
             return [
@@ -305,7 +305,6 @@ __**Prizes**__
                 Choice(name="2", value="2"),
                 Choice(name="3", value="3"),
             ]
-
 
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
