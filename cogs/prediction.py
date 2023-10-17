@@ -230,10 +230,10 @@ __**Prizes**__
         print(votes_message_id)
         if score_team1 > score_team2:
             winnerteam = teams[0].decode("utf-8")
-            winningscore = score_team1
+            winningscore = (score_team1, score_team2)
         else:
             winnerteam = teams[1].decode("utf-8")
-            winningscore = score_team2
+            winningscore = (score_team2, score_team1)
         await update_user_prediction(self.client, interaction, matchid, [getChoiceByTeamname(teams[0].decode("utf-8")), getChoiceByTeamname(teams[1].decode("utf-8"))], winnerteam, winningscore, votes_message_id)
 
 
