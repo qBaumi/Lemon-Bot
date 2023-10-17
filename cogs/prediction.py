@@ -217,14 +217,14 @@ __**Prizes**__
     @app_commands.choices(team1=teamchoices)
     @app_commands.choices(team2=teamchoices)
     @app_commands.choices(bestof=[
-        Choice(name="Best of one", value="1"),
-        Choice(name="Best of two", value="2"),
-        Choice(name="Best of three", value="3"),
+        Choice(name="Best of 1", value="1"),
+        Choice(name="Best of 3", value="2"),
+        Choice(name="Best of 5", value="3"),
     ])
     @app_commands.command(name="create", description="Create a prediction")
     @app_commands.describe(matchbegin_timestamp="Use `/timestamp` to get a timestamp for the date and time or a website")
     async def create(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str], matchbegin_timestamp: str):
-        em = discord.Embed(colour=discord.Color.brand_green(), title="FNC vs G2", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
+        em = discord.Embed(colour=discord.Color.brand_green(), title=f"{team1.name} vs {team2.name}", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
         em.add_field(name=f"{team1.value} Votes for {team1.name}", value="0")
         em.add_field(name=f"{team2.value} Votes for {team2.name}", value="0")
         # Calculate the new matchid value separately
