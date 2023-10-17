@@ -85,7 +85,10 @@ class prediction(commands.GroupCog):
         ORDER BY score DESC
         LIMIT 10;""")
         em = discord.Embed(title="Predictions Leaderboard", colour=discord.Color.dark_red())
-        firstpoints = leaderboard[0][1]
+        try:
+            firstpoints = leaderboard[0][1]
+        except:
+            return em
         secondpoints = 0
         thirdpoints = 0
         for i, user in enumerate(leaderboard):
