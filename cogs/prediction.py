@@ -59,6 +59,7 @@ def getChoiceByTeamname(teamname):
 
 predictions_channel_id = 651364619402739713
 leaderboard_message_id = 1163532547473559612
+leaderboard_channel_id = 1162712965087244298
 
 class prediction(commands.GroupCog):
     def __init__(self, client):
@@ -66,7 +67,7 @@ class prediction(commands.GroupCog):
         self.lock_prediction_timer.start()
 
     async def update_leaderboard(self):
-        channel = await self.client.fetch_channel(predictions_channel_id)
+        channel = await self.client.fetch_channel(leaderboard_channel_id)
         msg = await channel.fetch_message(leaderboard_message_id)
         await msg.edit(embed=await self.getLeaderboardEmbed())
 
