@@ -4,7 +4,8 @@ from discord.ext import commands
 from discord import Emoji
 
 from cogs.other import FeedbackButtons
-from cogs.prediction import LeaderboardDropdownView, leaderboard_message_id, PredictionDropdownViewBestofOne
+from cogs.prediction import LeaderboardDropdownView, leaderboard_message_id, PredictionDropdownViewBestofOne, \
+    getChoiceByTeamname
 from cogs.prediction import teamchoices as teamchoices
 from cogs.streamsubmissions import QueueContentDropdownView, queuecontent_message_id
 from cogs.support import DropdownView, support_message_id, getmsgids, CloseButtons, feedback_message_id
@@ -74,19 +75,12 @@ async def setup_hook():
 
     def getPredictionMsgIds():
         return es.sql_select(f"SELECT matchid, messageid, team1name, team2name, bestof FROM matches ")
-    def getTeamChoicesByTeamname(teamname1, teamname2):
-        teams = []
-        for team in teamchoices:
-            if team.name == teamname1:
-                teams.append(team)
-            elif team.name == teamname2:
-                teams.append(team)
-        return teams
+
 
     # add show all my predictions view leaderboard
     client.add_view(LeaderboardDropdownView(client), message_id=leaderboard_message_id)
     for match in getPredictionMsgIds():
-        teams = getTeamChoicesByTeamname(match[2].decode("utf-8"), match[3].decode("utf-8"))
+        teams = [getChoiceByTeamname(match[2].decode("utf-8")), getChoiceByTeamname(match[3].decode("utf-8"))]
         client.add_view(PredictionDropdownViewBestofOne(client=client, teams=teams, matchid=match[0], bestof=int(match[4])), message_id=int(match[1].decode("utf-8")))
 
 
