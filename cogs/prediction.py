@@ -443,6 +443,9 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
         team1score = winningscore[1]
         team2score = winningscore[0]
 
+    print(f"TEAM 1 {teams[0].name} {team1score}")
+    print(f"TEAM 1 {teams[1].name} {team2score}")
+
     # check if prediction is already in
     if oldPrediction:
         oldPrediction = oldPrediction[0]
