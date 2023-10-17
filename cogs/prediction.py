@@ -58,7 +58,7 @@ def getChoiceByTeamname(teamname):
             return team
     return None
 
-predictions_channel_id = 1162712749407731792
+predictions_channel_id = 651364619402739713#1162712749407731792
 leaderboard_message_id = 1163855942761328742
 leaderboard_channel_id = 1162712965087244298
 
