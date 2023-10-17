@@ -215,27 +215,33 @@ __**Prizes**__
         em = await self.getLeaderboardEmbed()
         await ctx.send(embed=em, view=LeaderboardDropdownView(client=self.client))
 
-    def getActiveMatchIDs(self):
-        currentMatches = es.sql_select(f"SELECT matchid FROM matches WHERE timestamp > UNIX_TIMESTAMP(NOW()) AND locked = 0;")
-        print(currentMatches)
-        return [
-            Choice(name=str(match[0]), value=str(match[0]))
-            for match in currentMatches
-        ]
 
-    @app_commands.choices(matchid=getActiveMatchIDs())
+
     @app_commands.command(name="select", description="Select a prediction result instead of pressing the buttons")
     @app_commands.describe(matchid="MatchID is on the bottom of the Prediction")
     @app_commands.describe(score_team1="e.g. FNC vs G2 - team1 is FNC in this case and team2 is G2")
     @app_commands.describe(score_team2="e.g. FNC vs G2 - team1 is FNC in this case and team2 is G2")
-    async def select(self, interaction, matchid: int, score_team1: Choice[str], score_team2: Choice[str]):
+    async def select(self, interaction, matchid: Choice[str], score_team1: Choice[str], score_team2: Choice[str]):
         await interaction.response.defer()
-        
+
         #teams =
 
         #await update_user_prediction(self.client, interaction, matchid, teams, winnerteam, winningscore, votes_message_id)
 
 
+    @select.autocomplete('matchid')
+    async def select_autocomplete_matchid(
+            self,
+            interaction: discord.Interaction,
+            current: str
+    ) -> List[app_commands.Choice[str]]:
+        currentMatches = es.sql_select(
+            f"SELECT matchid FROM matches WHERE timestamp > UNIX_TIMESTAMP(NOW()) AND locked = 0;")
+        print(currentMatches)
+        return [
+            Choice(name=str(match[0]), value=str(match[0]))
+            for match in currentMatches
+        ]
 
     @select.autocomplete('score_team1')
     async def select_autocomplete(
