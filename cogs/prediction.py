@@ -218,7 +218,7 @@ WHERE matchid = {matchid}
         # Calculate the new matchid value separately
         new_matchid = es.sql_select("SELECT COALESCE(MAX(matchid), 0) + 1 FROM matches")[0][0]
         # Use the calculated new_matchid value in the INSERT statement
-        es.sql_exec(f"INSERT INTO matches (matchid, messageid, team1, team2, timestamp, team1name, team2name, bestof) VALUES ({new_matchid}, 'none', 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}', {int(bestof.value)});")
+        es.sql_exec(f"INSERT INTO matches (matchid, messageid, team1, team2, timestamp, team1name, team2name, bestof) VALUES ({new_matchid}, '0', 0, 0, '{matchbegin_timestamp}', '{team1.name}', '{team2.name}', {int(bestof.value)});")
         matchid = es.sql_select(f"SELECT MAX(matchid) FROM matches")[0][0]
         view = PredictionDropdownViewBestofOne(self.client, [team1, team2], matchid, int(bestof.value))
         em.set_footer(text=f"MatchID: {str(new_matchid)}")
