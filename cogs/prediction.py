@@ -149,8 +149,8 @@ WHERE matchid = {matchid}
 """)[0][0].decode("utf-8")
         embed.add_field(name=f"Winner", value=f"{getChoiceByTeamname(winner).value} {winner}", inline=False)
         await msg.edit(embed=embed)
-        await self.update_leaderboard()
         await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
+        await self.update_leaderboard()
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
     @commands.command(name="lockprediction")
