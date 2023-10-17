@@ -428,7 +428,12 @@ class PredictionSelectBestofOne(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
         if self.bestof == 1:
-            await update_user_prediction(self.client, interaction, self.matchid, self.teams, self.values[0], (1, 0), interaction.message.id)
+            if self.values[0] == self.teams[0].name:
+                winningscore = (1, 0)
+            else:
+                winningscore = (0, 1)
+
+            await update_user_prediction(self.client, interaction, self.matchid, self.teams, self.values[0], winningscore, interaction.message.id)
         else:
             await interaction.followup.send(f"You've picked **{self.values[0]}** as **winner**. What score will they finish?", view=PredictionViewScoreButtons(self.client, self.teams, self.matchid, self.bestof, self.values[0], interaction.message.id), ephemeral=True)
 
