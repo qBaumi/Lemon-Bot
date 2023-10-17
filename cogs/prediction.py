@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 from functools import partial
+from typing import List
 
 import discord, json
 from discord.ext import commands, tasks
@@ -213,6 +214,91 @@ __**Prizes**__
 
         em = await self.getLeaderboardEmbed()
         await ctx.send(embed=em, view=LeaderboardDropdownView(client=self.client))
+
+    def getActiveMatchIDs(self):
+        currentMatches = es.sql_select(f"SELECT matchid FROM matches WHERE timestamp > UNIX_TIMESTAMP(NOW()) AND locked = 0;")
+        print(currentMatches)
+        return [
+            Choice(name=str(match[0]), value=str(match[0]))
+            for match in currentMatches
+        ]
+
+    @app_commands.choices(matchid=getActiveMatchIDs())
+    @app_commands.command(name="select", description="Select a prediction result instead of pressing the buttons")
+    @app_commands.describe(matchid="MatchID is on the bottom of the Prediction")
+    @app_commands.describe(score_team1="e.g. FNC vs G2 - team1 is FNC in this case and team2 is G2")
+    @app_commands.describe(score_team2="e.g. FNC vs G2 - team1 is FNC in this case and team2 is G2")
+    async def select(self, interaction, matchid: int, score_team1: Choice[str], score_team2: Choice[str]):
+        await interaction.response.defer()
+        
+        #teams =
+
+        #await update_user_prediction(self.client, interaction, matchid, teams, winnerteam, winningscore, votes_message_id)
+
+
+
+    @select.autocomplete('score_team1')
+    async def select_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str
+    ) -> List[app_commands.Choice[str]]:
+
+        matchid = interaction.namespace.matchid
+        print(matchid)
+
+        bestof = es.sql_select(f"SELECT bestof FROM matches WHERE matchid = {matchid}")[0]
+        print(bestof)
+        if bestof == 1:
+            return [
+                Choice(name="0", value="0"),
+                Choice(name="1", value="1"),
+            ]
+        elif bestof == 2:
+            return [
+                Choice(name="0", value="0"),
+                Choice(name="1", value="1"),
+                Choice(name="2", value="2"),
+            ]
+        else:
+            return [
+                Choice(name="0", value="0"),
+                Choice(name="1", value="1"),
+                Choice(name="2", value="2"),
+                Choice(name="3", value="3"),
+            ]
+
+
+    @select.autocomplete('score_team2')
+    async def select_autocomplete_2(
+            self,
+            interaction: discord.Interaction,
+            current: str
+    ) -> List[app_commands.Choice[str]]:
+
+        matchid = interaction.namespace.matchid
+        print(matchid)
+
+        bestof = es.sql_select(f"SELECT bestof FROM matches WHERE matchid = {matchid}")[0]
+        print(bestof)
+        if bestof == 1:
+            return [
+                Choice(name="0", value="0"),
+                Choice(name="1", value="1"),
+            ]
+        elif bestof == 2:
+            return [
+                Choice(name="0", value="0"),
+                Choice(name="1", value="1"),
+                Choice(name="2", value="2"),
+            ]
+        else:
+            return [
+                Choice(name="0", value="0"),
+                Choice(name="1", value="1"),
+                Choice(name="2", value="2"),
+                Choice(name="3", value="3"),
+            ]
 
 
 
