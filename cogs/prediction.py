@@ -104,7 +104,7 @@ class prediction(commands.GroupCog):
                 secondpoints = user[1]
                 break
         for i, user in enumerate(leaderboard):
-            if user[1] < thirdpoints:
+            if user[1] < secondpoints:
                 thirdpoints = user[1]
                 break
         def getUsercountWithPoints(points):
