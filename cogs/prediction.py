@@ -74,7 +74,6 @@ def getPointsByUserId(userid):
     """)
     if not points:
         return 0
-    print(points)
     return int(points[0][0])
 
 predictions_channel_id = 1162712749407731792 # 651364619402739713#
