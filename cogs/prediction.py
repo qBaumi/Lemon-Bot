@@ -13,6 +13,8 @@ from config import guilds
 from discord.app_commands import Choice
 import cogs.essentialfunctions as es
 
+
+
 """
 <:FNC:1162308600128086096>
 <:GEN:1162308602250399744>
@@ -473,21 +475,33 @@ async def update_user_prediction(client, interaction, matchid, teams, winnerteam
     await interaction.followup.send(f"You predicted **{teams[0].name} vs {teams[1].name} | {team1score} - {team2score}**", ephemeral=True)
     await update_votes(client, matchid, votes_message_id)
 
-async def update_votes(client, matchid, msgid):
-        votes = es.sql_select(f"""SELECT
-  SUM(CASE WHEN m.team1 > m.team2 THEN 1 ELSE 0 END) AS team1_score,
-  SUM(CASE WHEN m.team2 > m.team1 THEN 1 ELSE 0 END) AS team2_score
-FROM predictions m WHERE matchid={matchid};""")[0]
-        channel = await client.fetch_channel(predictions_channel_id)
-        msg = await channel.fetch_message(msgid)
-        embed = msg.embeds[0]
-        field1name = embed.fields[0].name
-        field2name = embed.fields[1].name
-        embed.clear_fields()
-        embed.add_field(name=field1name, value=int(votes[0]))
-        embed.add_field(name=field2name, value=int(votes[1]))
-        await msg.edit(embed=embed)
+# limit update votes because of rate limiting
+updatevotecounter = 0
 
+async def update_votes(client, matchid, msgid):
+
+    # limit update votes because of rate limiting
+    global updatevotecounter
+    updatevotecounter += 1
+
+    if updatevotecounter < 10:
+        return
+
+    votes = es.sql_select(f"""SELECT
+SUM(CASE WHEN m.team1 > m.team2 THEN 1 ELSE 0 END) AS team1_score,
+SUM(CASE WHEN m.team2 > m.team1 THEN 1 ELSE 0 END) AS team2_score
+FROM predictions m WHERE matchid={matchid};""")[0]
+    channel = await client.fetch_channel(predictions_channel_id)
+    msg = await channel.fetch_message(msgid)
+    embed = msg.embeds[0]
+    field1name = embed.fields[0].name
+    field2name = embed.fields[1].name
+    embed.clear_fields()
+    embed.add_field(name=field1name, value=int(votes[0]))
+    embed.add_field(name=field2name, value=int(votes[1]))
+    await msg.edit(embed=embed)
+
+    updatevotecounter = 0
 
 async def setup(client):
     await client.add_cog(prediction(client), guilds=guilds)
