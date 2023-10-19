@@ -120,7 +120,7 @@ class prediction(commands.GroupCog):
         ties_secondplace = getUsercountWithPoints(secondpoints)
         ties_thirdplace = getUsercountWithPoints(thirdpoints)
         for i, user in enumerate(leaderboard):
-            if i == 11:
+            if i == 10:
                 break
             member = await self.client.fetch_user(user[0].decode('utf-8'))
             str = f""
