@@ -60,6 +60,23 @@ def getChoiceByTeamname(teamname):
             return team
     return None
 
+def getPointsByUserId(userid):
+    points = es.sql_select(f"""SELECT
+    SUM(CASE 
+    WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 2 
+    WHEN p.team1 = m.team1 AND p.team2 != m.team2 THEN 1
+    WHEN p.team2 = m.team2 AND p.team1 != m.team1 THEN 1
+    ELSE 0 
+    END) AS score
+    FROM predictions p
+    JOIN matches m ON p.matchid = m.matchid
+    WHERE m.team1 = 1 AND m.team2 = 0 AND userid = '{userid}' OR  m.team1 = 0 AND m.team2 = 1 AND userid = '{userid}' 
+    """)
+    if not points:
+        return 0
+    print(points)
+    return points[0]
+
 predictions_channel_id = 1162712749407731792 # 651364619402739713#
 leaderboard_message_id = 1163855942761328742
 leaderboard_channel_id = 1162712965087244298
@@ -79,6 +96,8 @@ class prediction(commands.GroupCog):
         channel = await self.client.fetch_channel(leaderboard_channel_id)
         msg = await channel.fetch_message(leaderboard_message_id)
         await msg.edit(embed=await self.getLeaderboardEmbed())
+
+
 
 
     async def getLeaderboardEmbed(self):
@@ -366,7 +385,7 @@ class LeaderboardDropdownView(discord.ui.View):
         JOIN matches m ON p.matchid = m.matchid
         WHERE userid = '{interaction.user.id}'
         """)
-        str = f""
+        str = f"You currently have **{getPointsByUserId(interaction.user.id)}** points\n"
         for prediction in mypredictions:
             str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
         em = discord.Embed(title="All your Predictions", colour=discord.Color.dark_red(), description=str)
