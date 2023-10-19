@@ -67,6 +67,12 @@ class prediction(commands.GroupCog):
         self.client = client
         self.lock_prediction_timer.start()
 
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.command(name="updateleaderboard")
+    async def updateleaderboard(self, ctx):
+        await self.update_leaderboard()
+
+
     async def update_leaderboard(self):
         channel = await self.client.fetch_channel(leaderboard_channel_id)
         msg = await channel.fetch_message(leaderboard_message_id)
