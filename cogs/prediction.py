@@ -483,10 +483,8 @@ async def update_votes(client, matchid, msgid):
     # limit update votes because of rate limiting
     global updatevotecounter
     updatevotecounter += 1
-    print(updatevotecounter)
     if updatevotecounter < 3:
         return
-    print("update votes")
     votes = es.sql_select(f"""SELECT
 SUM(CASE WHEN m.team1 > m.team2 THEN 1 ELSE 0 END) AS team1_score,
 SUM(CASE WHEN m.team2 > m.team1 THEN 1 ELSE 0 END) AS team2_score
