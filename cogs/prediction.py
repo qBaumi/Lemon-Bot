@@ -75,16 +75,17 @@ class prediction(commands.GroupCog):
 
     async def getLeaderboardEmbed(self):
         leaderboard = es.sql_select(f"""SELECT p.userid,
-               SUM(CASE 
-               WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 2 
-               WHEN p.team1 = m.team1 AND p.team2 != m.team2 THEN 1
-               WHEN p.team2 = m.team2 AND p.team1 != m.team1 THEN 1
-               ELSE 0 END) AS score
-          FROM predictions p
-               JOIN matches m ON p.matchid = m.matchid
+       SUM(CASE 
+           WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 2 
+           WHEN p.team1 = m.team1 AND p.team2 != m.team2 THEN 1
+           WHEN p.team2 = m.team2 AND p.team1 != m.team1 THEN 1
+           ELSE 0 
+       END) AS score
+        FROM predictions p
+        JOIN matches m ON p.matchid = m.matchid
+        WHERE m.team1 = 1 AND m.team2 = 0 OR  m.team1 = 0 AND m.team2 = 1 
         GROUP BY p.userid
-        ORDER BY score DESC
-        LIMIT 10;""")
+        ORDER BY score DESC""")
         em = discord.Embed(title="Predictions Leaderboard", colour=discord.Color.dark_red())
         try:
             firstpoints = leaderboard[0][1]
@@ -111,6 +112,8 @@ class prediction(commands.GroupCog):
         ties_secondplace = getUsercountWithPoints(secondpoints)
         ties_thirdplace = getUsercountWithPoints(thirdpoints)
         for i, user in enumerate(leaderboard):
+            if i == 11:
+                break
             member = await self.client.fetch_user(user[0].decode('utf-8'))
             str = f""
             if i == 0:
