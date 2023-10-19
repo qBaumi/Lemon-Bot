@@ -74,7 +74,10 @@ def getPointsByUserId(userid):
     """)
     if not points:
         return 0
-    return int(points[0][0])
+    try:
+        return int(points[0][0])
+    except:
+        return 0
 
 predictions_channel_id = 1162712749407731792 # 651364619402739713#
 leaderboard_message_id = 1163855942761328742
