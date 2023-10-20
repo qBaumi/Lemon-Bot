@@ -80,7 +80,7 @@ def getPointsByUserId(userid):
         return 0
 
 predictions_channel_id = 1162712749407731792 # 651364619402739713#
-leaderboard_message_id = 1163855942761328742
+leaderboard_message_id = 1165045342782361670
 leaderboard_channel_id = 1162712965087244298
 
 class prediction(commands.GroupCog):
