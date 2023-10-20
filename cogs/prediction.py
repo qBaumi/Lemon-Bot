@@ -384,12 +384,13 @@ class PredictionUserSelectView(discord.ui.View):
 
 async def getAllPredictionsByUser(interaction, user):
     mypredictions = es.sql_select(f"""        
-    SELECT p.team1, p.team2, m.team1name, m.team2name
+    SELECT p.team1, p.team2, m.team1name, m.team2name, timestamp
     FROM predictions p
     JOIN matches m ON p.matchid = m.matchid
     WHERE userid = '{user.id}'
+    ORDER BY timestamp
     """)
-    str = f"You currently have **{getPointsByUserId(user.id)}** points\n"
+    str = f"{user} currently has **{getPointsByUserId(user.id)}** points\n\n"
     for prediction in mypredictions:
         str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
     em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
@@ -405,7 +406,7 @@ class LeaderboardDropdownView(discord.ui.View):
         self.add_item(showallmypredictionsbutton)
 
     async def showallmypredictions(self, interaction):
-        await getAllPredictionsByUser(interaction)
+        await getAllPredictionsByUser(interaction, interaction.user)
         #await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
 class PredictionDropdownViewBestofOne(discord.ui.View):
