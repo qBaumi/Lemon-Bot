@@ -382,6 +382,19 @@ class PredictionUserSelectView(discord.ui.View):
         super().__init__(timeout=None)
         self.add_item(ShowPredictionsByUserSelect(client))
 
+async def getAllPredictionsByUser(interaction, user):
+    mypredictions = es.sql_select(f"""        
+    SELECT p.team1, p.team2, m.team1name, m.team2name
+    FROM predictions p
+    JOIN matches m ON p.matchid = m.matchid
+    WHERE userid = '{user.id}'
+    """)
+    str = f"You currently have **{getPointsByUserId(user.id)}** points\n"
+    for prediction in mypredictions:
+        str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
+    em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
+    await interaction.response.send_message(embed=em, ephemeral=True)
+
 class LeaderboardDropdownView(discord.ui.View):
     def __init__(self, client):
         # Pass the timeout in the initilization of the super class
@@ -392,17 +405,7 @@ class LeaderboardDropdownView(discord.ui.View):
         self.add_item(showallmypredictionsbutton)
 
     async def showallmypredictions(self, interaction):
-        mypredictions = es.sql_select(f"""        
-        SELECT p.team1, p.team2, m.team1name, m.team2name
-        FROM predictions p
-        JOIN matches m ON p.matchid = m.matchid
-        WHERE userid = '{interaction.user.id}'
-        """)
-        str = f"You currently have **{getPointsByUserId(interaction.user.id)}** points\n"
-        for prediction in mypredictions:
-            str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
-        em = discord.Embed(title="All your Predictions", colour=discord.Color.dark_red(), description=str)
-        await interaction.response.send_message(embed=em, ephemeral=True)
+        await getAllPredictionsByUser(interaction)
         #await interaction.response.send_message(f"You have currently selected **{mypredictions[0]} - {mypredictions[1]}** for **{mypredictions[2].decode('utf-8')}** vs **{mypredictions[3].decode('utf-8')}**", ephemeral=True)
 
 class PredictionDropdownViewBestofOne(discord.ui.View):
@@ -457,10 +460,10 @@ class PredictionViewScoreButtons(discord.ui.View):
 class ShowPredictionsByUserSelect(discord.ui.UserSelect):
     def __init__(self, client):
         self.client = client
-        super().__init__(placeholder='Pick a winner', min_values=1, max_values=1, custom_id=f'predictionuserselect')
+        super().__init__(placeholder='Show Predictions of', min_values=1, max_values=1, custom_id=f'predictionuserselect')
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f"{self.values[0]}", ephemeral=True)
+        await getAllPredictionsByUser(interaction, self.values[0])
 
 
 class PredictionSelectBestofOne(discord.ui.Select):
