@@ -227,7 +227,8 @@ WHERE matchid = {matchid}
     async def predictionleaderboard(self, ctx):
         em = discord.Embed(colour=discord.Color.dark_red())
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/1163437922310168586/IMG_6763.webp?ex=653f9300&is=652d1e00&hm=88f67c863db9299db094a710e39819fbc390f3cd979bf7c8f3f92dcd638aa12c&=")
-        await ctx.send(embed=em)
+        channel = await self.client.fetch_channel(leaderboard_channel_id)
+        await channel.send(embed=em)
         em = discord.Embed(colour=discord.Color.dark_red(), title="Prediction Info", description=
         """
 This new system will make it way easier for everyone to participate in predictions! Keep in mind it is still new and we might experience bugs along the way, so please be patient and let us know if something isn't working for you.
@@ -247,10 +248,10 @@ __**Prizes**__
 🏅 Rest of top 10 will get 100 Golden Lemons
         """)
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/881551188879867954/Intermission.png?width=1440&height=38")
-        await ctx.send(embed=em)
+        await channel.send(embed=em)
 
         em = await self.getLeaderboardEmbed()
-        await ctx.send(embed=em, view=LeaderboardDropdownView(client=self.client))
+        await channel.send(embed=em, view=LeaderboardDropdownView(client=self.client))
 
 
 
@@ -411,6 +412,7 @@ class LeaderboardDropdownView(discord.ui.View):
         showallmypredictionsbutton = discord.ui.Button(label="Show all my Predictions", style=discord.ButtonStyle.grey, custom_id=f"showallmypredictions")
         showallmypredictionsbutton.callback = self.showallmypredictions
         self.add_item(showallmypredictionsbutton)
+        self.add_item(ShowPredictionsByUserSelect(client))
 
     async def showallmypredictions(self, interaction):
         await getAllPredictionsByUser(interaction, interaction.user)
