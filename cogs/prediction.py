@@ -391,12 +391,12 @@ async def getAllPredictionsByUser(interaction, user):
     ORDER BY timestamp
     """)
     str = f"{user} currently has **{getPointsByUserId(user.id)}** points\n"
-    last_date = datetime.date.fromtimestamp(int(mypredictions[0][4].decode('utf-8')))
+    last_date = f"{datetime.date.fromtimestamp(int(mypredictions[0][4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(mypredictions[0][4].decode('utf-8'))).month}"
     str += f"**{last_date.day}-{last_date.month}**\n"
     #print(f"{last_date.day}-{last_date.month}")
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
-        if f"{last_date.day}-{last_date.month}" != day_month:
+        if last_date != day_month:
             last_date = day_month
             str += f"\n**{day_month}**\n"
         str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
