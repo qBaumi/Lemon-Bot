@@ -195,6 +195,11 @@ WHERE matchid = {matchid}
         await self.lock_prediction(matchid)
         await ctx.send("Locked prediction")
 
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.command(name="testuserselect")
+    async def testuserselect(self, ctx):
+        await ctx.send(view=PredictionUserSelectView(self.client))
+
 
 
     async def lock_prediction(self, matchid):
@@ -371,6 +376,12 @@ __**Prizes**__
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
 
+class PredictionUserSelectView(discord.ui.View):
+    def __init__(self, client):
+        # Pass the timeout in the initilization of the super class
+        super().__init__(timeout=None)
+        self.add_item(ShowPredictionsByUserSelect(client))
+
 class LeaderboardDropdownView(discord.ui.View):
     def __init__(self, client):
         # Pass the timeout in the initilization of the super class
@@ -442,6 +453,14 @@ class PredictionViewScoreButtons(discord.ui.View):
     async def selectScore(self, interaction, matchid, winnerteam,  option):
         await interaction.response.defer()
         await update_user_prediction(self.client, interaction, matchid, self.teams, winnerteam, option, self.votes_message_id)
+
+class ShowPredictionsByUserSelect(discord.ui.UserSelect):
+    def __init__(self, client):
+        self.client = client
+        super().__init__(placeholder='Pick a winner', min_values=1, max_values=1, custom_id=f'predictionuserselect')
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f"{self.values[0]}", ephemeral=True)
 
 
 class PredictionSelectBestofOne(discord.ui.Select):
