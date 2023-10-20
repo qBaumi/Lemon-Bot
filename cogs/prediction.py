@@ -392,7 +392,7 @@ async def getAllPredictionsByUser(interaction, user):
     """)
     str = f"{user} currently has **{getPointsByUserId(user.id)}** points\n"
     last_date = datetime.date.fromtimestamp(int(mypredictions[0][4].decode('utf-8')))
-    str += f"**{last_date.day}-{last_date.month}\n**"
+    str += f"**{last_date.day}-{last_date.month}**\n"
     #print(f"{last_date.day}-{last_date.month}")
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
