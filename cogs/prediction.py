@@ -391,7 +391,10 @@ async def getAllPredictionsByUser(interaction, user):
     ORDER BY timestamp
     """)
     str = f"{user} currently has **{getPointsByUserId(user.id)}** points\n\n"
+    last_date = datetime.date.fromtimestamp(mypredictions[0][4].decode('utf-8'))
+    print(f"{last_date.day}-{last_date.month}")
     for prediction in mypredictions:
+        timestamp = prediction[4].decode('utf-8')
         str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
     em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
     await interaction.response.send_message(embed=em, ephemeral=True)
