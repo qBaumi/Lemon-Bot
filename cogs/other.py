@@ -54,8 +54,8 @@ class other(commands.Cog):
     async def server(self, ctx):
         print("test")
         guild = await self.client.fetch_guild(598303095352459305)
-        await guild.fetch_channels()
-        for channel in guild.channels:
+
+        for channel in await guild.fetch_channels():
             print(f"{channel.category} {channel.name}")
         #await channel.set_permissions(user, view_channel=True)
 
