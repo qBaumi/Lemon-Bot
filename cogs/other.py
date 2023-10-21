@@ -35,6 +35,15 @@ class other(commands.Cog):
         modal = Suggestion(client=self.client)
         await interaction.response.send_modal(modal)
 
+    @commands.has_any_role("Developer")
+    @commands.command(name="nuke")
+    async def nuke(self, ctx):
+        msg = await ctx.send(f"**Nuking server in 5**")
+        for i in range(0, 5, -1):
+            await msg.edit(f"**Nuking server in {i}**")
+            await asyncio.sleep(1)
+        await msg.delete()
+
     @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="parrot", description="Repeats")
     async def parrot(self, ctx, msg):
