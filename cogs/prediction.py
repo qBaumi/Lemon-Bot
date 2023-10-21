@@ -87,6 +87,7 @@ def getPointsByUserId(userid):
 predictions_channel_id = 1162712749407731792 # 651364619402739713#
 leaderboard_message_id = 1165274015116570728
 leaderboard_channel_id = 1162712965087244298
+mod_channel_id = 1165243291973976125
 
 class prediction(commands.GroupCog):
     def __init__(self, client):
@@ -227,7 +228,7 @@ WHERE matchid = {matchid}
         for matchid in matchids:
             matchid = matchid[0]
             await self.lock_prediction(matchid)
-            channel = await self.client.fetch_channel(651364619402739713) # test channel id
+            channel = await self.client.fetch_channel(mod_channel_id) # mod channel id
             await channel.send("Prediction was succesfully locked!")
             await asyncio.sleep(1)
 
