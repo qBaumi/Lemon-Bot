@@ -49,17 +49,6 @@ class other(commands.Cog):
     async def parrot(self, ctx, msg):
         await ctx.send(msg)
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer")
-    @commands.command(name="server")
-    async def server(self, ctx):
-        print("test")
-        guild = await self.client.fetch_guild(598303095352459305)
-
-        for channel in await guild.fetch_channels():
-            print(f"{channel.category} {channel.name} {channel.id}")
-        channel = await self.client.fetch_channel(1091321712714448896)
-        await channel.set_permissions(ctx.author, view_channel=True)
-
     @commands.command(name="listemojis")
     async def listemojis(self, ctx):
         server = ctx.guild
