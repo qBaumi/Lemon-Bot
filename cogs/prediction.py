@@ -248,6 +248,10 @@ To participate in predictions all you have to do is:
 * If the match is a Bo3 or Bo5 you will get a message under the prediction that makes you able to pick the result
 * If you're unsure what you predicted later you can press `Show my prediction` under the same match and Lemon Bot will tell you what you predicted. 
 
+* You get 1 point if you picked the correct winner 
+* You get +1 point if you picked the correct score in a Bo3 game
+* You get +2 points if you picked the correct score in a Bo5 game
+
 The predictions will be locked on game start!
 
 __**Prizes**__
