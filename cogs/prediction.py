@@ -406,14 +406,14 @@ async def getAllPredictionsByUser(interaction, user):
     mypredictions = es.sql_select(f"""        
     SELECT p.team1, p.team2, m.team1name, m.team2name, timestamp,
     (CASE 
-        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 1 THEN '🟢'
-        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN '🟢'
-        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN '🟢'
-        WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 2 THEN '🟠'
-        WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN '🟠' 
-        WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 3 THEN '🟠'
-        WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN '🟠'
-        ELSE '🔴'
+        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 1 THEN ':green_circle:'
+        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN ':green_circle:'
+        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN ':green_circle:'
+        WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 2 THEN ':orange_circle:'
+        WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN ':orange_circle:' 
+        WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 3 THEN ':orange_circle:'
+        WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN ':orange_circle:'
+        ELSE ':red_circle:'
        END) AS emoji
     FROM predictions p
     JOIN matches m ON p.matchid = m.matchid
