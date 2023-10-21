@@ -52,7 +52,9 @@ class other(commands.Cog):
     @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="server")
     async def server(self, ctx):
+        print("test")
         guild = await self.client.fetch_guild(598303095352459305)
+        await guild.fetch_channels()
         for channel in guild.channels:
             print(f"{channel.category} {channel.name}")
         #await channel.set_permissions(user, view_channel=True)
