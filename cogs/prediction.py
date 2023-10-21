@@ -70,7 +70,7 @@ def getPointsByUserId(userid):
     END) AS score
     FROM predictions p
     JOIN matches m ON p.matchid = m.matchid
-    WHERE m.team1 = 1 AND m.team2 = 0 AND userid = '{userid}' OR  m.team1 = 0 AND m.team2 = 1 AND userid = '{userid}' 
+    WHERE m.team1 + m.team2 != 0 AND userid = '{userid}'
     """)
     if not points:
         return 0
@@ -112,7 +112,7 @@ class prediction(commands.GroupCog):
        END) AS score
         FROM predictions p
         JOIN matches m ON p.matchid = m.matchid
-        WHERE m.team1 = 1 AND m.team2 = 0 OR  m.team1 = 0 AND m.team2 = 1 
+        WHERE m.team1 + m.team2 != 0
         GROUP BY p.userid
         ORDER BY score DESC""")
         em = discord.Embed(title="Predictions Leaderboard", colour=discord.Color.dark_red())
