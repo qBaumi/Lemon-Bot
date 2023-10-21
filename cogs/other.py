@@ -38,11 +38,11 @@ class other(commands.Cog):
     @commands.has_any_role("Developer")
     @commands.command(name="nuke")
     async def nuke(self, ctx):
-        msg = await ctx.send(f"**Nuking server in 5**")
-        for i in range(5, 0, -1):
+        msg = await ctx.send(f"**Nuking server in 10**")
+        for i in range(10, 0, -1):
             await msg.edit(content=f"**Nuking server in {i}**")
             await asyncio.sleep(1)
-        #await msg.delete()
+        await msg.delete()
 
     @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="parrot", description="Repeats")
