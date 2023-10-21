@@ -56,7 +56,7 @@ class other(commands.Cog):
         guild = await self.client.fetch_guild(598303095352459305)
 
         for channel in await guild.fetch_channels():
-            print(f"{channel.category} {channel.name}")
+            print(f"{channel.category} {channel.name} {channel.id}")
         #await channel.set_permissions(user, view_channel=True)
 
     @commands.command(name="listemojis")
