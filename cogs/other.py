@@ -40,7 +40,7 @@ class other(commands.Cog):
     async def nuke(self, ctx):
         msg = await ctx.send(f"**Nuking server in 5**")
         for i in range(5, 0, -1):
-            await msg.edit(f"**Nuking server in {i}**")
+            await msg.edit(content=f"**Nuking server in {i}**")
             await asyncio.sleep(1)
         #await msg.delete()
 
