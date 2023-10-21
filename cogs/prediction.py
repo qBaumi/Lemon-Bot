@@ -403,7 +403,17 @@ class PredictionUserSelectView(discord.ui.View):
 
 async def getAllPredictionsByUser(interaction, user):
     mypredictions = es.sql_select(f"""        
-    SELECT p.team1, p.team2, m.team1name, m.team2name, timestamp
+    SELECT p.team1, p.team2, m.team1name, m.team2name, timestamp,
+    (CASE 
+        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 1 THEN '🟢'
+        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN '🟢'
+        WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN '🟢'
+        WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 2 THEN '🟠'
+        WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN '🟠' 
+        WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 3 THEN '🟠'
+        WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN '🟠'
+        ELSE '🔴'
+       END) AS emoji
     FROM predictions p
     JOIN matches m ON p.matchid = m.matchid
     WHERE userid = '{user.id}'
@@ -418,7 +428,7 @@ async def getAllPredictionsByUser(interaction, user):
         if last_date != day_month:
             last_date = day_month
             str += f"\n**{day_month}**\n"
-        str += f"**{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
+        str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
     em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
     await interaction.response.send_message(embed=em, ephemeral=True)
 
