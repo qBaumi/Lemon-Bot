@@ -420,7 +420,12 @@ async def getAllPredictionsByUser(interaction, user):
     ORDER BY timestamp
     """)
     str = f"{user} currently has **{getPointsByUserId(user.id)}** points\n"
-    last_date = f"{datetime.date.fromtimestamp(int(mypredictions[0][4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(mypredictions[0][4].decode('utf-8'))).month}"
+    try:
+        last_date = f"{datetime.date.fromtimestamp(int(mypredictions[0][4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(mypredictions[0][4].decode('utf-8'))).month}"
+    except:
+        em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
+        await interaction.response.send_message(embed=em, ephemeral=True)
+        return
     str += f"\n**{last_date}**\n"
     #print(f"{last_date.day}-{last_date.month}")
     for prediction in mypredictions:
