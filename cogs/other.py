@@ -42,7 +42,7 @@ class other(commands.Cog):
         for i in range(0, 5, -1):
             await msg.edit(f"**Nuking server in {i}**")
             await asyncio.sleep(1)
-        await msg.delete()
+        #await msg.delete()
 
     @commands.has_any_role("Admins", "Head Mods", "Developer")
     @commands.command(name="parrot", description="Repeats")
