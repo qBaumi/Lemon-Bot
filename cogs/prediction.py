@@ -63,9 +63,14 @@ def getChoiceByTeamname(teamname):
 def getPointsByUserId(userid):
     points = es.sql_select(f"""SELECT
     SUM(CASE 
-    WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 2 
-    WHEN p.team1 = m.team1 AND p.team2 != m.team2 THEN 1
-    WHEN p.team2 = m.team2 AND p.team1 != m.team1 THEN 1
+    WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 1 THEN 1
+    WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN 2
+    WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN 3
+    WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 2 THEN 1
+    WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN 1    
+    WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 3 THEN 1
+    WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN 1
+
     ELSE 0 
     END) AS score
     FROM predictions p
