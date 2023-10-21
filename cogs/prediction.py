@@ -110,10 +110,14 @@ class prediction(commands.GroupCog):
     async def getLeaderboardEmbed(self):
         leaderboard = es.sql_select(f"""SELECT p.userid,
        SUM(CASE 
-           WHEN p.team1 = m.team1 AND p.team2 = m.team2 THEN 2 
-           WHEN p.team1 = m.team1 AND p.team2 != m.team2 THEN 1
-           WHEN p.team2 = m.team2 AND p.team1 != m.team1 THEN 1
-           ELSE 0 
+            WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 1 THEN 1
+            WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN 2
+            WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN 3
+            WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 2 THEN 1
+            WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN 1    
+            WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 3 THEN 1
+            WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN 1
+            ELSE 0 
        END) AS score
         FROM predictions p
         JOIN matches m ON p.matchid = m.matchid
@@ -367,6 +371,11 @@ __**Prizes**__
     @app_commands.command(name="create", description="Create a prediction")
     @app_commands.describe(matchbegin_timestamp="Use `/timestamp` to get a timestamp for the date and time or a website")
     async def create(self, interaction, team1: Choice[str], team2: Choice[str], bestof: Choice[str], matchbegin_timestamp: str):
+        try:
+            test = int(matchbegin_timestamp)
+        except:
+            await interaction.response.send_message("Something is wrong with your timestamp!", ephemeral=True)
+            return
         em = discord.Embed(colour=discord.Color.brand_green(), title=f"{team1.name} vs {team2.name}", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
         em.add_field(name=f"{team1.value} Votes for {team1.name}", value="0")
         em.add_field(name=f"{team2.value} Votes for {team2.name}", value="0")
