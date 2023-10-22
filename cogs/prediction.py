@@ -401,6 +401,7 @@ async def getAllPredictionsByUser(interaction, user):
     mypredictions = es.sql_select(f"""        
     SELECT p.team1, p.team2, m.team1name, m.team2name, timestamp,
     (CASE 
+        WHEN m.team1 = 0 AND m.team2 = 0 THEN ':white_circle:'
         WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 1 THEN ':green_circle:'
         WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN ':green_circle:'
         WHEN p.team1 = m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN ':green_circle:'
@@ -408,7 +409,6 @@ async def getAllPredictionsByUser(interaction, user):
         WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 2 THEN ':orange_circle:' 
         WHEN p.team1 = m.team1 AND p.team2 != m.team2 AND m.bestof = 3 THEN ':orange_circle:'
         WHEN p.team1 != m.team1 AND p.team2 = m.team2 AND m.bestof = 3 THEN ':orange_circle:'
-        WHEN m.team1 = 0 AND m.team2 = 0 THEN ':white_circle:'
         ELSE ':red_circle:'
        END) AS emoji
     FROM predictions p
