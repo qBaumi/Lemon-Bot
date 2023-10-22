@@ -219,7 +219,7 @@ WHERE matchid = {matchid}
 
     @tasks.loop(seconds=59)
     async def lock_prediction_timer(self):
-        matchids = es.sql_select(f"SELECT matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW()) AND locked = 0;")
+        matchids = es.sql_select(f"SELECT matchid FROM matches WHERE timestamp < UNIX_TIMESTAMP(NOW())+600 AND locked = 0;")
         for matchid in matchids:
             matchid = matchid[0]
             await self.lock_prediction(matchid)
