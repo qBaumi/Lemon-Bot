@@ -94,7 +94,7 @@ class prediction(commands.GroupCog):
         self.client = client
         self.lock_prediction_timer.start()
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
     @commands.command(name="updateleaderboard")
     async def updateleaderboard(self, ctx):
         await self.update_leaderboard()
@@ -175,7 +175,7 @@ class prediction(commands.GroupCog):
 
         return em
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
     @app_commands.command(name="result", description="Put result into a Prediction")
     @app_commands.describe(matchid="The matchid is the last line / footer of the prediction")
     async def result(self, interaction: discord.Interaction, matchid: int, team1score: int, team2score: int):
@@ -199,16 +199,11 @@ WHERE matchid = {matchid}
         await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
         await self.update_leaderboard()
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
     @commands.command(name="lockprediction")
     async def lockprediction(self, ctx, matchid):
         await self.lock_prediction(matchid)
         await ctx.send("Locked prediction")
-
-    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
-    @commands.command(name="testuserselect")
-    async def testuserselect(self, ctx):
-        await ctx.send(view=PredictionUserSelectView(self.client))
 
 
 
@@ -232,7 +227,7 @@ WHERE matchid = {matchid}
             await channel.send("Prediction was succesfully locked!")
             await asyncio.sleep(1)
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
     @commands.command(name="predictionleaderboard")
     async def predictionleaderboard(self, ctx):
         em = discord.Embed(colour=discord.Color.dark_red())
@@ -365,7 +360,7 @@ __**Prizes**__
             ]
 
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
     @app_commands.choices(team1=teamchoices)
     @app_commands.choices(team2=teamchoices)
     @app_commands.choices(bestof=[

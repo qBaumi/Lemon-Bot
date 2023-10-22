@@ -121,7 +121,7 @@ class admincommands(commands.Cog):
         await interaction.response.send_message(f"There are now {instock} {name}'s in stock")
 
     #GETS ITEM AMOUNTS FOR A SPECIFIC ITEM AND RETURNS LIST FROM USERS ONLY FOR ADMINS
-    @commands.has_any_role("Admins", "Developer", "HM")
+    @commands.has_any_role("Admins", "Developer", "Staff")
     @commands.command()
     async def listitem(self, ctx, item="None"):
         if item == "None":
@@ -152,7 +152,7 @@ class admincommands(commands.Cog):
             list += str(user) + "\n"
         await ctx.send(list)
 
-    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods")
+    @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
     @commands.command(name="createvc", description="Permanent message for createvc channel")
     async def createvc(self, ctx):
         em = discord.Embed(colour=discord.Color.from_rgb(243, 155, 0), title="Create your own voice channel", description="To create your own voice-channel, join <#860099749307088916>. The bot will then automatically move you to your own channel. All temporary channels will disappear once everyone leaves.")
