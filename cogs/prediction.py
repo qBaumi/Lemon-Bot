@@ -447,6 +447,7 @@ async def getAllPredictionsByUser(interaction, user):
                 embeds.append(em)
                 #await interaction.response.send_message(embed=em, ephemeral=True)
             str = ""
+            counter = 0
         if last_date != day_month:
             last_date = day_month
             str += f"\n**{day_month}**\n"
