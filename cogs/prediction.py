@@ -428,6 +428,7 @@ async def getAllPredictionsByUser(interaction, user):
     first_msg = True
     sendtitle = True
     em = None
+    embeds = []
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
         if first_msg:
@@ -438,20 +439,22 @@ async def getAllPredictionsByUser(interaction, user):
         if counter == 4:
             if sendtitle:
                 em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
-                await interaction.response.send_message(embed=em, ephemeral=True)
+                #await interaction.response.send_message(embed=em, ephemeral=True)
+                embeds.append(em)
                 sendtitle = False
             else:
                 em = discord.Embed(colour=discord.Color.dark_red(), description=str)
-                await interaction.response.send_message(embed=em, ephemeral=True)
+                embeds.append(em)
+                #await interaction.response.send_message(embed=em, ephemeral=True)
             str = ""
         if last_date != day_month:
             last_date = day_month
-        str += f"\n**{day_month}**\n"
+            str += f"\n**{day_month}**\n"
         str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
         counter+=1
     if str != "":
         em = discord.Embed(colour=discord.Color.dark_red(), description=str)
-        await interaction.response.send_message(embed=em, ephemeral=True)
+        await interaction.response.send_message(embeds=embeds, ephemeral=True)
 
 
 class LeaderboardDropdownView(discord.ui.View):
