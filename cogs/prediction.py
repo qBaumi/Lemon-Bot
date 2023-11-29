@@ -426,7 +426,7 @@ async def getAllPredictionsByUser(interaction, user):
     #print(f"{last_date.day}-{last_date.month}")
     counter = 0
     first_msg = True
-
+    em = None
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
         if first_msg:
