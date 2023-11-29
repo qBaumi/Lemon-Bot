@@ -423,16 +423,29 @@ async def getAllPredictionsByUser(interaction, user):
         em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
         await interaction.response.send_message(embed=em, ephemeral=True)
         return
-    str += f"\n**{last_date}**\n"
     #print(f"{last_date.day}-{last_date.month}")
+    counter = 0
+    first_msg = True
+    em = discord.Embed(colour=discord.Color.dark_red(), description=str)
+
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
-        if last_date != day_month:
+        if first_msg:
+            str += f"\n**{last_date}**\n"
+            first_msg = False
+            em.title = f"All Predictions of {user}"
+        elif last_date != day_month:
             last_date = day_month
+            if counter == 4:
+                await interaction.response.send_message(embed=em, ephemeral=True)
+                #em = discord.Embed(colour=discord.Color.dark_red(), description=str)
+                str = ""
             str += f"\n**{day_month}**\n"
         str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
-    em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
-    await interaction.response.send_message(embed=em, ephemeral=True)
+        counter+=1
+    if str != "":
+        await interaction.response.send_message(embed=em, ephemeral=True)
+
 
 class LeaderboardDropdownView(discord.ui.View):
     def __init__(self, client):
