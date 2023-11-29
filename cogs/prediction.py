@@ -430,11 +430,10 @@ async def getAllPredictionsByUser(interaction, user):
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
         if first_msg:
-            print("First Message")
             str += f"\n**{last_date}**\n"
             first_msg = False
             continue
-        if len(str) > 1000:
+        if len(str) > 1300:
             if sendtitle:
                 em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
                 #await interaction.response.send_message(embed=em, ephemeral=True)
