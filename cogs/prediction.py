@@ -436,7 +436,7 @@ async def getAllPredictionsByUser(interaction, user):
             str += f"\n**{last_date}**\n"
             first_msg = False
             continue
-        if counter == 4 and last_date != day_month:
+        if len(str) > 3000:
             if sendtitle:
                 em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
                 #await interaction.response.send_message(embed=em, ephemeral=True)
