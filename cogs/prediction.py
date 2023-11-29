@@ -424,10 +424,8 @@ async def getAllPredictionsByUser(interaction, user):
         await interaction.response.send_message(embed=em, ephemeral=True)
         return
     #print(f"{last_date.day}-{last_date.month}")
-    counter = 0
     first_msg = True
     sendtitle = True
-    em = None
     embeds = []
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
@@ -447,12 +445,11 @@ async def getAllPredictionsByUser(interaction, user):
                 embeds.append(em)
                 #await interaction.response.send_message(embed=em, ephemeral=True)
             str = ""
-            counter = 0
+
+        str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
         if last_date != day_month:
             last_date = day_month
             str += f"\n**{day_month}**\n"
-        str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
-        counter+=1
     if str != "":
         em = discord.Embed(colour=discord.Color.dark_red(), description=str)
         embeds.append(em)
