@@ -426,17 +426,17 @@ async def getAllPredictionsByUser(interaction, user):
     #print(f"{last_date.day}-{last_date.month}")
     counter = 0
     first_msg = True
-    em = discord.Embed(colour=discord.Color.dark_red(), description=str)
 
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
         if first_msg:
             str += f"\n**{last_date}**\n"
             first_msg = False
-            em.title = f"All Predictions of {user}"
+            #em.title = f"All Predictions of {user}"
         elif last_date != day_month:
             last_date = day_month
             if counter == 4:
+                em = discord.Embed(colour=discord.Color.dark_red(), description=str)
                 await interaction.response.send_message(embed=em, ephemeral=True)
                 #em = discord.Embed(colour=discord.Color.dark_red(), description=str)
                 str = ""
