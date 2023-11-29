@@ -455,7 +455,8 @@ async def getAllPredictionsByUser(interaction, user):
         counter+=1
     if str != "":
         em = discord.Embed(colour=discord.Color.dark_red(), description=str)
-        await interaction.response.send_message(embeds=embeds, ephemeral=True)
+        embeds.append(em)
+    await interaction.response.send_message(embeds=embeds, ephemeral=True)
 
 
 class LeaderboardDropdownView(discord.ui.View):
