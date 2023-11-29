@@ -430,17 +430,20 @@ async def getAllPredictionsByUser(interaction, user):
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
         if first_msg:
+            print("First Message")
             str += f"\n**{last_date}**\n"
             first_msg = False
-            #em.title = f"All Predictions of {user}"
-        elif last_date != day_month:
+            em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
+            await interaction.response.send_message(embed=em, ephemeral=True)
+            continue
+        if counter == 4:
+            em = discord.Embed(colour=discord.Color.dark_red(), description=str)
+            await interaction.response.send_message(embed=em, ephemeral=True)
+            #em = discord.Embed(colour=discord.Color.dark_red(), description=str)
+            str = ""
+        if last_date != day_month:
             last_date = day_month
-            if counter == 4:
-                em = discord.Embed(colour=discord.Color.dark_red(), description=str)
-                await interaction.response.send_message(embed=em, ephemeral=True)
-                #em = discord.Embed(colour=discord.Color.dark_red(), description=str)
-                str = ""
-            str += f"\n**{day_month}**\n"
+        str += f"\n**{day_month}**\n"
         str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
         counter+=1
     if str != "":
