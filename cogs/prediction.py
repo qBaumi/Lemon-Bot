@@ -423,16 +423,37 @@ async def getAllPredictionsByUser(interaction, user):
         em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
         await interaction.response.send_message(embed=em, ephemeral=True)
         return
-    str += f"\n**{last_date}**\n"
     #print(f"{last_date.day}-{last_date.month}")
+    first_msg = True
+    sendtitle = True
+    embeds = []
     for prediction in mypredictions:
         day_month = f"{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).day}-{datetime.date.fromtimestamp(int(prediction[4].decode('utf-8'))).month}"
-        if last_date != day_month:
+        if first_msg:
+            str += f"\n**{last_date}**\n"
+            first_msg = False
+            continue
+        if len(str) > 1300:
+            if sendtitle:
+                em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
+                #await interaction.response.send_message(embed=em, ephemeral=True)
+                embeds.append(em)
+                sendtitle = False
+            else:
+                em = discord.Embed(colour=discord.Color.dark_red(), description=str)
+                embeds.append(em)
+                #await interaction.response.send_message(embed=em, ephemeral=True)
+            str = ""
+
+        str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
+        if last_date != day_month and prediction != mypredictions[len(mypredictions)-1]:
             last_date = day_month
             str += f"\n**{day_month}**\n"
-        str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
-    em = discord.Embed(title=f"All Predictions of {user}", colour=discord.Color.dark_red(), description=str)
-    await interaction.response.send_message(embed=em, ephemeral=True)
+    if str != "":
+        em = discord.Embed(colour=discord.Color.dark_red(), description=str)
+        embeds.append(em)
+    await interaction.response.send_message(embeds=embeds, ephemeral=True)
+
 
 class LeaderboardDropdownView(discord.ui.View):
     def __init__(self, client):
