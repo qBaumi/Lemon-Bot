@@ -85,7 +85,7 @@ def getPointsByUserId(userid):
         return 0
 
 predictions_channel_id = 1162712749407731792 # 651364619402739713#
-leaderboard_message_id = 1165274015116570728
+leaderboard_message_id = 1194290648115839057
 leaderboard_channel_id = 1162712965087244298
 mod_channel_id = 1165243291973976125
 
@@ -234,7 +234,7 @@ WHERE matchid = {matchid}
         em.set_image(url="https://media.discordapp.net/attachments/651364619402739713/1163437922310168586/IMG_6763.webp?ex=653f9300&is=652d1e00&hm=88f67c863db9299db094a710e39819fbc390f3cd979bf7c8f3f92dcd638aa12c&=")
         channel = await self.client.fetch_channel(leaderboard_channel_id)
         await channel.send(embed=em)
-        em = discord.Embed(colour=discord.Color.dark_red(), title="Prediction Info", description=
+        em = discord.Embed(colour=discord.Color.from_str("#7a613c"), title="Prediction Info", description=
         """
 This new system will make it way easier for everyone to participate in predictions! Keep in mind it is still new and we might experience bugs along the way, so please be patient and let us know if something isn't working for you.
 
