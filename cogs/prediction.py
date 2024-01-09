@@ -85,7 +85,7 @@ def getPointsByUserId(userid):
         return 0
 
 predictions_channel_id = 1162712749407731792 # 651364619402739713#
-leaderboard_message_id = 1194290648115839057
+leaderboard_message_id = 1194293497361072199
 leaderboard_channel_id = 1162712965087244298
 mod_channel_id = 1165243291973976125
 
