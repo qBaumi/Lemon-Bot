@@ -376,7 +376,7 @@ __**Prizes**__
         except:
             await interaction.response.send_message("Something is wrong with your timestamp!", ephemeral=True)
             return
-        em = discord.Embed(colour=discord.Color.brand_green(), title=f"{team1.name} vs {team2.name}", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
+        em = discord.Embed(colour=discord.Color.from_rgb(255, 255, 255), title=f"{team1.name} vs {team2.name}", description=f"Predictions close when the match begins at <t:{matchbegin_timestamp}>")
         em.add_field(name=f"{team1.value} Votes for {team1.name}", value="0")
         em.add_field(name=f"{team2.value} Votes for {team2.name}", value="0")
         # Calculate the new matchid value separately
