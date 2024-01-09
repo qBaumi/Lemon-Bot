@@ -125,7 +125,7 @@ class prediction(commands.GroupCog):
         WHERE m.team1 + m.team2 != 0
         GROUP BY p.userid
         ORDER BY score DESC""")
-        em = discord.Embed(title="Predictions Leaderboard", colour=discord.Color.dark_red())
+        em = discord.Embed(title="Predictions Leaderboard", colour=discord.Color.from_str("#7a613c"))
         try:
             firstpoints = leaderboard[0][1]
         except:
