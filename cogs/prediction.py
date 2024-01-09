@@ -212,24 +212,24 @@ WHERE matchid = {matchid}
         await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
         await self.update_leaderboard()
 
-        @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
-        @app_commands.command(name="edittime", description="Edit time when prediction locks")
-        @app_commands.describe(matchid="The matchid is the last line / footer of the prediction")
-        async def edittime(self, interaction: discord.Interaction, matchid: int, newtime: str):
-            try:
-                test = int(newtime)
-            except:
-                await interaction.response.send_message("Something is wrong with your timestamp!", ephemeral=True)
-                return
-            es.sql_exec(
-                f"UPDATE matches SET timestamp='{int(newtime)}' WHERE matchid={int(matchid)}")
-            msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
-            channel = await self.client.fetch_channel(predictions_channel_id)
-            msg = await channel.fetch_message(msgid)
-            embed = msg.embeds[0]
-            embed.description = f"Predictions close when the match begins at <t:{newtime}>"
-            await msg.edit(embed=embed)
-            await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
+    @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
+    @app_commands.command(name="edittime", description="Edit time when prediction locks")
+    @app_commands.describe(matchid="The matchid is the last line / footer of the prediction")
+    async def edittime(self, interaction: discord.Interaction, matchid: int, newtime: str):
+        try:
+            test = int(newtime)
+        except:
+            await interaction.response.send_message("Something is wrong with your timestamp!", ephemeral=True)
+            return
+        es.sql_exec(
+            f"UPDATE matches SET timestamp='{int(newtime)}' WHERE matchid={int(matchid)}")
+        msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
+        channel = await self.client.fetch_channel(predictions_channel_id)
+        msg = await channel.fetch_message(msgid)
+        embed = msg.embeds[0]
+        embed.description = f"Predictions close when the match begins at <t:{newtime}>"
+        await msg.edit(embed=embed)
+        await interaction.response.send_message(f"Updated Prediction with matchid {matchid}", ephemeral=True)
 
     @commands.has_any_role("Admins", "Staff", "Developer", "Mods")
     @commands.command(name="lockprediction")
