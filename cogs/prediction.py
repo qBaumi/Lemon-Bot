@@ -464,6 +464,7 @@ async def getAllPredictionsByUser(interaction, user):
         if first_msg:
             str += f"\n**{last_date}**\n"
             first_msg = False
+            str += f"{prediction[5]} **{prediction[2].decode('utf-8')}** vs **{prediction[3].decode('utf-8')}** | **{prediction[0]}** - **{prediction[1]}**\n"
             continue
         if len(str) > 1300:
             if sendtitle:
