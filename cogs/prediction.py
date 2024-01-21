@@ -242,12 +242,15 @@ WHERE matchid = {matchid}
     async def lock_prediction(self, matchid):
         msgid = es.sql_select(f"SELECT messageid FROM matches WHERE matchid={matchid}")[0][0].decode('utf-8')
         channel = await self.client.fetch_channel(predictions_channel_id)
-        msg = await channel.fetch_message(msgid)
-        view = View.from_message(msg)
-        view.children[0].disabled = True
-        view.children[1].disabled = True
-        await msg.edit(view=view)
-        es.sql_exec(f"UPDATE matches SET locked = 1  WHERE matchid={matchid}")
+        try:
+            msg = await channel.fetch_message(msgid)
+            view = View.from_message(msg)
+            view.children[0].disabled = True
+            view.children[1].disabled = True
+            await msg.edit(view=view)
+            es.sql_exec(f"UPDATE matches SET locked = 1  WHERE matchid={matchid}")
+        except Exception as e:
+            print(e)
 
     @tasks.loop(seconds=59)
     async def lock_prediction_timer(self):
