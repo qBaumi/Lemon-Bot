@@ -248,7 +248,7 @@ WHERE matchid = {matchid}
             view.children[0].disabled = True
             view.children[1].disabled = True
             await msg.edit(view=view)
-            es.sql_exec(f"UPDATE matches SET locked = 1  WHERE matchid={matchid}")
+        es.sql_exec(f"UPDATE matches SET locked = 1  WHERE matchid={matchid}")
         except Exception as e:
             print(e)
 
