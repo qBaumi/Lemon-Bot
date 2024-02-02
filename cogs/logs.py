@@ -28,7 +28,7 @@ class logs(commands.GroupCog):
             emoji = '🔴'
             if log[2].decode('utf-8')=='action':
                 emoji = '🟣'
-            my_str += f"{emoji} **ID: {log[0]}\nDate: {log[4].decode('utf-8')}**\n{log[3].decode('utf-8')} \nresponsible: <@{log[5].decode('utf-8')}>\n"
+            my_str += f"{emoji} **ID: {log[0]}\nDate: {log[4].decode('utf-8')}**\n{log[3].decode('utf-8')} \nresponsible: <@{log[5].decode('utf-8')}>\n\n"
         em.description = my_str
         await interaction.response.send_message(embed=em)
 
