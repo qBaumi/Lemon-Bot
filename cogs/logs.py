@@ -14,6 +14,24 @@ class logs(commands.GroupCog):
         self.client = client
 
 
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods", "Mod")
+    @app_commands.command(name="logs", description="See all logs of a member")
+    async def logs(self, interaction: discord.Interaction, user: discord.User):
+
+        result = es.sql_select(f"SELECT * FROM logs WHERE id = {user.id}")
+
+        print(result)
+
+        await interaction.response.send_message(f"Logs")
+
+
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods", "Mod")
+    @app_commands.command(name="remove", description="remove a log")
+    async def remove(self, interaction: discord.Interaction, log_id: int):
+
+        es.sql_exec(f"DELETE FROM logs WHERE id = {log_id}")
+
+        await interaction.response.send_message(f"Log {log_id} was successfully removed!")
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods", "Mod")
     @app_commands.choices(type=[
@@ -21,8 +39,22 @@ class logs(commands.GroupCog):
         Choice(name='Action', value="action"),
     ])
     @app_commands.describe(type='If an action like a tempban or verbally warning was made, then choose Action!')
-    @app_commands.command(name="log", description="Log a missbehaviour or an action")
-    async def log(self, interaction: discord.Interaction, type: Choice[str], user: discord.User, message: str):
+    @app_commands.command(name="edit", description="Edit a log")
+    async def edit(self, interaction: discord.Interaction, log_id: int, type: Choice[str], message: str):
+
+        es.sql_exec(f"UPDATE logs SET type='{type.value}', msg='{message}' WHERE id={log_id}")
+
+        await interaction.response.send_message(f"Log {log_id} was successfully edited!")
+
+
+    @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods", "Mod")
+    @app_commands.choices(type=[
+        Choice(name='Log', value="log"),
+        Choice(name='Action', value="action"),
+    ])
+    @app_commands.describe(type='If an action like a tempban or verbally warning was made, then choose Action!')
+    @app_commands.command(name="create", description="Log a missbehaviour or an action")
+    async def create(self, interaction: discord.Interaction, type: Choice[str], user: discord.User, message: str):
 
         es.sql_exec(f"INSERT INTO logs(user_id, type, msg, date, moderator_id) VALUES ('{user.id}', '{type.value}', '{message}', '{datetime.datetime.now().strftime('%Y-%m-%d')}', '{interaction.user.id}')")
 
