@@ -19,10 +19,18 @@ class logs(commands.GroupCog):
     async def logs(self, interaction: discord.Interaction, user: discord.User):
 
         result = es.sql_select(f"SELECT * FROM logs WHERE user_id = {user.id}")
-
+        em = discord.Embed(colour=discord.Color.light_grey(), title=f"Logs of {user.name}")
+        em.set_footer(text=f"user_id={user.id}")
         print(result)
-
-        await interaction.response.send_message(f"Logs")
+        my_str = ""
+        # id, user_id, type, msg, date, moderator_id
+        for log in result:
+            emoji = '🔴'
+            if log[2]=='action':
+                emoji = '🟣'
+            my_str += f"{emoji} **ID: {log[0]} Date: {log[4]}** {log[3]} (responsible: <@{log[5]}>)"
+        em.description = my_str
+        await interaction.response.send_message(embed=em)
 
 
     @commands.has_any_role("Admins", "Head Mods", "Developer", "Mods", "Mod")
