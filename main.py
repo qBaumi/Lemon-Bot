@@ -63,6 +63,7 @@ async def setup_hook():
     await client.load_extension("cogs.Roles")
     await client.load_extension("cogs.streamsubmissions")
     await client.load_extension("cogs.prediction")
+    await client.load_extension("cogs.logs")
     client.add_view(DropdownView(client), message_id=support_message_id)
     client.add_view(QueueContentDropdownView(client), message_id=queuecontent_message_id)
     client.add_view(FeedbackButtons(client), message_id=feedback_message_id)
