@@ -18,7 +18,7 @@ class logs(commands.GroupCog):
     @app_commands.command(name="logs", description="See all logs of a member")
     async def logs(self, interaction: discord.Interaction, user: discord.User):
 
-        result = es.sql_select(f"SELECT * FROM logs WHERE id = {user.id}")
+        result = es.sql_select(f"SELECT * FROM logs WHERE user_id = {user.id}")
 
         print(result)
 
