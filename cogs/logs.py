@@ -64,7 +64,7 @@ class logs(commands.GroupCog):
     @app_commands.command(name="create", description="Log a missbehaviour or an action")
     async def create(self, interaction: discord.Interaction, type: Choice[str], user: discord.User, message: str):
 
-        es.sql_exec(f"INSERT INTO logs(user_id, type, msg, date, moderator_id) VALUES ('{user.id}', '{type.value}', '{{{message}}}', '{datetime.datetime.now().strftime('%Y-%m-%d')}', '{interaction.user.id}')")
+        es.sql_exec(f"INSERT INTO logs(user_id, type, msg, date, moderator_id) VALUES ('{user.id}', '{type.value}', '{{message}}', '{datetime.datetime.now().strftime('%Y-%m-%d')}', '{interaction.user.id}')")
 
         await interaction.response.send_message(f"Log type: {type.value} was successfully created for user {user.mention}")
 
