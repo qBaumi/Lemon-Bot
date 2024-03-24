@@ -69,10 +69,13 @@ async def setup_hook():
     client.add_view(FeedbackButtons(client), message_id=feedback_message_id)
     guild = await client.fetch_guild(598303095352459305)
     for msg in getmsgids():
-        msgid = msg["msg_id"]
-        ticketchannel = await guild.fetch_channel(msg["ticketchannel_id"])
-        opener = await guild.fetch_member(msg["opener_id"])
-        client.add_view(CloseButtons(client=client, ticketchannel=ticketchannel, opener=opener), message_id=msgid)
+        try:
+            msgid = msg["msg_id"]
+            ticketchannel = await guild.fetch_channel(msg["ticketchannel_id"])
+            opener = await guild.fetch_member(msg["opener_id"])
+            client.add_view(CloseButtons(client=client, ticketchannel=ticketchannel, opener=opener), message_id=msgid)
+        except:
+            pass
 
     def getPredictionMsgIds():
         return es.sql_select(f"SELECT matchid, messageid, team1name, team2name, bestof FROM matches ")
