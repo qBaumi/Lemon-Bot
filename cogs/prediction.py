@@ -438,6 +438,28 @@ __**Prizes**__
         es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
 
+    @create.autocomplete('team1')
+    async def team1_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str
+    ) -> List[app_commands.Choice[str]]:
+        return [
+            team
+            for team in teamchoices if current.lower() in team.lower()
+        ]
+    @create.autocomplete('team2')
+    async def team1_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str
+    ) -> List[app_commands.Choice[str]]:
+        return [
+            team
+            for team in teamchoices if current.lower() in team.lower()
+        ]
+
+
 
 class PredictionUserSelectView(discord.ui.View):
     def __init__(self, client):
