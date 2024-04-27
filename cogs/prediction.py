@@ -39,9 +39,8 @@ import cogs.essentialfunctions as es
 <:RGEX:1194294393692237946>
 <:TH:1194294636919926794>
 
-<:estral:1233524307112624170>
+<:est:1233524307112624170>
 <:fly:1233524318856675349>
-////<:gam:1233524330214985728>
 <:loud:1233524344617963591>
 <:psg:1233524358543315005>
 <:tes:1233524370429972612>
@@ -76,7 +75,7 @@ teamchoices = [
     Choice(name='LOUD', value="<:loud:1233524344617963591>"),
     Choice(name='PSG', value="<:psg:1233524358543315005>"),
     Choice(name='TES', value="<:tes:1233524370429972612>"),
-    Choice(name='ESTRAL', value="<:estral:1233524307112624170>"),
+    Choice(name='EST', value="<:est:1233524307112624170>"),
 
     ]
 
