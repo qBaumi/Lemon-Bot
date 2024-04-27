@@ -45,20 +45,24 @@ import cogs.essentialfunctions as es
 <:psg:1233524358543315005>
 <:tes:1233524370429972612>
 """
+"""
+    Choice(name='C9', value="<:C9:1162308621657440267>"),
+    Choice(name='KT', value="<:KT:1162308604787957781>"),
+    Choice(name='NRG', value="<:NRG:1162308612291567686>"),
+    Choice(name='WBG', value="<:WBG:1162308617979048008>"),
+    Choice(name='TL', value="<:TL:1162308616657829958>"),
+
+"""
+
 
 teamchoices = [
     Choice(name='FNC', value="<:FNC:1162308600128086096>"),
     Choice(name='GEN', value="<:GEN:1162308602250399744>"),
     Choice(name='JDG', value="<:JDG:1162308603504508949>"),
-    Choice(name='KT', value="<:KT:1162308604787957781>"),
     Choice(name='LNG', value="<:LNG:1162308607409397770>"),
     Choice(name='MAD', value="<:MAD:1162308610173452298>"),
-    Choice(name='NRG', value="<:NRG:1162308612291567686>"),
     Choice(name='T1', value="<:T1:1162308614413877308>"),
-    Choice(name='TL', value="<:TL:1162308616657829958>"),
-    Choice(name='WBG', value="<:WBG:1162308617979048008>"),
     Choice(name='BLG', value="<:BLG:1162308619203784784>"),
-    Choice(name='C9', value="<:C9:1162308621657440267>"),
     Choice(name='G2', value="<:G2:1162308625763672154>"),
     Choice(name='DK', value="<:DK:1162308751433404516>"),
     Choice(name='BDS', value="<:BDS:1163070288406265966>"),
@@ -71,11 +75,11 @@ teamchoices = [
     Choice(name='RGEX', value="<:RGEX:1194294393692237946>"),
     Choice(name='TH', value="<:TH:1194294636919926794>"),
 
-    Choice(name='FLY', value="<:fly:1233524318856675349>"),
-    Choice(name='LOUD', value="<:loud:1233524344617963591>"),
-    Choice(name='PSG', value="<:psg:1233524358543315005>"),
-    Choice(name='TES', value="<:tes:1233524370429972612>"),
-    Choice(name='EST', value="<:est:1233524307112624170>"),
+    Choice(name='FLY', value="<:FLY:1233524318856675349>"),
+    Choice(name='LOUD', value="<:LOUD:1233524344617963591>"),
+    Choice(name='PSG', value="<:PSG:1233524358543315005>"),
+    Choice(name='TES', value="<:TES:1233524370429972612>"),
+    Choice(name='EST', value="<:EST:1233524307112624170>"),
 
     ]
 
@@ -437,7 +441,7 @@ __**Prizes**__
         msg = await interaction.channel.send(embed=em, view=view)
         es.sql_exec(f"UPDATE matches SET messageid='{msg.id}' WHERE matchid = {new_matchid}")
         await interaction.response.send_message("Successfully created prediction", ephemeral=True)
-
+"""
     @create.autocomplete('team1')
     async def team1_autocomplete(
             self,
@@ -458,7 +462,7 @@ __**Prizes**__
             team
             for team in teamchoices if current.lower() in team.lower()
         ]
-
+"""
 
 
 class PredictionUserSelectView(discord.ui.View):
