@@ -51,6 +51,7 @@ import cogs.essentialfunctions as es
     Choice(name='NRG', value="<:NRG:1162308612291567686>"),
     Choice(name='WBG', value="<:WBG:1162308617979048008>"),
     Choice(name='TL', value="<:TL:1162308616657829958>"),
+    Choice(name='FLY', value="<:FLY:1233524318856675349>"),
 
 """
 
@@ -75,7 +76,7 @@ teamchoices = [
     Choice(name='RGEX', value="<:RGEX:1194294393692237946>"),
     Choice(name='TH', value="<:TH:1194294636919926794>"),
 
-    Choice(name='FLY', value="<:FLY:1233524318856675349>"),
+    Choice(name='TL', value="<:TL:1162308616657829958>"),
     Choice(name='LOUD', value="<:LOUD:1233524344617963591>"),
     Choice(name='PSG', value="<:PSG:1233524358543315005>"),
     Choice(name='TES', value="<:TES:1233524370429972612>"),
