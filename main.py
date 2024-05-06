@@ -84,9 +84,13 @@ async def setup_hook():
     # add show all my predictions view leaderboard
     client.add_view(LeaderboardDropdownView(client), message_id=leaderboard_message_id)
     for match in getPredictionMsgIds():
-        teams = [getChoiceByTeamname(match[2].decode("utf-8")), getChoiceByTeamname(match[3].decode("utf-8"))]
-        client.add_view(PredictionDropdownViewBestofOne(client=client, teams=teams, matchid=match[0], bestof=int(match[4])), message_id=int(match[1].decode("utf-8")))
-
+        try:
+            teams = [getChoiceByTeamname(match[2].decode("utf-8")), getChoiceByTeamname(match[3].decode("utf-8"))]
+            client.add_view(PredictionDropdownViewBestofOne(client=client, teams=teams, matchid=match[0], bestof=int(match[4])), message_id=int(match[1].decode("utf-8")))
+        except:
+            print("ERROR IN TEAM NAME")
+            print(match[2].decode("utf-8"))
+            print(match[3].decode("utf-8"))
 
 
     #channel = await client.fetch_channel(955476670352093204)
