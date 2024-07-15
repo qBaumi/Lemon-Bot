@@ -256,21 +256,11 @@ class other(commands.Cog):
         guild = await self.client.fetch_guild(598303095352459305)
         members = {}
         async for member in guild.fetch_members(limit=10000):
-            members[str(member).lower()] = member
+            members[str(member.name).lower()] = member
 
         lastindex = 0
-        userlist = []
-        for i, letter in enumerate(users):
-            try:
-                num = int(users[i])
-                if users[i+1] == " ":
-                    userlist.append(users[lastindex:i+1])
-                    lastindex = i+2
-
-            except IndexError as e:
-                userlist.append(users[lastindex:len(users)])
-            except:
-                pass
+        userlist = users.split(" ")
+    
         print(userlist)
         role = discord.utils.get(guild.roles, id=1205621282658586668)
         failed_members = []
