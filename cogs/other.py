@@ -263,7 +263,7 @@ class other(commands.Cog):
         for i, letter in enumerate(users):
             try:
                 num = int(users[i])
-                if users[i+1] == "\n":
+                if users[i+1] == " ":
                     userlist.append(users[lastindex:i+1])
                     lastindex = i+2
 
@@ -272,7 +272,7 @@ class other(commands.Cog):
             except:
                 pass
         print(userlist)
-        role = discord.utils.get(guild.roles, id=1064211501839286412)
+        role = discord.utils.get(guild.roles, id=1205621282658586668)
         failed_members = []
         for user in userlist:
             try:
