@@ -263,7 +263,7 @@ class other(commands.Cog):
         for i, letter in enumerate(users):
             try:
                 num = int(users[i])
-                if users[i+1] == " ":
+                if users[i+1] == "\n":
                     userlist.append(users[lastindex:i+1])
                     lastindex = i+2
 
