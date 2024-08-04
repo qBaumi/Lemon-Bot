@@ -42,11 +42,12 @@ async def removeid(ticketchannelid):
         json.dump(msgids, f, indent=4)
 
 async def setheadmodperms(user, channel, client, enabled):
-    guild = await client.fetch_guild(598303095352459305)
-    role = discord.utils.get(guild.roles, id=845280788001849345)
-    await channel.set_permissions(guild.default_role, view_channel=False)
-    await channel.set_permissions(role, view_channel=enabled)
-    await channel.set_permissions(user, view_channel=True)
+    pass
+    #guild = await client.fetch_guild(598303095352459305)
+    #role = discord.utils.get(guild.roles, id=845280788001849345)
+    #await channel.set_permissions(guild.default_role, view_channel=False)
+    #await channel.set_permissions(role, view_channel=enabled)
+    #await channel.set_permissions(user, view_channel=True)
 async def setmodperms(user, channel, client, enabled):
     guild = await client.fetch_guild(598303095352459305)
 
