@@ -392,18 +392,18 @@ class Report(ui.Modal, title='Report'):
 
         guild = await self.client.fetch_guild(598303095352459305)
         modrole = guild.get_role(598307062086107156)
-        headmodrole = guild.get_role(845280788001849345)
+        #headmodrole = guild.get_role(845280788001849345)
 
         mention = modrole
-        mention2 = headmodrole
+        #mention2 = headmodrole
         if TESTMODE == False:
             mention = modrole.mention
-            mention2 = headmodrole.mention
+            #mention2 = headmodrole.mention
 
         await setmodperms(interaction.user, ticketchannel, self.client, True)
         await setheadmodperms(interaction.user, ticketchannel, self.client, True)
 
-        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}{mention2}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
         addid(msg.id, ticketchannel.id, interaction.user.id)
 
         await openTicketResponse(interaction, ticketchannel)
@@ -470,19 +470,19 @@ class Other(ui.Modal, title='Other'):
         em.add_field(name="Description", value=self.description, inline=False)
         guild = await self.client.fetch_guild(598303095352459305)
         modrole = guild.get_role(598307062086107156)
-        headmodrole = guild.get_role(845280788001849345)
+        #headmodrole = guild.get_role(845280788001849345)
 
         mention = modrole
-        mention2 = headmodrole
+        #mention2 = headmodrole
         if TESTMODE == False:
             mention = modrole.mention
-            mention2 = headmodrole.mention
+            #mention2 = headmodrole.mention
 
 
         await setmodperms(interaction.user, ticketchannel, self.client, True)
         await setheadmodperms(interaction.user, ticketchannel, self.client, True)
 
-        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}{mention2}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
+        msg = await ticketchannel.send(f"{interaction.user.mention}{mention}", embed=em, view=CloseButtons(self.client, ticketchannel, interaction.user.mention))
         addid(msg.id, ticketchannel.id, interaction.user.id)
         await openTicketResponse(interaction, ticketchannel)
 
