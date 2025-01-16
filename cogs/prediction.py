@@ -35,13 +35,13 @@ teamchoices = [
     Choice(name='WBG', value="<:WBG:1162308617979048008>"),
     Choice(name='FLY', value="<:FLY:1233524318856675349>"),
 
+    Choice(name='KC', value="<:KC:1194294254776885429>"),
+    Choice(name='SK', value="<:SK:1194293686092185660>"),
+    Choice(name='VIT', value="<:VIT:1194293912643321866>"),
+    Choice(name='RGEX', value="<:RGEX:1194294393692237946>"),
+    Choice(name='TH', value="<:TH:1194294636919926794>"),
 
-    Choice(name='100T', value="<:100T:1288035748121022484>"),
-    Choice(name='HAN', value="<:HAN:1288035881638428682>"),
-    Choice(name='MOV', value="<:MOV:1288035876525441097>"),
-    Choice(name='PAIN', value="<:PAIN:1288035878014287893>"),
-    Choice(name='SHG', value="<:SHG:1288035797903081503>"),
-    Choice(name='VIK', value="<:VIK:1288035879281098772>"),
+
 
 ]
 """
@@ -91,12 +91,13 @@ teamchoices = [
     Choice(name='LOUD', value="<:LOUD:1233524344617963591>"),
     Choice(name='JDG', value="<:JDG:1162308603504508949>"),
 
-    Choice(name='KC', value="<:KC:1194294254776885429>"),
-    Choice(name='SK', value="<:SK:1194293686092185660>"),
-    Choice(name='VIT', value="<:VIT:1194293912643321866>"),
-    Choice(name='RGEX', value="<:RGEX:1194294393692237946>"),
-    Choice(name='TH', value="<:TH:1194294636919926794>"),
-
+    Choice(name='100T', value="<:100T:1288035748121022484>"),
+    Choice(name='HAN', value="<:HAN:1288035881638428682>"),
+    Choice(name='MOV', value="<:MOV:1288035876525441097>"),
+    Choice(name='PAIN', value="<:PAIN:1288035878014287893>"),
+    Choice(name='SHG', value="<:SHG:1288035797903081503>"),
+    Choice(name='VIK', value="<:VIK:1288035879281098772>"),
+TH, RGE, VIT, KC, SK
 
 """
 
