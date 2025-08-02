@@ -28,7 +28,7 @@ class loyalty(commands.Cog):
     @app_commands.describe(points="10 Points for winner, 5 for second, 3 for third and 1 for participation")
     async def reward(self, interaction: discord.Interaction, user: discord.User, points: int):
 
-        if not await es.checkPerms(interaction, allowedRoles):
+        if not await es.checkPerms(interaction, allowedRoles.append(1395315033172480000)): # add event host role
             return
 
         # If the user has no loyalty points he gets inserted into the loyalty table
