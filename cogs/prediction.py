@@ -19,7 +19,7 @@ teamchoices = [
     Choice(name='FNC', value="<:FNC:1162308600128086096>"),
     Choice(name='GEN', value="<:GEN:1162308602250399744>"),
     Choice(name='LNG', value="<:LNG:1162308607409397770>"),
-    Choice(name='MAD', value="<:MAD:1162308610173452298>"),
+    Choice(name='MKOI', value="<:MKOI:1413895300317446176>"),
     Choice(name='T1', value="<:T1:1162308614413877308>"),
     Choice(name='BLG', value="<:BLG:1162308619203784784>"),
     Choice(name='G2', value="<:G2:1162308625763672154>"),
@@ -40,6 +40,8 @@ teamchoices = [
     Choice(name='VIT', value="<:VIT:1194293912643321866>"),
     Choice(name='RGEX', value="<:RGEX:1194294393692237946>"),
     Choice(name='TH', value="<:TH:1194294636919926794>"),
+
+    Choice(name='NAVI', value="<:NAVI:1413895268700655656>"),
 
 
 
@@ -73,7 +75,8 @@ teamchoices = [
 <:loud:1233524344617963591>
 <:psg:1233524358543315005>
 <:tes:1233524370429972612>
-
+<:NAVI:1413895268700655656>
+<:MKOI:1413895300317446176>
 
 <:100T:1288035748121022484>
 <:SHG:1288035797903081503>
