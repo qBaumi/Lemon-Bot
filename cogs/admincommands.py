@@ -4,7 +4,7 @@ from discord.ext import commands
 import discord, asyncio
 from discord import app_commands
 from discord import ui
-from config import guilds, allowedAdminRoles
+from config import guilds, allowedAdminRoles, allowedRoles
 from discord.app_commands import Choice
 from config import allowedAdminRoles, guilds
 
@@ -45,7 +45,7 @@ class admincommands(commands.Cog):
     async def gift(self, interaction : discord.Interaction, user: discord.User, amount : int, *, currency : Choice[str]):
         adminuser = interaction.user
         currency = currency.value
-        if not await es.checkPerms(interaction, allowedAdminRoles):
+        if not await es.checkPerms(interaction, allowedRoles):
             return
 
         async def check_account(userid):
