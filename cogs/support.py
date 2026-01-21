@@ -19,7 +19,7 @@ admin_channel_id =  1162741546706284574# this is the channel for the report staf
 support_category_id = 955151615252385854
 support_channel_id = 955476670352093204 # #support for the claim message in cogs.economy
 feedback_message_id = 994313931877257386
-support_message_id = 1157032299024621639 # message in #support
+support_message_id = 1463594976654000221 # message in #support
 TESTMODE = False
 
 def getmsgids():
@@ -78,11 +78,11 @@ class support(commands.Cog):
     async def permsupport(self, ctx):
         em = discord.Embed(colour=discord.Color.from_rgb(229, 196, 89))
         em.set_image(
-            url="https://media.discordapp.net/attachments/651364619402739713/881551197608218644/Support.png?width=1440&height=458")
+            url="https://cdn.discordapp.com/attachments/651364619402739713/1463594701989871646/image.png?ex=69726649&is=697114c9&hm=5c8baabd326d5a3651d1bed1a2dcedefe67bd00c6eaf976bb0dbe0b82b749cf0&")
         await ctx.send(embed=em)
 
         em = discord.Embed(title="Ticket Support", colour=discord.Color.from_rgb(229, 196, 89))
-        em.add_field(name="\u200b", value="""🪙 **- Verification** If you have read the Verification tab under <#945162520275079199> and you need further support, feel free to open a ticket that will allow our staff members to offer you further assistance.
+        em.add_field(name="\u200b", value="""🎮 **- Event Host** If you want to become an event host and have the ability to plan community events for the server, open a ticket here to show your interest!
 
 🎁 **- Claim a reward** If you claimed a reward through <@881476780765093939>, please open a ticket to claim it.
 
@@ -300,7 +300,7 @@ class EventHost(ui.Modal, title='Event Host'):
         self.client = client
 
 
-    description = ui.TextInput(label='Why do you want to be an event host?', placeholder="If you want to become an event host and have the ability to plan community events for the server, open a ticket here to show your interest!", style=discord.TextStyle.paragraph)
+    description = ui.TextInput(label='Why do you want to be an event host?', placeholder="What event would you like to host?", style=discord.TextStyle.paragraph)
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer()
