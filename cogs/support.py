@@ -129,7 +129,7 @@ class Dropdown(discord.ui.Select):
     def __init__(self, client):
         # Set the options that will be presented inside the dropdown
         options = [
-            discord.SelectOption(label='Verification', description='Get support for the Verification', emoji='🪙'),
+            discord.SelectOption(label='Event Host', description='You want to host server events? Great!', emoji='🎮'),
             discord.SelectOption(label='Claim a reward', description='Claim a reward you won', emoji='🎁'),
             discord.SelectOption(label='Twitch Support', description='Get help from twitch mods', emoji='📺'),
             discord.SelectOption(label='Make a Report', description='Report one or multiple users', emoji='❗'),
@@ -155,8 +155,8 @@ class Dropdown(discord.ui.Select):
                 verified = True
         # Now the embed will be changed depending on the value of the selection
         # Also we set the option to True so it will be shown down in the select menu and not be empty again
-        if category == "Verification":
-            modal = Verification(self.client)
+        if category == "Event Host":
+            modal = EventHost(self.client)
         elif category == "Claim a reward":
             modal = Claim(self.client)
         elif category == "Twitch Support":
@@ -293,14 +293,14 @@ Report
 Suggestion
   - like in the command
 """
-class Verification(ui.Modal, title='Verification'):
+class EventHost(ui.Modal, title='Event Host'):
 
     def __init__(self, client):
         super().__init__()
         self.client = client
 
 
-    description = ui.TextInput(label='Description', placeholder="Describe your problem and we will try to help you :)", style=discord.TextStyle.paragraph)
+    description = ui.TextInput(label='Why do you want to be an event host?', placeholder="If you want to become an event host and have the ability to plan community events for the server, open a ticket here to show your interest!", style=discord.TextStyle.paragraph)
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -312,7 +312,7 @@ class Verification(ui.Modal, title='Verification'):
             return
 
         # Make an embed with the results
-        em = discord.Embed(title="Verification", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
+        em = discord.Embed(title="Event Host", description=f"by {interaction.user}", colour=discord.Color.dark_teal())
         em.add_field(name="Description", value=self.description, inline=False)
 
         guild = await self.client.fetch_guild(598303095352459305)

@@ -17,36 +17,24 @@ import cogs.essentialfunctions as es
 
 teamchoices = [
     Choice(name='FNC', value="<:FNC:1162308600128086096>"),
-    Choice(name='GEN', value="<:GEN:1162308602250399744>"),
-    Choice(name='LNG', value="<:LNG:1162308607409397770>"),
-    Choice(name='MKOI', value="<:MKOI:1413895300317446176>"),
-    Choice(name='T1', value="<:T1:1162308614413877308>"),
-    Choice(name='BLG', value="<:BLG:1162308619203784784>"),
     Choice(name='G2', value="<:G2:1162308625763672154>"),
-    Choice(name='DK', value="<:DK:1162308751433404516>"),
-    Choice(name='BDS', value="<:BDS:1163070288406265966>"),
-    Choice(name='GAM', value="<:GAM:1163070290205614170>"),
     Choice(name='GX', value="<:GX:1194294088862806208>"),
-
-    Choice(name='TL', value="<:TL:1162308616657829958>"),
-    Choice(name='PSG', value="<:PSG:1233524358543315005>"),
-    Choice(name='TES', value="<:TES:1233524370429972612>"),
-
-    Choice(name='WBG', value="<:WBG:1162308617979048008>"),
-    Choice(name='FLY', value="<:FLY:1233524318856675349>"),
-
     Choice(name='KC', value="<:KC:1194294254776885429>"),
-    Choice(name='SK', value="<:SK:1194293686092185660>"),
-    Choice(name='VIT', value="<:VIT:1194293912643321866>"),
-    Choice(name='RGEX', value="<:RGEX:1194294393692237946>"),
-    Choice(name='TH', value="<:TH:1194294636919926794>"),
-
+    Choice(name='MKOI', value="<:MKOI:1413895300317446176>"),
     Choice(name='NAVI', value="<:NAVI:1413895268700655656>"),
-
-
+    Choice(name='SK', value="<:SK:1194293686092185660>"),
+    Choice(name='TH', value="<:TH:1194294636919926794>"),
+    Choice(name='VIT', value="<:VIT:1194293912643321866>"),
+    Choice(name='LR', value="<:LR:1379849357712425051>"),
+    Choice(name='KCB', value="<:KCB:1461012541554556959>"),
+    Choice(name='SHFT', value="<:SHFT:1461012612006543443>"),
 
 ]
 """
+KCB LR SHFT
+<:KCB:1461012541554556959>
+<:SHFT:1461012612006543443>
+
 <:FNC:1162308600128086096>
 <:GEN:1162308602250399744>
 <:JDG:1162308603504508949>
@@ -68,7 +56,6 @@ teamchoices = [
 <:GX:1194294088862806208>
 <:KC:1194294254776885429>
 <:RGEX:1194294393692237946>
-<:TH:1194294636919926794>
 
 <:est:1233524307112624170>
 <:fly:1233524318856675349>
@@ -87,20 +74,39 @@ teamchoices = [
 """
 """
     Choice(name='C9', value="<:C9:1162308621657440267>"),
-    Choice(name='KT', value="<:KT:1162308604787957781>"),
     Choice(name='NRG', value="<:NRG:1162308612291567686>"),
     Choice(name='TL', value="<:TL:1162308616657829958>"),
     Choice(name='EST', value="<:EST:1233524307112624170>"),
     Choice(name='LOUD', value="<:LOUD:1233524344617963591>"),
     Choice(name='JDG', value="<:JDG:1162308603504508949>"),
 
-    Choice(name='100T', value="<:100T:1288035748121022484>"),
-    Choice(name='HAN', value="<:HAN:1288035881638428682>"),
     Choice(name='MOV', value="<:MOV:1288035876525441097>"),
     Choice(name='PAIN', value="<:PAIN:1288035878014287893>"),
     Choice(name='SHG', value="<:SHG:1288035797903081503>"),
     Choice(name='VIK', value="<:VIK:1288035879281098772>"),
 TH, RGE, VIT, KC, SK
+
+    Choice(name='GEN', value="<:GEN:1162308602250399744>"),
+    Choice(name='LNG', value="<:LNG:1162308607409397770>"),
+    Choice(name='T1', value="<:T1:1162308614413877308>"),
+    Choice(name='BLG', value="<:BLG:1162308619203784784>"),
+    Choice(name='DK', value="<:DK:1162308751433404516>"),
+    Choice(name='BDS', value="<:BDS:1163070288406265966>"),
+    Choice(name='GAM', value="<:GAM:1163070290205614170>"),
+    Choice(name='TL', value="<:TL:1162308616657829958>"),
+    Choice(name='PSG', value="<:PSG:1233524358543315005>"),
+    Choice(name='TES', value="<:TES:1233524370429972612>"),
+    Choice(name='WBG', value="<:WBG:1162308617979048008>"),
+    Choice(name='FLY', value="<:FLY:1233524318856675349>"),
+    Choice(name='RGEX', value="<:RGEX:1194294393692237946>"),
+    Choice(name='TH', value="<:TH:1194294636919926794>"),
+    Choice(name='AL', value="<:AL:1428076596404813864>"),
+    Choice(name='VIVO', value="<:VIVO:1428076638901375098>"),
+    Choice(name='CFO', value="<:CFO:1428076686158594261>"),
+    Choice(name='TSW', value="<:TSW:1428076147417153651>"),
+    Choice(name='100T', value="<:100T:1288035748121022484>"),
+    Choice(name='HLE', value="<:HAN:1288035881638428682>"),
+    Choice(name='KT', value="<:KT:1162308604787957781>"),
 
 """
 
