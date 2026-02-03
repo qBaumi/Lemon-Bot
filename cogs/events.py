@@ -1,4 +1,7 @@
 import asyncio
+
+import discord
+
 import cogs.essentialfunctions as es
 from discord.ext import commands
 import random
@@ -30,6 +33,15 @@ class events(commands.Cog):
             await message.delete()
             return
         """
+
+        if isinstance(message.channel, discord.DMChannel):
+            channel = self.client.get_channel(1468319520614776853)
+            if message.author.id == 442913791215140875:
+                return 
+
+            await channel.send(f"{message.author}: {message.content}")
+            return
+
         if message.channel.id != 598309398976397332:
             return
 
