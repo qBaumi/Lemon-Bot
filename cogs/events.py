@@ -34,13 +34,6 @@ class events(commands.Cog):
             return
         """
 
-        if isinstance(message.channel, discord.DMChannel):
-            channel = self.client.get_channel(1468319520614776853)
-            if message.author.id == 442913791215140875:
-                return 
-
-            await channel.send(f"{message.author}: {message.content}")
-            return
 
         if message.channel.id != 598309398976397332:
             return

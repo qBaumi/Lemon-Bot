@@ -304,7 +304,7 @@ WHERE matchid = {matchid}
         for matchid in matchids:
             matchid = matchid[0]
             await self.lock_prediction(matchid)
-            channel = await self.client.fetch_channel(mod_channel_id) # mod channel id
+            channel = await self.client.fetch_channel(1469811392487096391) # bot spam channel id
             await channel.send("Prediction was succesfully locked!")
             await asyncio.sleep(1)
 
