@@ -228,8 +228,8 @@ class TournamentSetup(commands.Cog, name="Tournament Setup"):
                 reason=f"Tournament setup: role for team {team_name}",
             )
             target_position = max(1, template_role.position - 1)
-            await team_role.edit(
-                position=target_position,
+            await guild.edit_role_positions(
+                {team_role: target_position},
                 reason=f"Tournament setup: move role {team_name} under template role",
             )
             await self._send(interaction, f"✅ Created role **{team_name}**")
